@@ -15,8 +15,8 @@ tasks.withType(JavaCompile) {
 
 dependencies {
     testImplementation(
-            'org.junit.jupiter:junit-jupiter:5.9.1',
-            'com.codeborne:selenide:6.10.1'
+            'org.junit.jupiter:junit-jupiter:5.9.3',
+            'com.codeborne:selenide:6.14.0'
     )
 }
 
