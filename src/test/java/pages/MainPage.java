@@ -45,9 +45,7 @@ public class MainPage {
         deliveryPopUpCityNo.click();
 
         deliveryPopUpModal.shouldBe(exist);
-        System.out.println(getRandomArrayItem(dropDownCityList).getText());
-        System.out.println(getRandomArrayItem(dropDownCityList).getOwnText());
-        getRandomArrayItem(dropDownCityList).click();
+        getRandomArrayItem(dropDownCityList).hover().click();
         return this;
     }
 
