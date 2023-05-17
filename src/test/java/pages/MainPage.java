@@ -1,13 +1,16 @@
 package pages;
 
+import com.codeborne.selenide.CollectionCondition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import pages.components.DeliveryComponent;
 
 import java.util.Random;
 
+import static com.codeborne.selenide.CollectionCondition.size;
 import static com.codeborne.selenide.Condition.exist;
 import static com.codeborne.selenide.Selenide.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MainPage {
     private final SelenideElement deliveryPopUp = $("#confirm");
@@ -16,8 +19,12 @@ public class MainPage {
     private final SelenideElement deliveryPopUpModal = $x("//span[text()='Укажите город доставки в поле:']");
     private final SelenideElement deliveryPopUpInput = $("#location-select");
     private final SelenideElement deliveryPopUpFindCityItem = $(".css-oboqqt-menu");
-    private final ElementsCollection dropDownCityList = $$("._187JQJYl");
+    private final ElementsCollection dropDownCityList = $$("._8PeWF0tD");
+    private final SelenideElement cookiePopUp = $(".bco1zbf0");
+    private final SelenideElement cookiePopUpClose = $(".lkfJru7k");
+    private final ElementsCollection bouquetList = $$("._3_gf3f0b");
     DeliveryComponent deliveryComponent = new DeliveryComponent();
+    BouquetPage bouquetPage = new BouquetPage();
 
     static Random random = new Random();
 
@@ -40,17 +47,32 @@ public class MainPage {
         return this;
     }
 
-    public MainPage setRandomDeliveryCity() {
+    // добавить вызов апи списка всех городов
+    public MainPage setRandomPopularDeliveryCity() {
         deliveryPopUp.shouldBe(exist);
         deliveryPopUpCityNo.click();
 
+        // добавить проверку выбранного города
         deliveryPopUpModal.shouldBe(exist);
-        getRandomArrayItem(dropDownCityList).hover().click();
+        dropDownCityList.get(getRandomArrayItem(dropDownCityList)).click();
         return this;
     }
 
-    public SelenideElement getRandomArrayItem(ElementsCollection values) {
-        int index = random.nextInt(values.size());
-        return values.get(index);
+    public BouquetPage openRandomBouquetPage() {
+        bouquetList.shouldHave(size(60));
+        bouquetList.get(getRandomArrayItem(bouquetList)).click();
+        return bouquetPage;
+    }
+
+    public MainPage closeCookiePopUp() {
+        if (cookiePopUp.exists()) {
+            cookiePopUpClose.click();
+        }
+        cookiePopUp.shouldNotBe(exist);
+        return this;
+    }
+
+    public int getRandomArrayItem(ElementsCollection values) {
+        return random.nextInt(values.size());
     }
 }

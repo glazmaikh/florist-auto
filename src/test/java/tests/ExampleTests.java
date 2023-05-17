@@ -1,7 +1,9 @@
 package tests;
 
 import org.junit.jupiter.api.Test;
+import pages.BouquetPage;
 import pages.MainPage;
+import pages.OrderPage;
 
 import static com.codeborne.selenide.Condition.exist;
 import static com.codeborne.selenide.Condition.text;
@@ -11,6 +13,8 @@ import static com.codeborne.selenide.Selenide.open;
 
 public class ExampleTests extends TestBase{
     MainPage mainPage = new MainPage();
+    BouquetPage bouquetPage = new BouquetPage();
+    OrderPage orderPage = new OrderPage();
 
     @Test
     void testExample1() {
@@ -29,6 +33,11 @@ public class ExampleTests extends TestBase{
     @Test
     void criticalPathTest() {
         mainPage.openMainPage()
-                .setRandomDeliveryCity();
+                .closeCookiePopUp()
+                .setRandomPopularDeliveryCity()
+                .openRandomBouquetPage();
+
+        bouquetPage.clickAddtoCardButton();
+        //orderPage.
     }
 }
