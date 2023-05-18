@@ -20,12 +20,14 @@ public class MainPage {
     private final SelenideElement deliveryPopUpInput = $("#location-select");
     private final SelenideElement deliveryPopUpFindCityItem = $(".css-oboqqt-menu");
     private final ElementsCollection dropDownCityList = $$("._8PeWF0tD");
+    private final ElementsCollection droppedCityList = $$("._8PeWF0tD");
+    SelenideElement selectedDeliveryCity = $(".CUvbyl33");
     private final SelenideElement cookiePopUp = $(".bco1zbf0");
     private final SelenideElement cookiePopUpClose = $(".lkfJru7k");
+
     private final ElementsCollection bouquetList = $$("._3_gf3f0b");
     DeliveryComponent deliveryComponent = new DeliveryComponent();
     BouquetPage bouquetPage = new BouquetPage();
-
     static Random random = new Random();
 
     public MainPage openMainPage() {
@@ -42,21 +44,19 @@ public class MainPage {
             deliveryPopUpModal.shouldBe(exist);
             deliveryPopUpInput.val(city);
             deliveryPopUpFindCityItem.shouldBe(exist);
-            //todo найти локатор первого выпадающего элемента
+
+            for (SelenideElement se : droppedCityList) {
+                if (se.getOwnText().contains(city)) {
+                    se.click();
+                    break;
+                }
+            }
         }
+        assertEquals(city, selectedDeliveryCity.getText(), "На странице товаров отображается не выбранный город доставки");
         return this;
     }
 
-    // добавить вызов апи списка всех городов
-    public MainPage setRandomPopularDeliveryCity() {
-        deliveryPopUp.shouldBe(exist);
-        deliveryPopUpCityNo.click();
-
-        // добавить проверку выбранного города
-        deliveryPopUpModal.shouldBe(exist);
-        dropDownCityList.get(getRandomArrayItem(dropDownCityList)).click();
-        return this;
-    }
+// добавить вызов апи списка всех городов
 
     public BouquetPage openRandomBouquetPage() {
         bouquetList.shouldHave(size(60));

@@ -15,6 +15,9 @@ public class ExampleTests extends TestBase{
     MainPage mainPage = new MainPage();
     BouquetPage bouquetPage = new BouquetPage();
     OrderPage orderPage = new OrderPage();
+    TestData testData = new TestData();
+
+    String city = testData.getCity();
 
     @Test
     void testExample1() {
@@ -25,16 +28,10 @@ public class ExampleTests extends TestBase{
     }
 
     @Test
-    void criticalPathWithRandomDeliveryCityTest() {
-        mainPage.openMainPage()
-                .setDeliveryCity("Самара");
-    }
-
-    @Test
     void criticalPathTest() {
         mainPage.openMainPage()
                 .closeCookiePopUp()
-                .setRandomPopularDeliveryCity()
+                .setDeliveryCity(city)
                 .openRandomBouquetPage();
 
         bouquetPage.clickAddtoCardButton();
