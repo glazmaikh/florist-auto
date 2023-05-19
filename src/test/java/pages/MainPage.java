@@ -1,13 +1,11 @@
 package pages;
 
-import com.codeborne.selenide.CollectionCondition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import pages.components.DeliveryComponent;
 
 import java.util.Random;
 
-import static com.codeborne.selenide.CollectionCondition.size;
 import static com.codeborne.selenide.Condition.exist;
 import static com.codeborne.selenide.Selenide.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -24,9 +22,7 @@ public class MainPage {
     SelenideElement selectedDeliveryCity = $(".CUvbyl33");
     private final SelenideElement cookiePopUp = $(".bco1zbf0");
     private final SelenideElement cookiePopUpClose = $(".lkfJru7k");
-
     private final ElementsCollection bouquetList = $$("._3_gf3f0b");
-    DeliveryComponent deliveryComponent = new DeliveryComponent();
     BouquetPage bouquetPage = new BouquetPage();
     static Random random = new Random();
 
@@ -52,15 +48,15 @@ public class MainPage {
                 }
             }
         }
-        assertEquals(city, selectedDeliveryCity.getText(), "На странице товаров отображается не выбранный город доставки");
+        assertEquals(city, selectedDeliveryCity.getText(),
+                "На странице товаров отображается не выбранный город доставки");
         return this;
     }
 
-// добавить вызов апи списка всех городов
+    public BouquetPage setBouquet(String city) {
+        // прорабатываю логику в классе WithApiExampleTest, чтобы ничего не мешало
 
-    public BouquetPage openRandomBouquetPage() {
-        bouquetList.shouldHave(size(60));
-        bouquetList.get(getRandomArrayItem(bouquetList)).click();
+        //bouquetList.get(getRandomArrayItem(bouquetList)).click();
         return bouquetPage;
     }
 
