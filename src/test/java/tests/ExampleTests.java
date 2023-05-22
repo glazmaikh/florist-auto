@@ -7,7 +7,6 @@ import pages.MainPage;
 public class ExampleTests extends TestBase{
     MainPage mainPage = new MainPage();
     TestData testData = new TestData();
-
     String city = testData.getCity();
 
     @Test
