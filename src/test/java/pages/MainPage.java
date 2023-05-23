@@ -1,12 +1,27 @@
 package pages;
 
+import com.codeborne.selenide.CollectionCondition;
+import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.restassured.RestAssured;
+import io.restassured.response.Response;
+import io.restassured.response.ResponseBody;
+import io.restassured.specification.RequestSpecification;
+import lombok.SneakyThrows;
+import models.DataDto;
+import models.DataItemDto;
+import org.junit.jupiter.api.Timeout;
 import pages.components.DeliveryComponent;
 
+import java.time.Duration;
+import java.util.Map;
 import java.util.Random;
 
-import static com.codeborne.selenide.Condition.exist;
+import static com.codeborne.selenide.CollectionCondition.*;
+import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -16,7 +31,7 @@ public class MainPage {
     private final SelenideElement deliveryPopUpCityNo = $x("//span[text()='Другой город']");
     private final SelenideElement deliveryPopUpModal = $x("//span[text()='Укажите город доставки в поле:']");
     private final SelenideElement deliveryPopUpInput = $("#location-select");
-    private final SelenideElement deliveryPopUpFindCityItem = $(".css-oboqqt-menu");
+    private final SelenideElement deliveryPopUpFindCityItem = $(".css-11unzgr");
     private final ElementsCollection dropDownCityList = $$("._8PeWF0tD");
     private final ElementsCollection droppedCityList = $$("._8PeWF0tD");
     SelenideElement selectedDeliveryCity = $(".CUvbyl33");
@@ -31,6 +46,21 @@ public class MainPage {
         return this;
     }
 
+    @SneakyThrows
+    public MainPage getRandomCity() {
+        RequestSpecification httpRequest = RestAssured.given();
+        Response response = httpRequest
+                .auth().basic("florist_api", "123")
+                .get("https://www.test.florist.local/api/city");
+        ResponseBody body = response.getBody();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        DataDto data = objectMapper.readValue(body.asString(), DataDto.class);
+
+        DataItemDto dto = getRandomCity(data.getData());
+        return this;
+    }
+
     public MainPage setDeliveryCity(String city) {
         deliveryPopUp.shouldBe(exist);
         if (city.equals("Москва")) {
@@ -39,8 +69,10 @@ public class MainPage {
             deliveryPopUpCityNo.click();
             deliveryPopUpModal.shouldBe(exist);
             deliveryPopUpInput.val(city);
-            deliveryPopUpFindCityItem.shouldBe(exist);
+            deliveryPopUpFindCityItem.shouldHave(exist);
 
+            // придумать ожидание
+            droppedCityList.shouldHave(sizeGreaterThan(5));
             for (SelenideElement se : droppedCityList) {
                 if (se.getOwnText().contains(city)) {
                     se.click();
@@ -61,6 +93,7 @@ public class MainPage {
     }
 
     public MainPage closeCookiePopUp() {
+        cookiePopUp.shouldBe(exist);
         if (cookiePopUp.exists()) {
             cookiePopUpClose.click();
         }
@@ -70,5 +103,10 @@ public class MainPage {
 
     public int getRandomArrayItem(ElementsCollection values) {
         return random.nextInt(values.size());
+    }
+
+    public DataItemDto getRandomCity(Map<String, DataItemDto> cityMap) {
+        Object[] values = cityMap.values().toArray();
+        return (DataItemDto) values[new Random().nextInt(values.length)];
     }
 }

@@ -12,13 +12,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
+import java.util.Optional;
+import java.util.Random;
+
+import static tests.TestData.random;
 
 public class WithApiExampleTest {
-
-    @BeforeEach
-    public void setUp() {
-
-    }
 
     @Test
     @SneakyThrows
@@ -31,12 +30,14 @@ public class WithApiExampleTest {
 
         ObjectMapper objectMapper = new ObjectMapper();
         DataDto data = objectMapper.readValue(body.asString(), DataDto.class);
-        System.out.println(data.getData().get("1963").getName());
 
-        //перебирать мапу стримом
-        Map<String, DataItemDto> cityMap = data.getData();
-        for (Map.Entry<String, DataItemDto> entry : cityMap.entrySet())
-            System.out.println("Key = " + entry.getKey() +
-                    ", value = " + entry.getValue());
+        DataItemDto dto = getRandomCity(data.getData());
+        System.out.println(dto.getName());
+        System.out.println(dto.getId());
+    }
+
+    public DataItemDto getRandomCity(Map<String, DataItemDto> cityMap) {
+        Object[] values = cityMap.values().toArray();
+        return (DataItemDto) values[new Random().nextInt(values.length)];
     }
 }

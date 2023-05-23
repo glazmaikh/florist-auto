@@ -1,5 +1,8 @@
 package tests;
 
+import models.DataItemDto;
+
+import java.util.Map;
 import java.util.Random;
 
 public class TestData {
@@ -20,5 +23,10 @@ public class TestData {
 
     public String getRandomArrayItem(String[] values) {
         return values[random.nextInt(values.length)];
+    }
+
+    public DataItemDto getRandomCity(Map<String, DataItemDto> cityMap) {
+        Object[] values = cityMap.values().toArray();
+        return (DataItemDto) values[new Random().nextInt(values.length)];
     }
 }
