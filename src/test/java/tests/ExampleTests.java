@@ -33,7 +33,7 @@ public class ExampleTests extends TestBase{
     }
 
     @Test
-    void criticalPathTest() throws InterruptedException {
+    void criticalPathTest() {
         mainPage.openMainPage()
                 .closeCookiePopUp()
                 .setDeliveryCity(city.getName())

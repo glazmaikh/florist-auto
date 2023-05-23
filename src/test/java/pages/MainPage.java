@@ -46,21 +46,6 @@ public class MainPage {
         return this;
     }
 
-    @SneakyThrows
-    public MainPage getRandomCity() {
-        RequestSpecification httpRequest = RestAssured.given();
-        Response response = httpRequest
-                .auth().basic("florist_api", "123")
-                .get("https://www.test.florist.local/api/city");
-        ResponseBody body = response.getBody();
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        DataDto data = objectMapper.readValue(body.asString(), DataDto.class);
-
-        DataItemDto dto = getRandomCity(data.getData());
-        return this;
-    }
-
     public MainPage setDeliveryCity(String city) {
         deliveryPopUp.shouldBe(exist);
         if (city.equals("Москва")) {
