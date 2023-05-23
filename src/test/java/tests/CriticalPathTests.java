@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 import pages.MainPage;
 
 
-public class ExampleTests extends TestBase{
+public class CriticalPathTests extends TestBase{
     MainPage mainPage = new MainPage();
     DataItemDto city;
     TestData testData = new TestData();
