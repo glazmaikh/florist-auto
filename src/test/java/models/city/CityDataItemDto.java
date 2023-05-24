@@ -1,10 +1,10 @@
-package models;
+package models.city;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public @Data class DataItemDto {
+public @Data class CityDataItemDto {
     public String id;
     public String name;
     public String alternative;

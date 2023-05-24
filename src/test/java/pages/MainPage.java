@@ -2,11 +2,9 @@ package pages;
 
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
-import models.DataItemDto;
+import models.city.CityDataItemDto;
 
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -89,8 +87,8 @@ public class MainPage {
         return random.nextInt(values.size());
     }
 
-    public DataItemDto getRandomCity(Map<String, DataItemDto> cityMap) {
+    public CityDataItemDto getRandomCity(Map<String, CityDataItemDto> cityMap) {
         Object[] values = cityMap.values().toArray();
-        return (DataItemDto) values[new Random().nextInt(values.length)];
+        return (CityDataItemDto) values[new Random().nextInt(values.length)];
     }
 }

@@ -1,17 +1,24 @@
-package models;
+package models.bouquet;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public @Data class Delivery {
+public @Data class _2 {
     @JsonProperty("RUB")
     public int rub;
     @JsonProperty("USD")
-    public int usd;
+    public double usd;
     @JsonProperty("EUR")
-    public int eur;
+    public double eur;
     @JsonProperty("KZT")
     public int kzt;
+    public String type;
+    public String name;
+    public List list;
+    public int id;
+    public String slug;
+    public boolean active;
+    public String icon;
 }
