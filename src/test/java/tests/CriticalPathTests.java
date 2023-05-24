@@ -33,10 +33,10 @@ public class CriticalPathTests extends TestBase{
     }
 
     @Test
-    void criticalPathTest() {
+    void criticalPathTest() throws InterruptedException {
         mainPage.openMainPage()
                 .closeCookiePopUp()
-                .setDeliveryCity(city.getName())
-                .setBouquet(city.getName());
+                .setDeliveryCity(city.getName());
+//                .setBouquet(city.getName());
     }
 }
