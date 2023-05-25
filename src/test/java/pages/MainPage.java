@@ -7,6 +7,7 @@ import java.time.Duration;
 
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.*;
+import static com.codeborne.selenide.WebDriverConditions.url;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MainPage {
@@ -23,14 +24,15 @@ public class MainPage {
     private final SelenideElement cookiePopUpClose = $(".lkfJru7k");
     private final ElementsCollection bouquetList = $$("._3JY3BA25");
     private final SelenideElement findMoreButton = $("//span[text()='Показать ещё']");
-
     BouquetPage bouquetPage = new BouquetPage();
+
     public MainPage openMainPage() {
         open("https://www.stage.florist.local");
+        webdriver().shouldHave(url("https://www.stage.florist.local/"));
         return this;
     }
 
-    public MainPage setDeliveryCity(String city) {
+    public MainPage setCity(String city) {
         deliveryPopUp.shouldBe(exist);
         if (city.equals("Москва")) {
             deliveryPopUpYes.click();
@@ -53,14 +55,14 @@ public class MainPage {
     }
 
     public BouquetPage setBouquet(String bouquet) {
-        bouquetLoader.shouldNotBe(visible, Duration.ofSeconds(10));
+        bouquetLoader.shouldNotBe(visible, Duration.ofSeconds(30));
         int count = 0;
         for (SelenideElement se : bouquetList) {
             if (se.getOwnText().contains(bouquet)) {
                 se.click();
                 break;
             } else if (count == bouquetList.size()) {
-                findMoreButton.shouldBe(exist, Duration.ofSeconds(10)).click();
+                findMoreButton.shouldBe(exist, Duration.ofSeconds(30)).click();
             } else {
                 count++;
             }
