@@ -2,11 +2,8 @@ package pages;
 
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
-import models.city.CityDataItemDto;
 
 import java.time.Duration;
-import java.util.Map;
-import java.util.Random;
 
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.*;
@@ -19,16 +16,15 @@ public class MainPage {
     private final SelenideElement deliveryPopUpModal = $x("//span[text()='Укажите город доставки в поле:']");
     private final SelenideElement deliveryPopUpInput = $("#location-select");
     private final SelenideElement cityLoader = $(".css-1gl4k7y");
-
+    private final SelenideElement bouquetLoader = $(".w0pOM9kK");
     private final ElementsCollection droppedCityList = $$("._8PeWF0tD");
-    SelenideElement selectedDeliveryCity = $(".CUvbyl33");
+    private final SelenideElement selectedDeliveryCity = $(".CUvbyl33");
     private final SelenideElement cookiePopUp = $(".bco1zbf0");
     private final SelenideElement cookiePopUpClose = $(".lkfJru7k");
-    private final ElementsCollection bouquetList = $$("._3_gf3f0b");
+    private final ElementsCollection bouquetList = $$("._3JY3BA25");
+    private final SelenideElement findMoreButton = $("//span[text()='Показать ещё']");
 
     BouquetPage bouquetPage = new BouquetPage();
-    static Random random = new Random();
-
     public MainPage openMainPage() {
         open("https://www.stage.florist.local");
         return this;
@@ -56,39 +52,27 @@ public class MainPage {
         return this;
     }
 
-//    public List<SelenideElement> isDisplayed(ElementsCollection collection) {
-//        List<Boolean> list = new ArrayList<>();
-//        for (SelenideElement se : collection) {
-//            list.add(se.isDisplayed());
-//        }
-//        return list;
-//    }
-
-    public BouquetPage setBouquet(String city) {
-        // прорабатываю логику в классе WithApiExampleTest, чтобы ничего не мешало
-
-        //bouquetList.get(getRandomArrayItem(bouquetList)).click();
+    public BouquetPage setBouquet(String bouquet) {
+        bouquetLoader.shouldNotBe(visible, Duration.ofSeconds(10));
+        int count = 0;
+        for (SelenideElement se : bouquetList) {
+            if (se.getOwnText().contains(bouquet)) {
+                se.click();
+                break;
+            } else if (count == bouquetList.size()) {
+                findMoreButton.shouldBe(exist, Duration.ofSeconds(10)).click();
+            } else {
+                count++;
+            }
+        }
         return bouquetPage;
     }
 
     public MainPage closeCookiePopUp() {
-        cookiePopUp.shouldBe(exist, Duration.ofSeconds(10));
         cookiePopUp.shouldBe(visible, Duration.ofSeconds(10));
-        if (cookiePopUp.exists()) {
-            cookiePopUpClose.click();
-        }
+        cookiePopUpClose.click();
+
         cookiePopUp.shouldNotBe(visible, Duration.ofSeconds(10));
-
-
         return this;
-    }
-
-    public int getRandomArrayItem(ElementsCollection values) {
-        return random.nextInt(values.size());
-    }
-
-    public CityDataItemDto getRandomCity(Map<String, CityDataItemDto> cityMap) {
-        Object[] values = cityMap.values().toArray();
-        return (CityDataItemDto) values[new Random().nextInt(values.length)];
     }
 }
