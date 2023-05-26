@@ -14,7 +14,7 @@ public class BouquetPage {
     private final SelenideElement addToCardButton = $x("//span[text()='Добавить в корзину']");
     private final SelenideElement bouquetSection = $("#bouquet-main");
     private final SelenideElement priceSection = bouquetSection.$(".no-wrap");
-    OrderPage orderPage = new OrderPage();
+    private final OrderPage orderPage = new OrderPage();
 
     public BouquetPage openBouquetPage(String citySlug, BouquetDataItemDto bouquet) {
         webdriver().shouldHave(url("https://www.stage.florist.local/" + citySlug + "/bouquet-" + bouquet.getId()));
@@ -23,11 +23,6 @@ public class BouquetPage {
 
         String price = priceSection.getText().replaceAll(" ", "");
         assertEquals(String.valueOf(bouquet.getMin_price().getRub()), price.substring(0, price.length() - 1), "Incorrect price");
-        return this;
-    }
-
-    public BouquetPage getPrice() {
-        addToCardButton.shouldBe(Condition.exist).click();
         return this;
     }
 
