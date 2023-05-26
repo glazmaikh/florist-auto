@@ -14,7 +14,7 @@ public class CriticalPathTests extends TestBase{
         mainPage.openMainPage()
                 .closeCookiePopUp()
                 .setCity(testData.getRandomCityName())
-                .setBouquet(testData.getRandomBouquetName());
+                .setBouquet(testData.getBouquet());
 
         bouquetPage.openBouquetPage(testData.getCitySlug(), testData.getBouquet())
                 .addToCard();

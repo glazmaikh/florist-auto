@@ -2,6 +2,7 @@ package pages;
 
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
+import models.bouquet.BouquetDataItemDto;
 
 import java.time.Duration;
 
@@ -22,7 +23,7 @@ public class MainPage {
     private final SelenideElement cityLoader = $(".css-1gl4k7y");
     private final ElementsCollection droppedCityList = $$("._8PeWF0tD");
     private final SelenideElement bouquetLoader = $(".w0pOM9kK");
-    private final ElementsCollection bouquetList = $$("._3JY3BA25");
+    private final ElementsCollection bouquetList = $$("._3fIsQ45s");
     private final SelenideElement findMoreButton = $("//span[text()='Показать ещё']");
     private final BouquetPage bouquetPage = new BouquetPage();
 
@@ -50,15 +51,18 @@ public class MainPage {
             }
         }
         assertEquals(city, selectedCity.getText(),
-                "На странице товаров отображается не выбранный город доставки");
+                "На странице товаров не отображается выбранный город доставки");
         return this;
     }
 
-    public BouquetPage setBouquet(String bouquet) {
+    public BouquetPage setBouquet(BouquetDataItemDto bouquet) {
         bouquetLoader.shouldNotBe(visible, Duration.ofSeconds(30));
         int count = 0;
         for (SelenideElement se : bouquetList) {
-            if (se.getOwnText().contains(bouquet)) {
+            if (se.getText().contains(bouquet.getName())) {
+                assertEquals(String.valueOf(bouquet.getMin_price().getRub()),
+                        se.$("._1KvrG3Aq").getText().replaceAll("\\D", ""),
+                        "Incorrect price");
                 se.click();
                 break;
             } else if (count == bouquetList.size()) {

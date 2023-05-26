@@ -16,8 +16,8 @@ import java.util.Random;
 
 public class TestData {
 
-    private final CityDataItemDto city;
-    private final BouquetDataItemDto bouquet;
+    CityDataItemDto city;
+    BouquetDataItemDto bouquet;
 
     @SneakyThrows
     public TestData() {
