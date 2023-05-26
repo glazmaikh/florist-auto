@@ -11,7 +11,7 @@ import static com.codeborne.selenide.Selenide.*;
 import static com.codeborne.selenide.WebDriverConditions.url;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class MainPage {
+public class CatalogPage {
     private final SelenideElement cookiePopUp = $(".bco1zbf0");
     private final SelenideElement cookiePopUpClose = $(".lkfJru7k");
     private final SelenideElement cityPopUp = $("#confirm");
@@ -27,13 +27,13 @@ public class MainPage {
     private final SelenideElement findMoreButton = $("//span[text()='Показать ещё']");
     private final BouquetPage bouquetPage = new BouquetPage();
 
-    public MainPage openMainPage() {
+    public CatalogPage openMainPage() {
         open("https://www.stage.florist.local");
         webdriver().shouldHave(url("https://www.stage.florist.local/"));
         return this;
     }
 
-    public MainPage setCity(String city) {
+    public CatalogPage setCity(String city) {
         cityPopUp.shouldBe(exist);
         if (city.equals("Москва")) {
             cityPopUpYes.click();
@@ -74,7 +74,7 @@ public class MainPage {
         return bouquetPage;
     }
 
-    public MainPage closeCookiePopUp() {
+    public CatalogPage closeCookiePopUp() {
         cookiePopUp.shouldBe(visible, Duration.ofSeconds(10));
         cookiePopUpClose.click();
 
