@@ -1,6 +1,7 @@
 package tests;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.javafaker.Faker;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import io.restassured.response.ResponseBody;
@@ -11,6 +12,7 @@ import models.bouquet.BouquetDataItemDto;
 import models.city.CityDataDto;
 import models.city.CityDataItemDto;
 
+import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 
@@ -18,6 +20,14 @@ public class TestData {
 
     CityDataItemDto city;
     BouquetDataItemDto bouquet;
+    Faker faker = new Faker(new Locale("ru"));
+    String yourName = faker.name().fullName();
+    String yourEmail = faker.internet().emailAddress();
+    String yourPhone = faker.phoneNumber().cellPhone();
+    String name = faker.name().firstName();
+    String email = faker.internet().emailAddress();
+    String phone = faker.phoneNumber().cellPhone();
+    String address = faker.address().fullAddress();
 
     @SneakyThrows
     public TestData() {
