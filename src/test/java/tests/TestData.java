@@ -22,12 +22,11 @@ public class TestData {
     BouquetDataItemDto bouquet;
     Faker faker = new Faker(new Locale("ru"));
     String yourName = faker.name().fullName();
-    String yourEmail = faker.internet().emailAddress();
+    String yourEmail = faker.internet().emailAddress("en");
     String yourPhone = faker.phoneNumber().cellPhone();
     String name = faker.name().firstName();
-    String email = faker.internet().emailAddress();
     String phone = faker.phoneNumber().cellPhone();
-    String address = faker.address().fullAddress();
+    String address = faker.address().streetAddress();
 
     @SneakyThrows
     public TestData() {

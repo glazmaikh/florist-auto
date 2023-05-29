@@ -75,9 +75,7 @@ public class CatalogPage {
     }
 
     public CatalogPage closeCookiePopUp() {
-        cookiePopUp.shouldBe(visible, Duration.ofSeconds(10));
-        cookiePopUpClose.click();
-
+        cookiePopUpClose.shouldBe(exist, Duration.ofSeconds(10)).shouldBe(visible).click();
         cookiePopUp.shouldNotBe(visible, Duration.ofSeconds(10));
         return this;
     }
