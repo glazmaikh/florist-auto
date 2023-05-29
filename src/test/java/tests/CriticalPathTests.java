@@ -21,11 +21,7 @@ public class CriticalPathTests extends TestBase {
         bouquetPage.openBouquetPage(testData.getCitySlug(), testData.getBouquet())
                 .addToCard();
 
-        orderPage.simpleFillForm(testData.yourName,
-                testData.yourEmail,
-                testData.yourPhone,
-                testData.name,
-                testData.phone,
-                testData.address);
+        orderPage.simpleFillForm(testData.yourName, testData.yourEmail, testData.yourPhone,
+                testData.name, testData.phone, testData.address, testData.getBouquet());
     }
 }
