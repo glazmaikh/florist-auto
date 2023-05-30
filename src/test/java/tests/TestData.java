@@ -43,6 +43,8 @@ public class TestData {
         Response responseBouquet = httpRequest
                 .auth().basic("florist_api", "123")
                 .param("city", city.getId())
+                .param("showPrices", 1)
+                .param("includeIflorist", 1)
                 .get("https://www.test.florist.local/api/bouquet");
         ResponseBody bodyBouquet = responseBouquet.getBody();
 

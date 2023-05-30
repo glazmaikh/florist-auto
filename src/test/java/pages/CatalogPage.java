@@ -28,8 +28,8 @@ public class CatalogPage {
     private final BouquetPage bouquetPage = new BouquetPage();
 
     public CatalogPage openMainPage() {
-        open("https://www.stage.florist.local");
-        webdriver().shouldHave(url("https://www.stage.florist.local/"));
+        open("https://www.test.florist.local");
+        webdriver().shouldHave(url("https://www.test.florist.local/"));
         return this;
     }
 

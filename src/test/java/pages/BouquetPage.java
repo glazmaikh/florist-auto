@@ -17,7 +17,7 @@ public class BouquetPage {
     private final OrderPage orderPage = new OrderPage();
 
     public BouquetPage openBouquetPage(String citySlug, BouquetDataItemDto bouquet) {
-        webdriver().shouldHave(url("https://www.stage.florist.local/" + citySlug + "/bouquet-" + bouquet.getId()));
+        webdriver().shouldHave(url("https://www.test.florist.local/" + citySlug + "/bouquet-" + bouquet.getId()));
 
         bouquetSection.shouldHave(Condition.text(bouquet.getName()));
 
