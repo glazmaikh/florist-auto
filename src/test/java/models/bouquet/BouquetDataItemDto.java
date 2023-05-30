@@ -24,6 +24,7 @@ public @Data class BouquetDataItemDto {
     public boolean express_delivery;
     public String img;
     public String description;
+    public Prices prices;
     public MinDatePrice min_date_price;
     public String salon_name;
 }

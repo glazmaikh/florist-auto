@@ -2,7 +2,6 @@ package models.bouquet;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
-import models.city.CityDataItemDto;
 
 import java.util.Map;
 
