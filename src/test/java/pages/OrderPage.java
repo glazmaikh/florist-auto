@@ -3,7 +3,6 @@ package pages;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
-import models.bouquet.BouquetDataItemDto;
 
 import java.time.Duration;
 import java.util.Random;
@@ -20,11 +19,12 @@ public class OrderPage {
     private final SelenideElement yourPhoneInput = $(byName("customerPhone"));
     private final SelenideElement nameInput = $(byName("recipientName"));
     private final SelenideElement phoneInput = $(byName("recipientPhone"));
-    private final SelenideElement addressInput = $(byName("recipientAddress"));
-    private final SelenideElement dateDeliveryInput = $x("//span[text() ='Выберите дату']//preceding-sibling::input");
+    private final SelenideElement addressInput = $(byName("recipientAddressSource"));
+    private final SelenideElement addressInput1 = $(byName("recipientAddress"));
+    private final SelenideElement dateDeliveryInput = $x("//span[text()='Выберите дату']//preceding-sibling::input");
     //input[@type='submit'
     private final ElementsCollection deliveryDay =
-            $$x("//button[@class = 'react-calendar__tile react-calendar__month-view__days__day' and not(@disabled)]");
+            $$x("//div[@class='react-calendar__month-view__days']//button[not(@disabled)]");
 
     private final SelenideElement payButton = $(byText("Оплатить"));
     private final SelenideElement priceSection = payButton.$(".no-wrap");
@@ -37,7 +37,12 @@ public class OrderPage {
         nameInput.val(name);
         phoneInput.val(phone);
 
-        addressInput.shouldNotBe(hidden, Duration.ofSeconds(10)).val(address);
+        try {
+            addressInput.shouldBe(exist, Duration.ofSeconds(5)).val(address);
+        } catch (AssertionError e) {
+            addressInput1.shouldNotBe(hidden).val(address);
+        }
+
         dateDeliveryInput.click();
         getRandomDeliveryDay(deliveryDay).click();
 

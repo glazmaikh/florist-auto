@@ -16,11 +16,12 @@ public class PaymentPage {
     private final SelenideElement expireInput = $(byName("cardValidity"));
     private final SelenideElement cvcInput = $(byName("cardCvv"));
     private final SelenideElement submitButton = $x("//button[@type='submit']");
-    private final SelenideElement confirmSubmitButton = $(byName("SET"));
+    private final SelenideElement confirmSubmitButton = $x("//input[@name='SET']");
     private final SelenideElement thanksFor = $x("//h1[text() ='Спасибо за заказ']");
 
     public PaymentPage fillCard() {
         cardNumberInput.sendKeys("");
+        expireInput.click();
         expireInput.sendKeys("");
         cvcInput.sendKeys("");
         return this;

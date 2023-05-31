@@ -17,7 +17,6 @@ import java.util.Map;
 import java.util.Random;
 
 public class TestData {
-
     CityDataItemDto city;
     BouquetDataItemDto bouquet;
     Faker faker = new Faker(new Locale("ru"));
