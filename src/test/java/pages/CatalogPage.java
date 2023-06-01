@@ -74,6 +74,7 @@ public class CatalogPage {
         return bouquetPage;
     }
 
+    // сделать стабильнее ожидалки поп-апа куков
     public CatalogPage closeCookiePopUp() {
         cookiePopUpClose.shouldBe(exist, Duration.ofSeconds(10)).shouldBe(visible).click();
         cookiePopUp.shouldNotBe(visible, Duration.ofSeconds(10));

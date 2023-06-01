@@ -19,13 +19,11 @@ public class OrderPage {
     private final SelenideElement yourPhoneInput = $(byName("customerPhone"));
     private final SelenideElement nameInput = $(byName("recipientName"));
     private final SelenideElement phoneInput = $(byName("recipientPhone"));
-    private final SelenideElement addressInput = $(byName("recipientAddressSource"));
-    private final SelenideElement addressInput1 = $(byName("recipientAddress"));
+    private final SelenideElement addressDataInput = $(byName("recipientAddressSource"));
+    private final SelenideElement addressInput = $(byName("recipientAddress"));
     private final SelenideElement dateDeliveryInput = $x("//span[text()='Выберите дату']//preceding-sibling::input");
-    //input[@type='submit'
     private final ElementsCollection deliveryDay =
             $$x("//div[@class='react-calendar__month-view__days']//button[not(@disabled)]");
-
     private final SelenideElement payButton = $(byText("Оплатить"));
     private final SelenideElement priceSection = payButton.$(".no-wrap");
 
@@ -38,12 +36,13 @@ public class OrderPage {
         phoneInput.val(phone);
 
         try {
-            addressInput.shouldBe(exist).val(address);
+            addressDataInput.shouldBe(exist).val(address);
         } catch (AssertionError e) {
-            addressInput1.shouldNotBe(hidden).val(address);
+            addressInput.shouldNotBe(hidden).val(address);
         }
 
         dateDeliveryInput.click();
+        //передавать ВСЕ недизейбл дни
         getRandomDeliveryDay(deliveryDay).click();
 
         // сделать проверку не на мин цену, а на среднюю (десериализация json get bouquet)

@@ -18,6 +18,7 @@ public class PaymentPage {
     private final SelenideElement thanksFor = $x("//h1[text() ='Спасибо за заказ']");
     private final SelenideElement iframeAssist = $x("//div[@id='modal-overlay']//iframe");
 
+    //вынести в параметры креды карты
     public PaymentPage fillCard() {
         cardNumberInput.sendKeys("4111111111111111");
         expireInput.click();
