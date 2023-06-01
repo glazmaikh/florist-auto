@@ -16,8 +16,8 @@ public class BouquetPage {
     private final SelenideElement priceSection = bouquetSection.$(".no-wrap");
     private final OrderPage orderPage = new OrderPage();
 
-    public BouquetPage openBouquetPage(String citySlug, BouquetDataItemDto bouquet) {
-        webdriver().shouldHave(url("https://www.test.florist.local/" + citySlug + "/bouquet-" + bouquet.getId()));
+    public BouquetPage openBouquetPage(String baseUrl, String citySlug, BouquetDataItemDto bouquet) {
+        webdriver().shouldHave(url(baseUrl + citySlug + "/bouquet-" + bouquet.getId()));
 
         bouquetSection.shouldHave(Condition.text(bouquet.getName()));
 

@@ -27,9 +27,9 @@ public class CatalogPage {
     private final SelenideElement findMoreButton = $("//span[text()='Показать ещё']");
     private final BouquetPage bouquetPage = new BouquetPage();
 
-    public CatalogPage openMainPage() {
-        open();
-        webdriver().shouldHave(url("https://www.test.florist.local/"));
+    public CatalogPage openCatalogPage(String baseUrl) {
+        open(baseUrl);
+        webdriver().shouldHave(url(baseUrl));
         return this;
     }
 

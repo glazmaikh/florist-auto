@@ -18,12 +18,11 @@ public class PaymentPage {
     private final SelenideElement thanksFor = $x("//h1[text() ='Спасибо за заказ']");
     private final SelenideElement iframeAssist = $x("//div[@id='modal-overlay']//iframe");
 
-    //вынести в параметры креды карты
-    public PaymentPage fillCard() {
-        cardNumberInput.sendKeys("4111111111111111");
+    public PaymentPage fillCard(String cardNumber, String expireNumber, String cvcNumber) {
+        cardNumberInput.sendKeys(cardNumber);
         expireInput.click();
-        expireInput.sendKeys("1223");
-        cvcInput.sendKeys("123");
+        expireInput.sendKeys(expireNumber);
+        cvcInput.sendKeys(cvcNumber);
         return this;
     }
 
@@ -34,7 +33,7 @@ public class PaymentPage {
 
     public void confirm() {
         switchTo().frame(iframeAssist);
-        confirmSubmitButton.shouldBe(exist).click();
+        confirmSubmitButton.shouldBe(exist, Duration.ofSeconds(10)).click();
         thanksFor.shouldBe(visible, Duration.ofSeconds(10));
     }
 }
