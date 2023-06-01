@@ -1,11 +1,12 @@
 package tests;
 
 import com.codeborne.selenide.Configuration;
-import io.restassured.RestAssured;
+import config.WebConfig;
 import org.junit.jupiter.api.BeforeAll;
 
 public class TestBase {
 
+    public static WebConfig config;
     @BeforeAll
     static void setUp() {
         System.setProperty("webdriver.chrome.driver", "C://webdrivers/chromedriver.exe");

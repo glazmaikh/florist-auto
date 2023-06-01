@@ -28,7 +28,7 @@ public class CatalogPage {
     private final BouquetPage bouquetPage = new BouquetPage();
 
     public CatalogPage openMainPage() {
-        open("https://www.test.florist.local");
+        open();
         webdriver().shouldHave(url("https://www.test.florist.local/"));
         return this;
     }
