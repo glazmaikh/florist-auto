@@ -38,7 +38,7 @@ public class OrderPage {
         phoneInput.val(phone);
 
         try {
-            addressInput.shouldBe(exist, Duration.ofSeconds(5)).val(address);
+            addressInput.shouldBe(exist).val(address);
         } catch (AssertionError e) {
             addressInput1.shouldNotBe(hidden).val(address);
         }
