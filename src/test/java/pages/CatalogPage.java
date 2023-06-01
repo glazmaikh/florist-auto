@@ -12,7 +12,7 @@ import static com.codeborne.selenide.WebDriverConditions.url;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CatalogPage {
-    private final SelenideElement cookiePopUp = $(".bco1zbf0");
+    private final SelenideElement cookiePopUp = $("._3bcT6MiV");
     private final SelenideElement cookiePopUpClose = $(".lkfJru7k");
     private final SelenideElement cityPopUp = $("#confirm");
     private final SelenideElement cityPopUpYes = $x("//span[text()='Да']");
@@ -74,9 +74,9 @@ public class CatalogPage {
         return bouquetPage;
     }
 
-    // сделать стабильнее ожидалки поп-апа куков
     public CatalogPage closeCookiePopUp() {
-        cookiePopUpClose.shouldBe(exist, Duration.ofSeconds(10)).shouldBe(visible).click();
+        cookiePopUp.shouldBe(visible, Duration.ofSeconds(10));
+        cookiePopUpClose.shouldBe(visible).click();
         cookiePopUp.shouldNotBe(visible, Duration.ofSeconds(10));
         return this;
     }

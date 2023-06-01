@@ -19,7 +19,7 @@ public class OrderPage {
     private final SelenideElement yourPhoneInput = $(byName("customerPhone"));
     private final SelenideElement nameInput = $(byName("recipientName"));
     private final SelenideElement phoneInput = $(byName("recipientPhone"));
-    private final SelenideElement addressDataInput = $(byName("recipientAddressSource"));
+    private final SelenideElement addressDaDataInput = $(byName("recipientAddressSource"));
     private final SelenideElement addressInput = $(byName("recipientAddress"));
     private final SelenideElement dateDeliveryInput = $x("//span[text()='Выберите дату']//preceding-sibling::input");
     private final ElementsCollection deliveryDay =
@@ -36,7 +36,7 @@ public class OrderPage {
         phoneInput.val(phone);
 
         try {
-            addressDataInput.shouldBe(exist).val(address);
+            addressDaDataInput.shouldBe(exist).val(address);
         } catch (AssertionError e) {
             addressInput.shouldNotBe(hidden).val(address);
         }
