@@ -3,6 +3,10 @@ package models.bouquet;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public @Data class BouquetDataItemDto {
     public int id;
@@ -24,7 +28,11 @@ public @Data class BouquetDataItemDto {
     public boolean express_delivery;
     public String img;
     public String description;
-    public Prices prices;
+    private Map<String, PriceItemDto> prices;
     public MinDatePrice min_date_price;
     public String salon_name;
+
+    public List<PriceItemDto> getPriceList() {
+        return new ArrayList<>(prices.values());
+    }
 }

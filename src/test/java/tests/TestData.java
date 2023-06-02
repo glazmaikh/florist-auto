@@ -9,6 +9,7 @@ import io.restassured.specification.RequestSpecification;
 import lombok.SneakyThrows;
 import models.bouquet.BouquetDataDto;
 import models.bouquet.BouquetDataItemDto;
+import models.bouquet.PriceItemDto;
 import models.city.CityDataDto;
 import models.city.CityDataItemDto;
 
@@ -75,5 +76,10 @@ public class TestData {
     public BouquetDataItemDto getRandomBouquet(Map<String, BouquetDataItemDto> bouquetMap) {
         Object[] values = bouquetMap.values().toArray();
         return (BouquetDataItemDto) values[new Random().nextInt(values.length)];
+    }
+
+    public PriceItemDto getRandomPrice(Map<String, PriceItemDto> price) {
+        Object[] values = price.values().toArray();
+        return (PriceItemDto) values[new Random().nextInt(values.length)];
     }
 }
