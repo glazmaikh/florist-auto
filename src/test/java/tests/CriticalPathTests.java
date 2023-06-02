@@ -10,6 +10,8 @@ import io.restassured.specification.RequestSpecification;
 import models.bouquet.BouquetDataDto;
 import models.bouquet.BouquetDataItemDto;
 import models.bouquet.PriceItemDto;
+import models.city.CityDataDto;
+import models.city.CityDataItemDto;
 import org.aeonbits.owner.ConfigFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -45,7 +47,7 @@ public class CriticalPathTests extends TestBase {
     }
 
     @Test
-    void criticalPathTest() throws InterruptedException {
+    void criticalPathTest() {
         catalogPage.openCatalogPage(baseUrl)
                 .closeCookiePopUp()
                 .setCity(testData.getRandomCityName())
@@ -64,30 +66,19 @@ public class CriticalPathTests extends TestBase {
 
     @Test
     void test() throws JsonProcessingException {
-        RequestSpecification httpRequest = RestAssured.given();
-        ObjectMapper objectMapper = new ObjectMapper();
-        Response responseBouquet = httpRequest
-                .auth().basic("florist_api", "123")
-                .param("city", 1)
-                .param("showPrices", 1)
-                .param("includeIflorist", 1)
-                .get("https://www.test.florist.local/api/bouquet");
-        ResponseBody bodyBouquet = responseBouquet.getBody();
-
-        BouquetDataDto bouquetData = objectMapper.readValue(bodyBouquet.asString(), BouquetDataDto.class);
-        bouquet = getRandomBouquet(bouquetData.getData());
-
-        Map<String, PriceItemDto> prices = bouquet.getPrices();
-        prices.forEach((key, value) -> System.out.println("[Key]: " + key + "[Value]: " + value));
-    }
-
-    public BouquetDataItemDto getRandomBouquet(Map<String, BouquetDataItemDto> bouquetMap) {
-        Object[] values = bouquetMap.values().toArray();
-        return (BouquetDataItemDto) values[new Random().nextInt(values.length)];
-    }
-
-    public PriceItemDto getRandomPrice(Map<String, PriceItemDto> prices) {
-        List<PriceItemDto> priceItemDtoList = new ArrayList<>(prices.values());
-        return priceItemDtoList.get(new Random().nextInt(priceItemDtoList.size()));
+//        CityDataItemDto city;
+//
+//        RequestSpecification httpRequest = RestAssured.given();
+//        Response responseCity = httpRequest
+//                .auth().basic("florist_api", "123")
+//                .get("https://www.test.florist.local/api/city");
+//        ResponseBody bodyCity = responseCity.getBody();
+//
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        CityDataDto cityData = objectMapper.readValue(bodyCity.asString(), CityDataDto.class);
+//        city = getRandomCity(cityData.getData());
+//
+//        BouquetDataDto bouquetData = objectMapper.readValue(bodyBouquet.asString(), BouquetDataDto.class);
+//        bouquet = getRandomBouquet(bouquetData.getData());
     }
 }

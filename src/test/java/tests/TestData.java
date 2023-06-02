@@ -13,9 +13,7 @@ import models.bouquet.PriceItemDto;
 import models.city.CityDataDto;
 import models.city.CityDataItemDto;
 
-import java.util.Locale;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public class TestData {
     CityDataItemDto city;
@@ -69,17 +67,12 @@ public class TestData {
     }
 
     public CityDataItemDto getRandomCity(Map<String, CityDataItemDto> cityMap) {
-        Object[] values = cityMap.values().toArray();
-        return (CityDataItemDto) values[new Random().nextInt(values.length)];
+        List<CityDataItemDto> values = new ArrayList<>(cityMap.values());
+        return values.get(new Random().nextInt(values.size()));
     }
 
     public BouquetDataItemDto getRandomBouquet(Map<String, BouquetDataItemDto> bouquetMap) {
-        Object[] values = bouquetMap.values().toArray();
-        return (BouquetDataItemDto) values[new Random().nextInt(values.length)];
-    }
-
-    public PriceItemDto getRandomPrice(Map<String, PriceItemDto> price) {
-        Object[] values = price.values().toArray();
-        return (PriceItemDto) values[new Random().nextInt(values.length)];
+        List<BouquetDataItemDto> values =  new ArrayList<>(bouquetMap.values());
+        return values.get(new Random().nextInt(values.size()));
     }
 }
