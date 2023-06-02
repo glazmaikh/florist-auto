@@ -22,25 +22,20 @@ public class BouquetPage {
     private final SelenideElement addToCardButton = $x("//span[text()='Добавить в корзину']");
     private final SelenideElement bouquetSection = $("#bouquet-main");
     private final SelenideElement priceSection = bouquetSection.$(".no-wrap");
-    private final ElementsCollection variation = bouquetSection.$$x("//div[@class='hmJhIXSe']/div");
+    private final ElementsCollection variation = $$x("//div[@class='hmJhIXSe']/div/div");
     private final OrderPage orderPage = new OrderPage();
 
-    public BouquetPage openBouquetPage(String baseUrl, String citySlug, BouquetDataItemDto bouquet) throws InterruptedException {
+    public BouquetPage openBouquetPage(String baseUrl, String citySlug, BouquetDataItemDto bouquet) {
         webdriver().shouldHave(url(baseUrl + citySlug + "/bouquet-" + bouquet.getId()));
-
         bouquetSection.shouldHave(text(bouquet.getName()));
+
         List<PriceItemDto> priceList = bouquet.getPriceList();
+        assertEquals(variation.size(), priceList.size(), "where is your variation?");
 
-        assertEquals(variation.size(), priceList.size(), "Количество элементов не совпадает");
-        for (PriceItemDto price : priceList) {
-            System.out.println("var " + variation);
-            System.out.println("price " + price);
-            assertTrue(variation.contains(price), "Элемент не найден в ElementsCollection");
+        for (int i = 0; i < priceList.size(); i++) {
+            assertEquals(Integer.parseInt(variation.get(i).getText().replaceAll("[\\s₽]", "")),
+                    priceList.get(i).getPrice().get("RUB").intValue(), "Variations price is not equals");
         }
-
-
-        String price = priceSection.getText().replaceAll(" ", "");
-        assertEquals(String.valueOf(bouquet.getMin_price().getRub()), price.substring(0, price.length() - 1), "Incorrect price");
         return this;
     }
 

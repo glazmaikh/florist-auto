@@ -62,7 +62,7 @@ public class CatalogPage {
             if (se.getText().contains(bouquet.getName())) {
                 assertEquals(String.valueOf(bouquet.getMin_price().getRub()),
                         se.$("._1KvrG3Aq").getText().replaceAll("\\D", ""),
-                        "Incorrect price");
+                        "Incorrect price " + bouquet.getName());
                 se.click();
                 break;
             } else if (count == bouquetList.size()) {
