@@ -7,11 +7,12 @@ import com.codeborne.selenide.SelenideElement;
 import java.time.Duration;
 import java.util.Random;
 
-import static com.codeborne.selenide.Condition.exist;
-import static com.codeborne.selenide.Condition.hidden;
+import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selectors.byName;
 import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class OrderPage {
     private final SelenideElement yourNameInput = $(byName("customerName"));
@@ -26,6 +27,8 @@ public class OrderPage {
             $$x("//div[@class='react-calendar__month-view__days']//button[not(@disabled)]");
     private final SelenideElement payButton = $(byText("Оплатить"));
     private final SelenideElement priceSection = payButton.$(".no-wrap");
+    private final SelenideElement orderList = $("._2pTgtswS  ");
+    private final ElementsCollection orderListPrices = orderList.$$(".no-wrap");
 
     public OrderPage simpleFillForm(String yourName, String yourEmail, String yourPhone, String name, String phone, String address) {
         yourNameInput.val(yourName);
@@ -48,6 +51,22 @@ public class OrderPage {
         // сделать проверку не на мин цену, а на среднюю (десериализация json get bouquet)
         priceSection.shouldBe(Condition.visible, Duration.ofSeconds(5)).click();
         return this;
+    }
+
+    public OrderPage assertOrderList(String bouquetName, int bouquetPrice, int deliveryPrice) {
+        orderList.shouldBe(text(bouquetName));
+
+        assertAll("Prices of Order List",
+                () -> assertTextEquals(String.valueOf(bouquetPrice), orderListPrices.get(0)),
+                () -> assertTextEquals(String.valueOf(deliveryPrice), orderListPrices.get(1)),
+                () -> assertTextEquals(String.valueOf(bouquetPrice + deliveryPrice), orderListPrices.get(1))
+        );
+        return this;
+    }
+
+    private void assertTextEquals(String expected, SelenideElement element) {
+        String actual = element.getText().replaceAll("[\\s₽]", "");
+        assertEquals(expected, actual);
     }
 
     public SelenideElement getRandomDeliveryDay(ElementsCollection collection) {

@@ -32,8 +32,9 @@ public class PaymentPage {
     }
 
     public void confirm() {
+        iframeAssist.shouldBe(exist, Duration.ofSeconds(15));
         switchTo().frame(iframeAssist);
-        confirmSubmitButton.shouldBe(exist, Duration.ofSeconds(10)).click();
-        thanksFor.shouldBe(visible, Duration.ofSeconds(10));
+        confirmSubmitButton.shouldBe(exist, Duration.ofSeconds(15)).click();
+        thanksFor.shouldBe(visible, Duration.ofSeconds(15));
     }
 }

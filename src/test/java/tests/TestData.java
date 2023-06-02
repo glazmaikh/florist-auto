@@ -9,7 +9,6 @@ import io.restassured.specification.RequestSpecification;
 import lombok.SneakyThrows;
 import models.bouquet.BouquetDataDto;
 import models.bouquet.BouquetDataItemDto;
-import models.bouquet.PriceItemDto;
 import models.city.CityDataDto;
 import models.city.CityDataItemDto;
 
@@ -54,8 +53,20 @@ public class TestData {
         return city.getName();
     }
 
-    public String getRandomBouquetName() {
+    public String getBouquetName() {
         return bouquet.getName();
+    }
+
+    public int getDeliveryPrice() {
+        return city.getDelivery().getRub();
+    }
+
+    public int getBouquetId() {
+        return bouquet.getId();
+    }
+
+    public int getBouquetPrice() {
+        return bouquet.getMin_price().getRub();
     }
 
     public String getCitySlug() {

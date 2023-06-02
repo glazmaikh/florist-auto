@@ -5,6 +5,7 @@ import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import models.bouquet.BouquetDataItemDto;
 import models.bouquet.PriceItemDto;
+import models.city.CityDataItemDto;
 
 import java.time.Duration;
 import java.util.List;
@@ -20,10 +21,17 @@ public class BouquetPage {
     private final ElementsCollection variation = $$x("//div[@class='hmJhIXSe']/div/div");
     private final OrderPage orderPage = new OrderPage();
 
-    public BouquetPage openBouquetPage(String baseUrl, String citySlug, BouquetDataItemDto bouquet) {
-        webdriver().shouldHave(url(baseUrl + citySlug + "/bouquet-" + bouquet.getId()));
-        bouquetSection.shouldHave(text(bouquet.getName()));
+    public BouquetPage openBouquetPage(String baseUrl, String citySlug, int bouquetId) {
+        webdriver().shouldHave(url(baseUrl + citySlug + "/bouquet-" + bouquetId));
+        return this;
+    }
 
+    public BouquetPage assertBouquetName(String bouquet) {
+        bouquetSection.shouldHave(text(bouquet));
+        return this;
+    }
+
+    public BouquetPage assertVariationsPrices(BouquetDataItemDto bouquet) {
         List<PriceItemDto> priceList = bouquet.getPriceList();
         assertEquals(variation.size(), priceList.size(), "where is your variation?");
 
@@ -31,6 +39,12 @@ public class BouquetPage {
             assertEquals(Integer.parseInt(variation.get(i).getText().replaceAll("[\\s₽]", "")),
                     priceList.get(i).getPrice().get("RUB").intValue(), "Variations price is not equals");
         }
+        return this;
+    }
+
+    public BouquetPage assertDeliveryPrice(int deliveryPrice) {
+        System.out.println(deliveryPrice + " de");
+        bouquetSection.shouldBe(text(String.valueOf(deliveryPrice)));
         return this;
     }
 
