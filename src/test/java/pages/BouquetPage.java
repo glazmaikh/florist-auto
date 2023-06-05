@@ -5,7 +5,6 @@ import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import models.bouquet.BouquetDataItemDto;
 import models.bouquet.PriceItemDto;
-import models.city.CityDataItemDto;
 
 import java.time.Duration;
 import java.util.List;
@@ -45,11 +44,11 @@ public class BouquetPage {
 
     public BouquetPage assertDeliveryPrice(int deliveryPrice) {
         // сделать тест на бесплатную/платную доставку
-        System.out.println(deliveryPrice);
-        if (deliveryPrice > 500) {
-            deliveryPriceSection.shouldBe(text(String.valueOf(deliveryPrice)));
+        if (deliveryPrice > 100) {
+            assertEquals(deliveryPriceSection.$(".no-wrap").getText().replaceAll("[\\s₽]", ""),
+                    String.valueOf(deliveryPrice), "Delivery price on Bouquet Page is not equals");
         } else {
-            deliveryPriceSection.shouldBe(text("Бесплатно"));
+            deliveryPriceSection.shouldBe(text("бесплатно"));
         }
         return this;
     }

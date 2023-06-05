@@ -57,18 +57,19 @@ public class OrderPage {
         orderList.shouldBe(text(bouquetName));
         assertBouquetPrice(bouquetPrice, orderListPrices.get(0));
 
-        if (deliveryPrice > 500) {
+        if (deliveryPrice > 100) {
             orderList.shouldBe(text(String.valueOf(deliveryPrice)));
-            //assertEquals(assertTotalPrice(bouquetPrice, deliveryPrice), orderListPrices.get(1));
+            assertEquals(String.valueOf(totalPrice(bouquetPrice, deliveryPrice)), orderListPrices.get(1).getText(), "Incorrect total price on Order Page");
         } else {
             orderList.shouldBe(text("бесплатно"));
+            assertBouquetPrice(bouquetPrice, orderListPrices.get(1));
         }
         return this;
     }
 
-//    private int assertTotalPrice(int bouquetPrice, int deliveryPrice) {
-//        return bouquetPrice + deliveryPrice;
-//    }
+    private int totalPrice(int bouquetPrice, int deliveryPrice) {
+        return bouquetPrice + deliveryPrice;
+    }
 
     private void assertBouquetPrice(int bouquetPrice, SelenideElement element) {
         assertEquals(String.valueOf(bouquetPrice), element.getText().replaceAll("[\\s₽]", ""));
