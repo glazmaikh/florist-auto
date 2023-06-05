@@ -18,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class BouquetPage {
     private final SelenideElement addToCardButton = $x("//span[text()='Добавить в корзину']");
     private final SelenideElement bouquetSection = $("#bouquet-main");
+    private final SelenideElement deliveryPriceSection = $(".UFVGkjKP");
     private final ElementsCollection variation = $$x("//div[@class='hmJhIXSe']/div/div");
     private final OrderPage orderPage = new OrderPage();
 
@@ -42,9 +43,13 @@ public class BouquetPage {
         return this;
     }
 
-    public BouquetPage assertDeliveryPrice(int deliveryPrice) {
-        System.out.println(deliveryPrice + " de");
-        bouquetSection.shouldBe(text(String.valueOf(deliveryPrice)));
+    public BouquetPage assertDeliveryPrice(String deliveryPrice) {
+        // сделать тест на бесплатную/платную доставку
+        if (deliveryPrice.equals("100")) {
+            deliveryPriceSection.shouldBe(text("Бесплатно"));
+        } else {
+            deliveryPriceSection.shouldBe(text(deliveryPrice.replaceAll("^(.*)(.{3})$", "$1 $2")));
+        }
         return this;
     }
 

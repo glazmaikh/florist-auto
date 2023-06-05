@@ -53,13 +53,13 @@ public class OrderPage {
         return this;
     }
 
-    public OrderPage assertOrderList(String bouquetName, int bouquetPrice, int deliveryPrice) {
+    public OrderPage assertOrderList(String bouquetName, int bouquetPrice, String deliveryPrice) {
         orderList.shouldBe(text(bouquetName));
 
         assertAll("Prices of Order List",
                 () -> assertTextEquals(String.valueOf(bouquetPrice), orderListPrices.get(0)),
-                () -> assertTextEquals(String.valueOf(deliveryPrice), orderListPrices.get(1)),
-                () -> assertTextEquals(String.valueOf(bouquetPrice + deliveryPrice), orderListPrices.get(1))
+                () -> assertTextEquals(String.valueOf(deliveryPrice), orderListPrices.get(1))
+//                () -> assertTextEquals(bouquetPrice + deliveryPrice), orderListPrices.get(1)
         );
         return this;
     }

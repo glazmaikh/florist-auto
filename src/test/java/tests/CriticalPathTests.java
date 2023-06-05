@@ -39,12 +39,14 @@ public class CriticalPathTests extends TestBase {
         bouquetPage.openBouquetPage(baseUrl, testData.getCitySlug(), testData.getBouquetId())
                 .assertBouquetName(testData.getBouquetName())
                 .assertVariationsPrices(testData.getBouquet())
-                .assertDeliveryPrice(testData.getDeliveryPrice())
-                .addToCard();
+                .assertDeliveryPrice(testData.getDeliveryPrice());
+        System.out.println(testData.getDeliveryPrice() + " delPrice");
+                bouquetPage.addToCard();
 
         orderPage.simpleFillForm(testData.yourName, testData.yourEmail, testData.yourPhone,
-                testData.name, testData.phone, testData.address)
+                        testData.name, testData.phone, testData.address)
                 .assertOrderList(testData.getBouquetName(), testData.getBouquetPrice(), testData.getDeliveryPrice());
+        System.out.println(testData.getBouquetPrice() + " bouqPrice " + testData.getDeliveryPrice() + " delivPrice");
 
         paymentPage.fillCard(cardNumber, expireNumber, cvcNumber)
                 .pay()

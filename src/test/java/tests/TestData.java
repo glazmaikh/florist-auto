@@ -41,7 +41,7 @@ public class TestData {
                 .auth().basic("florist_api", "123")
                 .param("city", city.getId())
                 .param("showPrices", 1)
-                .param("includeIflorist", 1)
+//                .param("includeIflorist", 1)
                 .get("https://www.test.florist.local/api/bouquet");
         ResponseBody bodyBouquet = responseBouquet.getBody();
 
@@ -57,7 +57,7 @@ public class TestData {
         return bouquet.getName();
     }
 
-    public int getDeliveryPrice() {
+    public String getDeliveryPrice() {
         return city.getDelivery().getRub();
     }
 
