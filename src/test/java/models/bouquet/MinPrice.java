@@ -7,9 +7,9 @@ public @Data class MinPrice {
     @JsonProperty("RUB")
     public int rub;
     @JsonProperty("USD")
-    public double usd;
+    public int usd;
     @JsonProperty("EUR")
-    public double eur;
+    public int eur;
     @JsonProperty("KZT")
     public int kzt;
 }

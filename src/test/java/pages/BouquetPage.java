@@ -43,12 +43,13 @@ public class BouquetPage {
         return this;
     }
 
-    public BouquetPage assertDeliveryPrice(String deliveryPrice) {
+    public BouquetPage assertDeliveryPrice(int deliveryPrice) {
         // сделать тест на бесплатную/платную доставку
-        if (deliveryPrice.equals("100")) {
-            deliveryPriceSection.shouldBe(text("Бесплатно"));
+        System.out.println(deliveryPrice);
+        if (deliveryPrice > 500) {
+            deliveryPriceSection.shouldBe(text(String.valueOf(deliveryPrice)));
         } else {
-            deliveryPriceSection.shouldBe(text(deliveryPrice.replaceAll("^(.*)(.{3})$", "$1 $2")));
+            deliveryPriceSection.shouldBe(text("Бесплатно"));
         }
         return this;
     }

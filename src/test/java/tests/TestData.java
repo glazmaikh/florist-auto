@@ -57,7 +57,7 @@ public class TestData {
         return bouquet.getName();
     }
 
-    public String getDeliveryPrice() {
+    public int getDeliveryPrice() {
         return city.getDelivery().getRub();
     }
 

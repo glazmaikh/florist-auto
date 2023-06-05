@@ -7,11 +7,11 @@ import lombok.Data;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public @Data class Delivery {
     @JsonProperty("RUB")
-    public String rub;
+    public int rub;
     @JsonProperty("USD")
-    public String usd;
+    public int usd;
     @JsonProperty("EUR")
-    public String eur;
+    public int eur;
     @JsonProperty("KZT")
-    public String kzt;
+    public int kzt;
 }

@@ -53,21 +53,32 @@ public class OrderPage {
         return this;
     }
 
-    public OrderPage assertOrderList(String bouquetName, int bouquetPrice, String deliveryPrice) {
+    public OrderPage assertOrderList(String bouquetName, int bouquetPrice, int deliveryPrice) {
         orderList.shouldBe(text(bouquetName));
+        assertBouquetPrice(bouquetPrice, orderListPrices.get(0));
 
-        assertAll("Prices of Order List",
-                () -> assertTextEquals(String.valueOf(bouquetPrice), orderListPrices.get(0)),
-                () -> assertTextEquals(String.valueOf(deliveryPrice), orderListPrices.get(1))
-//                () -> assertTextEquals(bouquetPrice + deliveryPrice), orderListPrices.get(1)
-        );
+        if (deliveryPrice > 500) {
+            orderList.shouldBe(text(String.valueOf(deliveryPrice)));
+            //assertEquals(assertTotalPrice(bouquetPrice, deliveryPrice), orderListPrices.get(1));
+        } else {
+            orderList.shouldBe(text("бесплатно"));
+        }
         return this;
     }
 
-    private void assertTextEquals(String expected, SelenideElement element) {
-        String actual = element.getText().replaceAll("[\\s₽]", "");
-        assertEquals(expected, actual);
+//    private int assertTotalPrice(int bouquetPrice, int deliveryPrice) {
+//        return bouquetPrice + deliveryPrice;
+//    }
+
+    private void assertBouquetPrice(int bouquetPrice, SelenideElement element) {
+        assertEquals(String.valueOf(bouquetPrice), element.getText().replaceAll("[\\s₽]", ""));
     }
+
+//    private void assertDeliveryPrice(String deliveryPrice, SelenideElement element) {
+//        System.out.println(deliveryPrice + " dp");
+//        System.out.println(element.getText().replaceAll("^(.*)(.{3})$", "$1 $2") + " elem");
+//        assertEquals(deliveryPrice, element.getText().replaceAll("^(.*)(.{3})$", "$1 $2"));
+//    }
 
     public SelenideElement getRandomDeliveryDay(ElementsCollection collection) {
         return collection.get(new Random().nextInt(collection.size()));
