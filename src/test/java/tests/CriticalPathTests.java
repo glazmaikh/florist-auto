@@ -40,6 +40,7 @@ public class CriticalPathTests extends TestBase {
                 .assertBouquetName(testData.getBouquetName())
                 .assertVariationsPrices(testData.getBouquet())
                 .assertDeliveryPrice(testData.getDeliveryPrice())
+                .getFirstVariation()
                 .addToCard();
 
         orderPage.simpleFillForm(testData.yourName, testData.yourEmail, testData.yourPhone,

@@ -11,6 +11,8 @@ import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selectors.byName;
 import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -29,6 +31,7 @@ public class OrderPage {
     private final SelenideElement priceSection = payButton.$(".no-wrap");
     private final SelenideElement orderList = $("._2pTgtswS  ");
     private final ElementsCollection orderListPrices = orderList.$$(".no-wrap");
+    private final SelenideElement deliveryTypeRadio = $(byName("deliveryType"));
 
     public OrderPage simpleFillForm(String yourName, String yourEmail, String yourPhone, String name, String phone, String address) {
         yourNameInput.val(yourName);
@@ -45,10 +48,10 @@ public class OrderPage {
         }
 
         dateDeliveryInput.click();
+
         //передавать ВСЕ недизейбл дни
         getRandomDeliveryDay(deliveryDay).click();
 
-        // сделать проверку не на мин цену, а на среднюю (десериализация json get bouquet)
         priceSection.shouldBe(Condition.visible, Duration.ofSeconds(5)).click();
         return this;
     }
@@ -58,11 +61,13 @@ public class OrderPage {
         assertBouquetPrice(bouquetPrice, orderListPrices.get(0));
 
         if (deliveryPrice > 100) {
-            orderList.shouldBe(text(String.valueOf(deliveryPrice)));
-            assertEquals(String.valueOf(totalPrice(bouquetPrice, deliveryPrice)), orderListPrices.get(1).getText(), "Incorrect total price on Order Page");
+            assertDeliveryPrice(deliveryPrice, orderListPrices.get(1));
+            assertThat(orderListPrices.get(2).getText().replaceAll("[\\s₽]", ""),
+                    equalTo(String.valueOf(totalPrice(bouquetPrice, deliveryPrice))));
         } else {
             orderList.shouldBe(text("бесплатно"));
-            assertBouquetPrice(bouquetPrice, orderListPrices.get(1));
+            assertThat(orderListPrices.get(2).getText().replaceAll("[\\s₽]", ""),
+                    equalTo(String.valueOf(bouquetPrice)));
         }
         return this;
     }
@@ -73,6 +78,10 @@ public class OrderPage {
 
     private void assertBouquetPrice(int bouquetPrice, SelenideElement element) {
         assertEquals(String.valueOf(bouquetPrice), element.getText().replaceAll("[\\s₽]", ""));
+    }
+
+    private void assertDeliveryPrice(int deliveryPrice, SelenideElement element) {
+        assertEquals(String.valueOf(deliveryPrice), element.getText().replaceAll("[\\s₽]", ""));
     }
 
 //    private void assertDeliveryPrice(String deliveryPrice, SelenideElement element) {

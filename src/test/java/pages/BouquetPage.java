@@ -53,6 +53,11 @@ public class BouquetPage {
         return this;
     }
 
+    public BouquetPage getFirstVariation() {
+        variation.get(0).click();
+        return this;
+    }
+
     public OrderPage addToCard() {
         addToCardButton.shouldBe(Condition.exist, Duration.ofSeconds(3)).click();
         return orderPage;
