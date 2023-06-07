@@ -55,7 +55,7 @@ public class CatalogPage {
         return this;
     }
 
-    public BouquetPage setBouquet(BouquetDataItemDto bouquet) {
+    public void setBouquet(BouquetDataItemDto bouquet) {
         bouquetLoader.shouldNotBe(visible, Duration.ofSeconds(30));
         int count = 0;
         for (SelenideElement se : bouquetList) {
@@ -71,7 +71,6 @@ public class CatalogPage {
                 count++;
             }
         }
-        return bouquetPage;
     }
 
     public CatalogPage closeCookiePopUp() {

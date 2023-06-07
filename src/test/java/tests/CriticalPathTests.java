@@ -76,6 +76,8 @@ public class CriticalPathTests extends TestBase {
         paymentPage.assertOrderList(bouquetName, bouquetPrice, deliveryPrice)
                 .fillCard(cardNumber, expireNumber, cvcNumber)
                 .pay()
-                .confirm();
+                .confirm()
+                .assertSuccessDataOnPage(bouquetPrice, deliveryPrice)
+                .assertERP();
     }
 }

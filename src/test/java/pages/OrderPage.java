@@ -51,7 +51,7 @@ public class OrderPage {
         return this;
     }
 
-    public OrderPage assertOrderList(String bouquetName, int bouquetPrice, int deliveryPrice) {
+    public void assertOrderList(String bouquetName, int bouquetPrice, int deliveryPrice) {
         orderList.shouldBe(text(bouquetName));
         HelperPage.assertBouquetPrice(bouquetPrice, orderListPrices.get(0));
 
@@ -64,6 +64,5 @@ public class OrderPage {
             assertThat(orderListPrices.get(2).getText().replaceAll("[\\s₽]", ""),
                     equalTo(String.valueOf(bouquetPrice)));
         }
-        return this;
     }
 }

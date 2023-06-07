@@ -58,8 +58,7 @@ public class BouquetPage {
         return this;
     }
 
-    public OrderPage addToCard() {
+    public void addToCard() {
         addToCardButton.shouldBe(Condition.exist, Duration.ofSeconds(3)).click();
-        return orderPage;
     }
 }
