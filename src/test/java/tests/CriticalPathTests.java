@@ -1,8 +1,10 @@
 package tests;
 
 import config.BaseConfig;
+import models.bouquet.BouquetDataItemDto;
 import org.aeonbits.owner.ConfigFactory;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pages.BouquetPage;
 import pages.CatalogPage;
@@ -19,6 +21,14 @@ public class CriticalPathTests extends TestBase {
     private static String cardNumber;
     private static String expireNumber;
     private static String cvcNumber;
+    private String cityName;
+    private BouquetDataItemDto bouquet;
+    private String citySlug;
+    private int bouquetId;
+    private String bouquetName;
+    private int deliveryPrice;
+    private String yourName, yourEmail, yourPhone, name, phone, address;
+    private int bouquetPrice;
 
     @BeforeAll
     static void setConfig() {
@@ -29,25 +39,41 @@ public class CriticalPathTests extends TestBase {
         cvcNumber = config.getCvcNumber();
     }
 
+    @BeforeEach
+    void setData() {
+        cityName = testData.getRandomCityName();
+        bouquet = testData.getBouquet();
+        citySlug = testData.getCitySlug();
+        bouquetId = testData.getBouquetId();
+        bouquetName = testData.getBouquetName();
+        deliveryPrice = testData.getDeliveryPrice();
+        yourName = testData.getYourName();
+        yourEmail = testData.getYourEmail();
+        yourPhone = testData.getYourPhone();
+        name = testData.getName();
+        phone = testData.getPhone();
+        address = testData.getAddress();
+        bouquetPrice = testData.getBouquetPrice();
+    }
+
     @Test
     void criticalPathTest() {
         catalogPage.openCatalogPage(baseUrl)
                 .closeCookiePopUp()
-                .setCity(testData.getRandomCityName())
-                .setBouquet(testData.getBouquet());
+                .setCity(cityName)
+                .setBouquet(bouquet);
 
-        bouquetPage.openBouquetPage(baseUrl, testData.getCitySlug(), testData.getBouquetId())
-                .assertBouquetName(testData.getBouquetName())
-                .assertVariationsPrices(testData.getBouquet())
-                .assertDeliveryPrice(testData.getDeliveryPrice())
+        bouquetPage.openBouquetPage(baseUrl, citySlug, bouquetId)
+                .assertBouquetName(bouquetName)
+                .assertVariationsPrices(bouquet)
+                .assertDeliveryPrice(deliveryPrice)
                 .getFirstVariation()
                 .addToCard();
 
-        orderPage.simpleFillForm(testData.yourName, testData.yourEmail, testData.yourPhone,
-                        testData.name, testData.phone, testData.address)
-                .assertOrderList(testData.getBouquetName(), testData.getBouquetPrice(), testData.getDeliveryPrice());
+        orderPage.simpleFillForm(yourName, yourEmail, yourPhone, name, phone, address)
+                .assertOrderList(bouquetName, bouquetPrice, deliveryPrice);
 
-        paymentPage.assertOrderList(testData.getBouquetName(), testData.getBouquetPrice(), testData.getDeliveryPrice())
+        paymentPage.assertOrderList(bouquetName, bouquetPrice, deliveryPrice)
                 .fillCard(cardNumber, expireNumber, cvcNumber)
                 .pay()
                 .confirm();

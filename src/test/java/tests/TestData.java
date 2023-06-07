@@ -1,6 +1,5 @@
 package tests;
 
-import com.codeborne.selenide.SelenideElement;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javafaker.Faker;
 import io.restassured.RestAssured;
@@ -12,14 +11,8 @@ import models.bouquet.BouquetDataDto;
 import models.bouquet.BouquetDataItemDto;
 import models.city.CityDataDto;
 import models.city.CityDataItemDto;
-import pages.OrderPage;
 
 import java.util.*;
-
-import static com.codeborne.selenide.Condition.text;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TestData {
     CityDataItemDto city;
@@ -31,6 +24,30 @@ public class TestData {
     String name = faker.name().firstName();
     String phone = faker.phoneNumber().cellPhone();
     String address = faker.address().streetAddress();
+
+    public String getYourName() {
+        return yourName;
+    }
+
+    public String getYourEmail() {
+        return yourEmail;
+    }
+
+    public String getYourPhone() {
+        return yourPhone;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public String getAddress() {
+        return address;
+    }
 
     @SneakyThrows
     public TestData() {
