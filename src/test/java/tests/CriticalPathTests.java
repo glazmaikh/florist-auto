@@ -29,6 +29,7 @@ public class CriticalPathTests extends TestBase {
     private int deliveryPrice;
     private String yourName, yourEmail, yourPhone, name, phone, address;
     private int bouquetPrice;
+    private String deliveryDay;
 
     @BeforeAll
     static void setConfig() {
@@ -70,8 +71,12 @@ public class CriticalPathTests extends TestBase {
                 .getFirstVariation()
                 .addToCard();
 
-        orderPage.simpleFillForm(yourName, yourEmail, yourPhone, name, phone, address)
-                .assertOrderList(bouquetName, bouquetPrice, deliveryPrice);
+        orderPage.simpleFillForm(yourName, yourEmail, yourPhone, name, phone, address);
+
+        String deliveryCity = orderPage.getRandomDeliveryDay();
+
+        orderPage.assertOrderList(bouquetName, bouquetPrice, deliveryPrice);
+        orderPage.pressPayButton();
 
         paymentPage.assertOrderList(bouquetName, bouquetPrice, deliveryPrice)
                 .fillCard(cardNumber, expireNumber, cvcNumber)

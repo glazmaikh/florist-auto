@@ -35,11 +35,11 @@ public class PaymentPage {
 
         if (deliveryPrice > 100) {
             HelperPage.assertDeliveryPrice(deliveryPrice, orderListPrices.get(1));
-            assertThat(orderListPrices.get(2).getText().replaceAll("[\\s₽]", ""),
+            assertThat(HelperPage.priceRegex(orderListPrices.get(2)),
                     equalTo(String.valueOf(HelperPage.totalPrice(bouquetPrice, deliveryPrice))));
         } else {
             orderList.shouldBe(text("бесплатно"));
-            assertThat(orderListPrices.get(2).getText().replaceAll("[\\s₽]", ""),
+            assertThat(HelperPage.priceRegex(orderListPrices.get(2)),
                     equalTo(String.valueOf(bouquetPrice)));
         }
         return this;
@@ -66,7 +66,7 @@ public class PaymentPage {
 
     public PaymentPage assertSuccessDataOnPage(int bouquetPrice, int deliveryPrice) {
         thanksFor.shouldBe(visible, Duration.ofSeconds(15));
-        assertThat(successPrice, equalTo(String.valueOf(HelperPage.totalPrice(bouquetPrice, deliveryPrice))));
+        assertThat(HelperPage.priceRegex(successPrice), equalTo(String.valueOf(HelperPage.totalPrice(bouquetPrice, deliveryPrice))));
 
         return this;
     }

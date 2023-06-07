@@ -1,9 +1,6 @@
 package helpers;
 
-import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
-
-import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -13,14 +10,13 @@ public class HelperPage {
     }
 
     public static void assertBouquetPrice(int bouquetPrice, SelenideElement element) {
-        assertEquals(String.valueOf(bouquetPrice), element.getText().replaceAll("[\\s₽]", ""));
+        assertEquals(String.valueOf(bouquetPrice), priceRegex(element));
     }
 
     public static void assertDeliveryPrice(int deliveryPrice, SelenideElement element) {
-        assertEquals(String.valueOf(deliveryPrice), element.getText().replaceAll("[\\s₽]", ""));
+        assertEquals(String.valueOf(deliveryPrice), priceRegex(element));
     }
-
-    public static SelenideElement getRandomDeliveryDay(ElementsCollection collection) {
-        return collection.get(new Random().nextInt(collection.size()));
+    public static String priceRegex(SelenideElement element) {
+        return element.getText().replaceAll("[\\s₽]", "");
     }
 }

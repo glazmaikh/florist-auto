@@ -3,6 +3,7 @@ package pages;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
+import helpers.HelperPage;
 import models.bouquet.BouquetDataItemDto;
 import models.bouquet.PriceItemDto;
 
@@ -19,7 +20,6 @@ public class BouquetPage {
     private final SelenideElement bouquetSection = $("#bouquet-main");
     private final SelenideElement deliveryPriceSection = $(".UFVGkjKP");
     private final ElementsCollection variation = $$x("//div[@class='hmJhIXSe']/div/div");
-    private final OrderPage orderPage = new OrderPage();
 
     public BouquetPage openBouquetPage(String baseUrl, String citySlug, int bouquetId) {
         webdriver().shouldHave(url(baseUrl + citySlug + "/bouquet-" + bouquetId));
@@ -45,7 +45,7 @@ public class BouquetPage {
     public BouquetPage assertDeliveryPrice(int deliveryPrice) {
         // сделать тест на бесплатную/платную доставку
         if (deliveryPrice > 100) {
-            assertEquals(deliveryPriceSection.$(".no-wrap").getText().replaceAll("[\\s₽]", ""),
+            assertEquals(HelperPage.priceRegex(deliveryPriceSection.$(".no-wrap")),
                     String.valueOf(deliveryPrice), "Delivery price on Bouquet Page is not equals");
         } else {
             deliveryPriceSection.shouldBe(text("бесплатно"));

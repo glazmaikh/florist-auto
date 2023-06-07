@@ -6,6 +6,7 @@ import com.codeborne.selenide.SelenideElement;
 import helpers.HelperPage;
 
 import java.time.Duration;
+import java.util.Random;
 
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selectors.byName;
@@ -44,11 +45,11 @@ public class OrderPage {
         }
 
         dateDeliveryInput.click();
-        // 1. передавать ВСЕ недизейбл дни
-        // 2. сделать тесты для выбора конкретного дня
-        HelperPage.getRandomDeliveryDay(deliveryDay).click();
-        priceSection.shouldBe(Condition.visible, Duration.ofSeconds(5)).click();
         return this;
+    }
+
+    public void pressPayButton() {
+        priceSection.shouldBe(Condition.visible, Duration.ofSeconds(5)).click();
     }
 
     public void assertOrderList(String bouquetName, int bouquetPrice, int deliveryPrice) {
@@ -57,12 +58,19 @@ public class OrderPage {
 
         if (deliveryPrice > 100) {
             HelperPage.assertDeliveryPrice(deliveryPrice, orderListPrices.get(1));
-            assertThat(orderListPrices.get(2).getText().replaceAll("[\\s₽]", ""),
+            assertThat(HelperPage.priceRegex(orderListPrices.get(2)),
                     equalTo(String.valueOf(HelperPage.totalPrice(bouquetPrice, deliveryPrice))));
         } else {
             orderList.shouldBe(text("бесплатно"));
-            assertThat(orderListPrices.get(2).getText().replaceAll("[\\s₽]", ""),
-                    equalTo(String.valueOf(bouquetPrice)));
+            assertThat(HelperPage.priceRegex(orderListPrices.get(2)), equalTo(String.valueOf(bouquetPrice)));
         }
+    }
+
+    // 1. передавать ВСЕ недизейбл дни
+    // 2. сделать тесты для выбора конкретного дня
+    public String getRandomDeliveryDay() {
+        SelenideElement randomDeliveryDay = deliveryDay.get(new Random().nextInt(deliveryDay.size()));
+        randomDeliveryDay.click();
+        return randomDeliveryDay.getText();
     }
 }
