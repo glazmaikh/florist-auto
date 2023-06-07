@@ -1,5 +1,6 @@
 package tests;
 
+import com.codeborne.selenide.SelenideElement;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javafaker.Faker;
 import io.restassured.RestAssured;
@@ -11,8 +12,14 @@ import models.bouquet.BouquetDataDto;
 import models.bouquet.BouquetDataItemDto;
 import models.city.CityDataDto;
 import models.city.CityDataItemDto;
+import pages.OrderPage;
 
 import java.util.*;
+
+import static com.codeborne.selenide.Condition.text;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TestData {
     CityDataItemDto city;

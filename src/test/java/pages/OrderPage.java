@@ -3,9 +3,9 @@ package pages;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
+import helpers.HelperPage;
 
 import java.time.Duration;
-import java.util.Random;
 
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selectors.byName;
@@ -13,8 +13,6 @@ import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class OrderPage {
     private final SelenideElement yourNameInput = $(byName("customerName"));
@@ -31,13 +29,11 @@ public class OrderPage {
     private final SelenideElement priceSection = payButton.$(".no-wrap");
     private final SelenideElement orderList = $("._2pTgtswS  ");
     private final ElementsCollection orderListPrices = orderList.$$(".no-wrap");
-    private final SelenideElement deliveryTypeRadio = $(byName("deliveryType"));
 
     public OrderPage simpleFillForm(String yourName, String yourEmail, String yourPhone, String name, String phone, String address) {
         yourNameInput.val(yourName);
         yourEmailInput.val(yourEmail);
         yourPhoneInput.val(yourPhone);
-
         nameInput.val(name);
         phoneInput.val(phone);
 
@@ -48,49 +44,26 @@ public class OrderPage {
         }
 
         dateDeliveryInput.click();
-
-        //передавать ВСЕ недизейбл дни
-        getRandomDeliveryDay(deliveryDay).click();
-
+        // 1. передавать ВСЕ недизейбл дни
+        // 2. сделать тесты для выбора конкретного дня
+        HelperPage.getRandomDeliveryDay(deliveryDay).click();
         priceSection.shouldBe(Condition.visible, Duration.ofSeconds(5)).click();
         return this;
     }
 
     public OrderPage assertOrderList(String bouquetName, int bouquetPrice, int deliveryPrice) {
         orderList.shouldBe(text(bouquetName));
-        assertBouquetPrice(bouquetPrice, orderListPrices.get(0));
+        HelperPage.assertBouquetPrice(bouquetPrice, orderListPrices.get(0));
 
         if (deliveryPrice > 100) {
-            assertDeliveryPrice(deliveryPrice, orderListPrices.get(1));
+            HelperPage.assertDeliveryPrice(deliveryPrice, orderListPrices.get(1));
             assertThat(orderListPrices.get(2).getText().replaceAll("[\\s₽]", ""),
-                    equalTo(String.valueOf(totalPrice(bouquetPrice, deliveryPrice))));
+                    equalTo(String.valueOf(HelperPage.totalPrice(bouquetPrice, deliveryPrice))));
         } else {
             orderList.shouldBe(text("бесплатно"));
             assertThat(orderListPrices.get(2).getText().replaceAll("[\\s₽]", ""),
                     equalTo(String.valueOf(bouquetPrice)));
         }
         return this;
-    }
-
-    private int totalPrice(int bouquetPrice, int deliveryPrice) {
-        return bouquetPrice + deliveryPrice;
-    }
-
-    private void assertBouquetPrice(int bouquetPrice, SelenideElement element) {
-        assertEquals(String.valueOf(bouquetPrice), element.getText().replaceAll("[\\s₽]", ""));
-    }
-
-    private void assertDeliveryPrice(int deliveryPrice, SelenideElement element) {
-        assertEquals(String.valueOf(deliveryPrice), element.getText().replaceAll("[\\s₽]", ""));
-    }
-
-//    private void assertDeliveryPrice(String deliveryPrice, SelenideElement element) {
-//        System.out.println(deliveryPrice + " dp");
-//        System.out.println(element.getText().replaceAll("^(.*)(.{3})$", "$1 $2") + " elem");
-//        assertEquals(deliveryPrice, element.getText().replaceAll("^(.*)(.{3})$", "$1 $2"));
-//    }
-
-    public SelenideElement getRandomDeliveryDay(ElementsCollection collection) {
-        return collection.get(new Random().nextInt(collection.size()));
     }
 }

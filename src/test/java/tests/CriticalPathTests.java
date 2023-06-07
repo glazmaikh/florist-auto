@@ -47,7 +47,8 @@ public class CriticalPathTests extends TestBase {
                         testData.name, testData.phone, testData.address)
                 .assertOrderList(testData.getBouquetName(), testData.getBouquetPrice(), testData.getDeliveryPrice());
 
-        paymentPage.fillCard(cardNumber, expireNumber, cvcNumber)
+        paymentPage.assertOrderList(testData.getBouquetName(), testData.getBouquetPrice(), testData.getDeliveryPrice())
+                .fillCard(cardNumber, expireNumber, cvcNumber)
                 .pay()
                 .confirm();
     }
