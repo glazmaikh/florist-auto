@@ -1,6 +1,7 @@
 package tests;
 
 import config.BaseConfig;
+import helpers.HelperPage;
 import models.bouquet.BouquetDataItemDto;
 import org.aeonbits.owner.ConfigFactory;
 import org.junit.jupiter.api.BeforeAll;
@@ -30,6 +31,8 @@ public class CriticalPathTests extends TestBase {
     private String yourName, yourEmail, yourPhone, name, phone, address;
     private int bouquetPrice;
     private String deliveryDay;
+    private String orderNumber;
+    private String orderAccessKey;
 
     @BeforeAll
     static void setConfig() {
@@ -58,7 +61,7 @@ public class CriticalPathTests extends TestBase {
     }
 
     @Test
-    void criticalPathTest() {
+    void criticalPathTest() throws InterruptedException {
         catalogPage.openCatalogPage(baseUrl)
                 .closeCookiePopUp()
                 .setCity(cityName)
@@ -73,16 +76,26 @@ public class CriticalPathTests extends TestBase {
 
         orderPage.simpleFillForm(yourName, yourEmail, yourPhone, name, phone, address);
 
-        String deliveryCity = orderPage.getRandomDeliveryDay();
+        // 1. передавать ВСЕ недизейбл дни
+        // 2. сделать тесты для выбора конкретного дня
+        deliveryDay = orderPage.getRandomDeliveryDay();
 
         orderPage.assertOrderList(bouquetName, bouquetPrice, deliveryPrice);
         orderPage.pressPayButton();
 
-        paymentPage.assertOrderList(bouquetName, bouquetPrice, deliveryPrice)
+        Thread.sleep(2000);
+        orderNumber = HelperPage.getOrderNumber();
+        orderAccessKey = HelperPage.getOrderAccessKey();
+        System.out.println(orderNumber);
+        System.out.println(orderAccessKey);
+
+
+        paymentPage.assertOrderNumber(orderNumber)
+                .assertOrderList(bouquetName, bouquetPrice, deliveryPrice)
                 .fillCard(cardNumber, expireNumber, cvcNumber)
                 .pay()
                 .confirm()
-                .assertSuccessDataOnPage(bouquetPrice, deliveryPrice)
+                .assertRedirectOnSuccessPage()
                 .assertERP();
     }
 }

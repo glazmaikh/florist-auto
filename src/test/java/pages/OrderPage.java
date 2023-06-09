@@ -2,8 +2,11 @@ package pages;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.ElementsCollection;
+import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import helpers.HelperPage;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 import java.util.Random;
@@ -50,6 +53,10 @@ public class OrderPage {
 
     public void pressPayButton() {
         priceSection.shouldBe(Condition.visible, Duration.ofSeconds(5)).click();
+
+        Selenide.Wait().until(webDriver -> {
+            return ((JavascriptExecutor) webDriver).executeScript("return document.readyState").equals("complete");
+        });
     }
 
     public void assertOrderList(String bouquetName, int bouquetPrice, int deliveryPrice) {
@@ -66,8 +73,6 @@ public class OrderPage {
         }
     }
 
-    // 1. передавать ВСЕ недизейбл дни
-    // 2. сделать тесты для выбора конкретного дня
     public String getRandomDeliveryDay() {
         SelenideElement randomDeliveryDay = deliveryDay.get(new Random().nextInt(deliveryDay.size()));
         randomDeliveryDay.click();

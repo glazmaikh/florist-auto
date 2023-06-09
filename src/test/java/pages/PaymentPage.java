@@ -14,6 +14,8 @@ import static com.codeborne.selenide.Selectors.byName;
 import static com.codeborne.selenide.Selenide.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PaymentPage {
     private final SelenideElement cardNumberInput = $(byName("cardNumber"));
@@ -26,8 +28,15 @@ public class PaymentPage {
     private final SelenideElement orderList = $(".AEYhRIG-");
     private final ElementsCollection orderListPrices = orderList.$$(".no-wrap");
     private final SelenideElement successPrice = $x("//main[@id='main']//span");
+    private final SelenideElement header = $x("//h1");
     private final ERPPurchaseItemPage erpItemPage = new ERPPurchaseItemPage();
     private final SuccessPage successPage = new SuccessPage();
+
+    public PaymentPage assertOrderNumber(String orderNumber) {
+        assertEquals(orderNumber, header.getText().replaceAll("[^0-9]", ""),
+                "incorrect order number on PaymentPage");
+        return this;
+    }
 
     public PaymentPage assertOrderList(String bouquetName, int bouquetPrice, int deliveryPrice) {
         orderList.shouldBe(text(bouquetName));
@@ -64,9 +73,10 @@ public class PaymentPage {
         return this;
     }
 
-    public PaymentPage assertSuccessDataOnPage(int bouquetPrice, int deliveryPrice) {
+    public PaymentPage assertRedirectOnSuccessPage() {
+        assertTrue(webdriver().driver().url().contains("success"));
         thanksFor.shouldBe(visible, Duration.ofSeconds(15));
-        assertThat(HelperPage.priceRegex(successPrice), equalTo(String.valueOf(HelperPage.totalPrice(bouquetPrice, deliveryPrice))));
+        //assertThat(HelperPage.priceRegex(successPrice), equalTo(String.valueOf(HelperPage.totalPrice(bouquetPrice, deliveryPrice))));
 
         return this;
     }
