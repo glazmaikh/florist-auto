@@ -3,6 +3,13 @@ package helpers;
 import static com.codeborne.selenide.Selenide.*;
 
 import com.codeborne.selenide.SelenideElement;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.restassured.RestAssured;
+import io.restassured.response.Response;
+import io.restassured.response.ResponseBody;
+import io.restassured.specification.RequestSpecification;
+import lombok.SneakyThrows;
+import models.order.OrderData;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -42,5 +49,17 @@ public class HelperPage {
         } return matcher.group(1);
     }
 
+    @SneakyThrows
+    public static OrderData getOrderData() {
+        RequestSpecification httpRequest = RestAssured.given();
+        Response responseOrderData = httpRequest
+                .auth().basic("florist_api", "123")
+                .param("id", getOrderNumber())
+                .param("access_key", getOrderAccessKey())
+                .get("http://www.test.florist.local/api/order/byAccessKey");
+        ResponseBody orderBody = responseOrderData.getBody();
 
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.readValue(orderBody.asString(), OrderData.class);
+    }
 }

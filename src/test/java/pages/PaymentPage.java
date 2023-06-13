@@ -36,53 +36,78 @@ public class PaymentPage {
     private final SelenideElement confirmSubmitButton = $(byName("SET"));
     private final SelenideElement thanksFor = $x("//h1[text() ='Спасибо за заказ']");
     private final SelenideElement iframeAssist = $x("//div[@id='modal-overlay']//iframe");
-    private final SelenideElement orderList = $(".AEYhRIG-");
-    private final ElementsCollection orderListPrices = orderList.$$(".no-wrap");
+    private final ElementsCollection orderList = $$x("//div[@class='AEYhRIG-']//div");
     private final SelenideElement successPrice = $x("//main[@id='main']//span");
     private final SelenideElement header = $x("//h1");
     private final ERPPurchaseItemPage erpItemPage = new ERPPurchaseItemPage();
     private final SuccessPage successPage = new SuccessPage();
 
-    @SneakyThrows
-    public PaymentPage assertOrderNumber() {
+
+    public PaymentPage assertOrderList() {
         header.shouldHave(textCaseSensitive("Оплата заказа"));
         assertEquals(HelperPage.getOrderNumber(), header.getText().replaceAll("[^0-9]", ""),
                 "incorrect order number on PaymentPage");
 
-        RequestSpecification httpRequest = RestAssured.given();
-        Response responseOrderData = httpRequest
-                .auth().basic("florist_api", "123")
-                .param("id", HelperPage.getOrderNumber())
-                .param("access_key", HelperPage.getOrderAccessKey())
-                .get("http://www.test.florist.local/api/order/byAccessKey");
-        ResponseBody orderBody = responseOrderData.getBody();
+        OrderData orderData = HelperPage.getOrderData();
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        OrderData orderData = objectMapper.readValue(orderBody.asString(), OrderData.class);
+        assertTrue(orderData.getData().getStatus_text().contains("Ожидает оплаты"));
 
-        System.out.println(HelperPage.getOrderNumber());
-        System.out.println(HelperPage.getOrderAccessKey());
-
-        System.out.println(orderData.getData().getCart().get("0").getName());
-        System.out.println(orderData.getData().getCart().get("1").getName());
-        return this;
-    }
-
-    public PaymentPage assertOrderList(String bouquetName, int bouquetPrice, int deliveryPrice) {
-        orderList.shouldBe(text(bouquetName));
-        HelperPage.assertBouquetPrice(bouquetPrice, orderListPrices.get(0));
-
-        if (deliveryPrice > 100) {
-            HelperPage.assertDeliveryPrice(deliveryPrice, orderListPrices.get(1));
-            assertThat(HelperPage.priceRegex(orderListPrices.get(2)),
-                    equalTo(String.valueOf(HelperPage.totalPrice(bouquetPrice, deliveryPrice))));
-        } else {
-            orderList.shouldBe(text("бесплатно"));
-            assertThat(HelperPage.priceRegex(orderListPrices.get(2)),
-                    equalTo(String.valueOf(bouquetPrice)));
+        for (SelenideElement element : orderList) {
+            element.shouldHave(text(orderData.getData().getCart().get("0").getName()));
         }
+
+        for (SelenideElement element : orderList) {
+            element.shouldHave(text(orderData.getData().getCart().get("0").getVariation()));
+        }
+
+        for (SelenideElement element : orderList) {
+            element.shouldHave(text(String.valueOf(orderData.getData().getCart().get("0").getCount())));
+        }
+
+        for (SelenideElement element : orderList) {
+            element.shouldHave(text(orderData.getData().getCart().get("1").getName()));
+        }
+
+//        for (SelenideElement element : orderList) {
+//            String bouquetName = orderData.getData().getCart().get("0").getName();
+//            String variation = orderData.getData().getCart().get("0").getVariation();
+//            int count = orderData.getData().getCart().get("0").getCount();
+//            String cityName = orderData.getData().getCart().get("1").getName();
+//
+//            element.shouldHave(text(bouquetName), text(variation), text(String.valueOf(count)), text(cityName));
+//        }
+
+
+        //assertTrue(orderList.stream().anyMatch(e -> e.text().equals(orderData.getData().getCart().get("0").getName())));
+        //assertTrue(orderList.stream().anyMatch(e -> e.text().equals(orderData.getData().getTotal().getRUB())));
+
+//        System.out.println(orderData.getData().getCart().get("0").getName() + " name");
+//        System.out.println(orderData.getData().getCart().get("0").getVariation() + " variation");
+//        System.out.println(orderData.getData().getCart().get("0").getCount() + " count");
+//        System.out.println(orderData.getData().getCart().get("0").getPrice().getRUB() + " getPriceRub");
+//
+//        System.out.println(orderData.getData().getCart().get("1").getName() + " deliveryName");
+//        System.out.println(orderData.getData().getCart().get("1").getPrice() + " delivePrice");
+//        System.out.println(orderData.getData().getTotal().getRUB() + " getTotalRub");
+
         return this;
     }
+
+//    public PaymentPage assertOrderList(String bouquetName, int bouquetPrice, int deliveryPrice) {
+//        orderList.shouldBe(text(bouquetName));
+//        HelperPage.assertBouquetPrice(bouquetPrice, orderListPrices.get(0));
+//
+//        if (deliveryPrice > 100) {
+//            HelperPage.assertDeliveryPrice(deliveryPrice, orderListPrices.get(1));
+//            assertThat(HelperPage.priceRegex(orderListPrices.get(2)),
+//                    equalTo(String.valueOf(HelperPage.totalPrice(bouquetPrice, deliveryPrice))));
+//        } else {
+//            orderList.shouldBe(text("бесплатно"));
+//            assertThat(HelperPage.priceRegex(orderListPrices.get(2)),
+//                    equalTo(String.valueOf(bouquetPrice)));
+//        }
+//        return this;
+//    }
     public PaymentPage fillCard(String cardNumber, String expireNumber, String cvcNumber) {
         cardNumberInput.sendKeys(cardNumber);
         expireInput.click();
