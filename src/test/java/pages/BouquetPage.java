@@ -20,6 +20,7 @@ public class BouquetPage {
     private final SelenideElement bouquetSection = $("#bouquet-main");
     private final SelenideElement deliveryPriceSection = $(".UFVGkjKP");
     private final ElementsCollection variation = $$x("//div[@class='hmJhIXSe']/div/div");
+    private final OrderPage orderPage = new OrderPage();
 
     public BouquetPage openBouquetPage(String baseUrl, String citySlug, int bouquetId) {
         webdriver().shouldHave(url(baseUrl + citySlug + "/bouquet-" + bouquetId));
@@ -58,7 +59,8 @@ public class BouquetPage {
         return this;
     }
 
-    public void addToCard() {
+    public OrderPage addToCard() {
         addToCardButton.shouldBe(Condition.exist, Duration.ofSeconds(3)).click();
+        return orderPage;
     }
 }

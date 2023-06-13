@@ -33,6 +33,7 @@ public class OrderPage {
     private final SelenideElement priceSection = payButton.$(".no-wrap");
     private final SelenideElement orderList = $("._2pTgtswS  ");
     private final ElementsCollection orderListPrices = orderList.$$(".no-wrap");
+    private final PaymentPage paymentPage = new PaymentPage();
 
     public OrderPage simpleFillForm(String yourName, String yourEmail, String yourPhone, String name, String phone, String address) {
         yourNameInput.val(yourName);
@@ -51,12 +52,13 @@ public class OrderPage {
         return this;
     }
 
-    public void pressPayButton() {
+    public PaymentPage pressPayButton() {
         priceSection.shouldBe(Condition.visible, Duration.ofSeconds(5)).click();
 
         Selenide.Wait().until(webDriver -> {
             return ((JavascriptExecutor) webDriver).executeScript("return document.readyState").equals("complete");
         });
+        return paymentPage;
     }
 
     public void assertOrderList(String bouquetName, int bouquetPrice, int deliveryPrice) {
@@ -73,6 +75,8 @@ public class OrderPage {
         }
     }
 
+    // 1. передавать ВСЕ недизейбл дни
+    // 2. сделать тесты для выбора конкретного дня
     public String getRandomDeliveryDay() {
         SelenideElement randomDeliveryDay = deliveryDay.get(new Random().nextInt(deliveryDay.size()));
         randomDeliveryDay.click();

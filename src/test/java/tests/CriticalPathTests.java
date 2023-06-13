@@ -1,16 +1,15 @@
 package tests;
 
 import config.BaseConfig;
+import helpers.APIClient;
 import helpers.HelperPage;
 import models.bouquet.BouquetDataItemDto;
+import models.order.OrderData;
 import org.aeonbits.owner.ConfigFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import pages.BouquetPage;
-import pages.CatalogPage;
-import pages.OrderPage;
-import pages.PaymentPage;
+import pages.*;
 
 public class CriticalPathTests extends TestBase {
     private final TestData testData = new TestData();
@@ -18,6 +17,7 @@ public class CriticalPathTests extends TestBase {
     private final BouquetPage bouquetPage = new BouquetPage();
     private final OrderPage orderPage = new OrderPage();
     private final PaymentPage paymentPage = new PaymentPage();
+    private final SuccessPage successPage = new SuccessPage();
     private static String baseUrl;
     private static String cardNumber;
     private static String expireNumber;
@@ -31,8 +31,8 @@ public class CriticalPathTests extends TestBase {
     private String yourName, yourEmail, yourPhone, name, phone, address;
     private int bouquetPrice;
     private String deliveryDay;
-    private String orderNumber;
-    private String orderAccessKey;
+    APIClient apiClient = new APIClient();
+
 
     @BeforeAll
     static void setConfig() {
@@ -76,8 +76,6 @@ public class CriticalPathTests extends TestBase {
 
         orderPage.simpleFillForm(yourName, yourEmail, yourPhone, name, phone, address);
 
-        // 1. передавать ВСЕ недизейбл дни
-        // 2. сделать тесты для выбора конкретного дня
         deliveryDay = orderPage.getRandomDeliveryDay();
 
         orderPage.assertOrderList(bouquetName, bouquetPrice, deliveryPrice);
@@ -86,7 +84,8 @@ public class CriticalPathTests extends TestBase {
         paymentPage.assertOrderList()
                 .fillCard(cardNumber, expireNumber, cvcNumber)
                 .pay()
-                .confirm()
-                .assertRedirectOnSuccessPage();
+                .confirm();
+
+        successPage.assertSuccessCreatedOrder();
     }
 }
