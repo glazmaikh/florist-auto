@@ -11,6 +11,7 @@ import io.restassured.specification.RequestSpecification;
 import lombok.SneakyThrows;
 import models.order.OrderData;
 
+import java.text.DecimalFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -61,5 +62,10 @@ public class HelperPage {
 
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.readValue(orderBody.asString(), OrderData.class);
+    }
+
+    public static String formatPrice(int formatPrice) {
+        DecimalFormat decimalFormat = new DecimalFormat("#,###");
+        return decimalFormat.format(formatPrice).replaceAll(",", " ") + " ₽";
     }
 }

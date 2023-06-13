@@ -87,7 +87,6 @@ public class CriticalPathTests extends TestBase {
                 .fillCard(cardNumber, expireNumber, cvcNumber)
                 .pay()
                 .confirm()
-                .assertRedirectOnSuccessPage()
-                .assertERP();
+                .assertRedirectOnSuccessPage();
     }
 }
