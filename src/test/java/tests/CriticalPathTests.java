@@ -61,7 +61,7 @@ public class CriticalPathTests extends TestBase {
     }
 
     @Test
-    void criticalPathTest() throws InterruptedException {
+    void criticalPathTest() {
         catalogPage.openCatalogPage(baseUrl)
                 .closeCookiePopUp()
                 .setCity(cityName)
@@ -83,14 +83,7 @@ public class CriticalPathTests extends TestBase {
         orderPage.assertOrderList(bouquetName, bouquetPrice, deliveryPrice);
         orderPage.pressPayButton();
 
-        Thread.sleep(2000);
-        orderNumber = HelperPage.getOrderNumber();
-        orderAccessKey = HelperPage.getOrderAccessKey();
-        System.out.println(orderNumber);
-        System.out.println(orderAccessKey);
-
-
-        paymentPage.assertOrderNumber(orderNumber)
+        paymentPage.assertOrderNumber()
                 .assertOrderList(bouquetName, bouquetPrice, deliveryPrice)
                 .fillCard(cardNumber, expireNumber, cvcNumber)
                 .pay()

@@ -54,7 +54,7 @@ public class TestData {
         RequestSpecification httpRequest = RestAssured.given();
         Response responseCity = httpRequest
                 .auth().basic("florist_api", "123")
-                .get("https://www.test.florist.local/api/city");
+                .get("http://www.test.florist.local/api/city");
         ResponseBody bodyCity = responseCity.getBody();
 
         ObjectMapper objectMapper = new ObjectMapper();

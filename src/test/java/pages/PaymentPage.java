@@ -1,8 +1,18 @@
 package pages;
 
+import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import helpers.HelperPage;
+import io.restassured.RestAssured;
+import io.restassured.response.Response;
+import io.restassured.response.ResponseBody;
+import io.restassured.specification.RequestSpecification;
+import lombok.SneakyThrows;
+import models.city.CityDataDto;
+import models.order.OrderData;
 
 import java.time.Duration;
 import java.util.regex.Matcher;
@@ -14,6 +24,7 @@ import static com.codeborne.selenide.Selectors.byName;
 import static com.codeborne.selenide.Selenide.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -32,9 +43,28 @@ public class PaymentPage {
     private final ERPPurchaseItemPage erpItemPage = new ERPPurchaseItemPage();
     private final SuccessPage successPage = new SuccessPage();
 
-    public PaymentPage assertOrderNumber(String orderNumber) {
-        assertEquals(orderNumber, header.getText().replaceAll("[^0-9]", ""),
+    @SneakyThrows
+    public PaymentPage assertOrderNumber() {
+        header.shouldHave(textCaseSensitive("Оплата заказа"));
+        assertEquals(HelperPage.getOrderNumber(), header.getText().replaceAll("[^0-9]", ""),
                 "incorrect order number on PaymentPage");
+
+        RequestSpecification httpRequest = RestAssured.given();
+        Response responseOrderData = httpRequest
+                .auth().basic("florist_api", "123")
+                .param("id", HelperPage.getOrderNumber())
+                .param("access_key", HelperPage.getOrderAccessKey())
+                .get("http://www.test.florist.local/api/order/byAccessKey");
+        ResponseBody orderBody = responseOrderData.getBody();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        OrderData orderData = objectMapper.readValue(orderBody.asString(), OrderData.class);
+
+        System.out.println(HelperPage.getOrderNumber());
+        System.out.println(HelperPage.getOrderAccessKey());
+
+        System.out.println(orderData.getData().getCart().get("0").getName());
+        System.out.println(orderData.getData().getCart().get("1").getName());
         return this;
     }
 

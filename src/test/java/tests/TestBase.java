@@ -5,11 +5,11 @@ import config.BaseConfig;
 import org.junit.jupiter.api.BeforeAll;
 
 public class TestBase {
-
     public static BaseConfig baseConfig;
     @BeforeAll
     static void setUp() {
-        System.setProperty("webdriver.chrome.driver", "C://webdrivers/chromedriver.exe");
+        System.setProperty("webdriver.chrome.driver", "C://webdrivers/chromedriver114.exe");
+        //Configuration.sslCertificateValidation = false;
         //Configuration.baseUrl = "https://www.test.florist.local";
         Configuration.holdBrowserOpen = true;
         //RestAssured.baseURI = "https://www.test.florist.local";
