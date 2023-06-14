@@ -30,6 +30,8 @@ public class SuccessPage {
                 () -> assertTrue(orderData.getData().getStatus_text().contains("Оплачен"))
         );
 
+        //"[\\d-]+"
+
         assertEquals(totalPrice.getText(), totalDataPrice, "incorrect total price");
         return this;
     }
