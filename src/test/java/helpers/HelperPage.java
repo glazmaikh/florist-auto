@@ -3,13 +3,6 @@ package helpers;
 import static com.codeborne.selenide.Selenide.*;
 
 import com.codeborne.selenide.SelenideElement;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.restassured.RestAssured;
-import io.restassured.response.Response;
-import io.restassured.response.ResponseBody;
-import io.restassured.specification.RequestSpecification;
-import lombok.SneakyThrows;
-import models.order.OrderData;
 
 import java.text.DecimalFormat;
 import java.util.regex.Matcher;

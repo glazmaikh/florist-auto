@@ -12,8 +12,6 @@ public class APIClient {
     @SneakyThrows
     public OrderData getOrderData() {
         RequestSpecification httpRequest = RestAssured.given();
-        System.out.println(HelperPage.getOrderNumber() + " order");
-        System.out.println(HelperPage.getOrderAccessKey() + " key");
         Response responseOrderData = httpRequest
                 .auth().basic("florist_api", "123")
                 .param("id", HelperPage.getOrderNumber())

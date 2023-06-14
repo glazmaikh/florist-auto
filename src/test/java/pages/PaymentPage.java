@@ -30,10 +30,10 @@ public class PaymentPage {
     @SneakyThrows
     public PaymentPage assertOrderList() {
         header.shouldHave(textCaseSensitive("Оплата заказа"));
-        assertEquals(HelperPage.getOrderNumber(), header.getText().replaceAll("[^0-9]", ""),
-                "incorrect order number on PaymentPage");
-
         OrderData orderData = apiClient.getOrderData();
+
+        assertEquals(String.valueOf(orderData.getData().getId()), header.getText().replaceAll("[^0-9]", ""),
+                "incorrect order number on PaymentPage");
 
         String bouquetName =  orderData.getData().getCart().get("0").getName();
         String price = HelperPage.formatPrice(orderData.getData().getCart().get("0").getPrice().getRUB());
