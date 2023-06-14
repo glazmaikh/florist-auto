@@ -22,4 +22,9 @@ public class APIClient {
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.readValue(orderBody.asString(), OrderData.class);
     }
+
+    public String getName() {
+        OrderData orderData = getOrderData();
+        return orderData.getData().getCart().get("0").getName();
+    }
 }

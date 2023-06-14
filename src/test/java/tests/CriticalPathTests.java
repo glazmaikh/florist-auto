@@ -78,8 +78,8 @@ public class CriticalPathTests extends TestBase {
 
         deliveryDay = orderPage.getRandomDeliveryDay();
 
-        orderPage.assertOrderList(bouquetName, bouquetPrice, deliveryPrice);
-        orderPage.pressPayButton();
+        orderPage.assertOrderList(bouquetName, bouquetPrice, deliveryPrice)
+                .pressPayButton();
 
         paymentPage.assertOrderList()
                 .fillCard(cardNumber, expireNumber, cvcNumber)

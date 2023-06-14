@@ -61,7 +61,7 @@ public class OrderPage {
         return paymentPage;
     }
 
-    public void assertOrderList(String bouquetName, int bouquetPrice, int deliveryPrice) {
+    public OrderPage assertOrderList(String bouquetName, int bouquetPrice, int deliveryPrice) {
         orderList.shouldBe(text(bouquetName));
         HelperPage.assertBouquetPrice(bouquetPrice, orderListPrices.get(0));
 
@@ -73,6 +73,7 @@ public class OrderPage {
             orderList.shouldBe(text("бесплатно"));
             assertThat(HelperPage.priceRegex(orderListPrices.get(2)), equalTo(String.valueOf(bouquetPrice)));
         }
+        return this;
     }
 
     // 1. передавать ВСЕ недизейбл дни

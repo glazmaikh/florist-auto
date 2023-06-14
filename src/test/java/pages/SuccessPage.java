@@ -3,7 +3,6 @@ package pages;
 import com.codeborne.selenide.ElementsCollection;
 import helpers.HelperPage;
 import lombok.SneakyThrows;
-import models.order.OrderData;
 
 import static com.codeborne.selenide.Selenide.*;
 import static org.junit.jupiter.api.Assertions.*;
