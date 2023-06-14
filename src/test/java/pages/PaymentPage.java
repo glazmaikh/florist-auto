@@ -2,6 +2,7 @@ package pages;
 
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
+import helpers.APIClient;
 import helpers.HelperPage;
 import lombok.SneakyThrows;
 import models.order.OrderData;
@@ -24,6 +25,7 @@ public class PaymentPage {
     private final SelenideElement header = $x("//h1");
     private final SelenideElement thanksFor = $x("//h1[text() ='Спасибо за заказ']");
     private final SuccessPage successPage = new SuccessPage();
+    private final APIClient apiClient = new APIClient();
 
     @SneakyThrows
     public PaymentPage assertOrderList() {
@@ -31,7 +33,8 @@ public class PaymentPage {
         assertEquals(HelperPage.getOrderNumber(), header.getText().replaceAll("[^0-9]", ""),
                 "incorrect order number on PaymentPage");
 
-        OrderData orderData = HelperPage.getOrderData();
+        OrderData orderData = apiClient.getOrderData();
+
         String bouquetName =  orderData.getData().getCart().get("0").getName();
         String price = HelperPage.formatPrice(orderData.getData().getCart().get("0").getPrice().getRUB());
         String variation = orderData.getData().getCart().get("0").getVariation();

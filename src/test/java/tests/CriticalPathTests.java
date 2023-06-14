@@ -31,8 +31,6 @@ public class CriticalPathTests extends TestBase {
     private String yourName, yourEmail, yourPhone, name, phone, address;
     private int bouquetPrice;
     private String deliveryDay;
-    APIClient apiClient = new APIClient();
-
 
     @BeforeAll
     static void setConfig() {

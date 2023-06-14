@@ -43,25 +43,11 @@ public class HelperPage {
     }
     public static String getOrderAccessKey() {
         String url = webdriver().driver().url();
-        Pattern pattern = Pattern.compile("\\/\\d+\\/([^\\/]+)$");
+        Pattern pattern = Pattern.compile(".*/([^/]+)$");
         Matcher matcher = pattern.matcher(url);
         if (!matcher.find()) {
             return null;
         } return matcher.group(1);
-    }
-
-    @SneakyThrows
-    public static OrderData getOrderData() {
-        RequestSpecification httpRequest = RestAssured.given();
-        Response responseOrderData = httpRequest
-                .auth().basic("florist_api", "123")
-                .param("id", getOrderNumber())
-                .param("access_key", getOrderAccessKey())
-                .get("http://www.test.florist.local/api/order/byAccessKey");
-        ResponseBody orderBody = responseOrderData.getBody();
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.readValue(orderBody.asString(), OrderData.class);
     }
 
     public static String formatPrice(int formatPrice) {

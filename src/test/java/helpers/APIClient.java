@@ -12,6 +12,8 @@ public class APIClient {
     @SneakyThrows
     public OrderData getOrderData() {
         RequestSpecification httpRequest = RestAssured.given();
+        System.out.println(HelperPage.getOrderNumber() + " order");
+        System.out.println(HelperPage.getOrderAccessKey() + " key");
         Response responseOrderData = httpRequest
                 .auth().basic("florist_api", "123")
                 .param("id", HelperPage.getOrderNumber())
@@ -21,10 +23,5 @@ public class APIClient {
 
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.readValue(orderBody.asString(), OrderData.class);
-    }
-
-    public String getName() {
-        OrderData orderData = getOrderData();
-        return orderData.getData().getCart().get("0").getName();
     }
 }
