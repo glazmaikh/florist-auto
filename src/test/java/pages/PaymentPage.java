@@ -39,7 +39,7 @@ public class PaymentPage {
         String price = HelperPage.formatPrice(orderData.getData().getCart().get("0").getPrice().getRUB());
         String variation = orderData.getData().getCart().get("0").getVariation();
         String count = orderData.getData().getCart().get("0").getCount() + " шт.";
-        String deliveryName = orderData.getData().getCart().get("1").getName();
+        String deliveryDateData = "Доставка (" + orderData.getData().getRecipient_city() + ") " + orderData.getData().getDelivery_date();
         String deliveryPrice = HelperPage.formatPrice(orderData.getData().getCart().get("1").getPrice().getRUB());
         String totalPrice = HelperPage.formatPrice(orderData.getData().getTotal().getRUB());
 
@@ -50,7 +50,7 @@ public class PaymentPage {
                 () -> assertTrue(orderList.stream().anyMatch(e -> e.text().equals(variation)), "incorrect bouquet variation"),
                 () -> assertTrue(orderList.stream().anyMatch(e -> e.text().equals(count)), "incorrect bouquet count"),
                 () -> assertTrue(orderList.stream().anyMatch(e -> e.text().equals(price)), "incorrect bouquet price"),
-                () -> assertTrue(orderList.stream().anyMatch(e -> e.text().equals(deliveryName)), "incorrect delivery city"),
+                () -> assertTrue(orderList.stream().anyMatch(e -> e.text().equals(deliveryDateData)), "incorrect delivery city"),
                 () -> assertTrue(orderList.stream().anyMatch(e -> e.text().equals(deliveryPrice)), "incorrect delivery price"),
                 () -> assertTrue(orderList.stream().anyMatch(e -> e.text().equals(totalPrice)), "incorrect total price")
         );

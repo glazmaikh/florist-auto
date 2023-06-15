@@ -6,7 +6,6 @@ import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import helpers.HelperPage;
 import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 import java.util.Random;
@@ -26,14 +25,13 @@ public class OrderPage {
     private final SelenideElement phoneInput = $(byName("recipientPhone"));
     private final SelenideElement addressDaDataInput = $(byName("recipientAddressSource"));
     private final SelenideElement addressInput = $(byName("recipientAddress"));
-    private final SelenideElement dateDeliveryInput = $x("//span[text()='Выберите дату']//preceding-sibling::input");
+    private final SelenideElement deliveryDateInput = $(byName("deliveryDateSource"));
     private final ElementsCollection deliveryDay =
             $$x("//div[@class='react-calendar__month-view__days']//button[not(@disabled)]");
     private final SelenideElement payButton = $(byText("Оплатить"));
     private final SelenideElement priceSection = payButton.$(".no-wrap");
     private final SelenideElement orderList = $("._2pTgtswS  ");
     private final ElementsCollection orderListPrices = orderList.$$(".no-wrap");
-    private final PaymentPage paymentPage = new PaymentPage();
 
     public OrderPage simpleFillForm(String yourName, String yourEmail, String yourPhone, String name, String phone, String address) {
         yourNameInput.val(yourName);
@@ -48,17 +46,8 @@ public class OrderPage {
             addressInput.shouldNotBe(hidden).val(address);
         }
 
-        dateDeliveryInput.click();
+        deliveryDateInput.click();
         return this;
-    }
-
-    public PaymentPage pressPayButton() {
-        priceSection.shouldBe(Condition.visible, Duration.ofSeconds(5)).click();
-
-        Selenide.Wait().until(webDriver -> {
-            return ((JavascriptExecutor) webDriver).executeScript("return document.readyState").equals("complete");
-        });
-        return paymentPage;
     }
 
     public OrderPage assertOrderList(String bouquetName, int bouquetPrice, int deliveryPrice) {
@@ -76,11 +65,20 @@ public class OrderPage {
         return this;
     }
 
+    public PaymentPage pressPayButton() {
+        priceSection.shouldBe(Condition.visible, Duration.ofSeconds(5)).click();
+
+        Selenide.Wait().until(webDriver -> {
+            return ((JavascriptExecutor) webDriver).executeScript("return document.readyState").equals("complete");
+        });
+        return new PaymentPage();
+    }
+
     // 1. передавать ВСЕ недизейбл дни
     // 2. сделать тесты для выбора конкретного дня
-    public String getRandomDeliveryDay() {
+    public OrderPage getRandomDeliveryDay() {
         SelenideElement randomDeliveryDay = deliveryDay.get(new Random().nextInt(deliveryDay.size()));
         randomDeliveryDay.click();
-        return randomDeliveryDay.getText();
+        return this;
     }
 }

@@ -5,6 +5,9 @@ import static com.codeborne.selenide.Selenide.*;
 import com.codeborne.selenide.SelenideElement;
 
 import java.text.DecimalFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -46,5 +49,13 @@ public class HelperPage {
     public static String formatPrice(int formatPrice) {
         DecimalFormat decimalFormat = new DecimalFormat("#,###");
         return decimalFormat.format(formatPrice).replaceAll(",", " ") + " ₽";
+    }
+
+    public static String formatCreatedDate(String formatDate) {
+        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        DateTimeFormatter outputFormatter = DateTimeFormatter
+                .ofPattern("d MMMM yyyy 'г.'", new Locale("ru"));
+        LocalDate date = LocalDate.parse(formatDate, inputFormatter);
+        return date.format(outputFormatter);
     }
 }

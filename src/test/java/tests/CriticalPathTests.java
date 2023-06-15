@@ -1,10 +1,7 @@
 package tests;
 
 import config.BaseConfig;
-import helpers.APIClient;
-import helpers.HelperPage;
 import models.bouquet.BouquetDataItemDto;
-import models.order.OrderData;
 import org.aeonbits.owner.ConfigFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,7 +27,6 @@ public class CriticalPathTests extends TestBase {
     private int deliveryPrice;
     private String yourName, yourEmail, yourPhone, name, phone, address;
     private int bouquetPrice;
-    private String deliveryDay;
 
     @BeforeAll
     static void setConfig() {
@@ -72,11 +68,9 @@ public class CriticalPathTests extends TestBase {
                 .getFirstVariation()
                 .addToCard();
 
-        orderPage.simpleFillForm(yourName, yourEmail, yourPhone, name, phone, address);
-
-        deliveryDay = orderPage.getRandomDeliveryDay();
-
-        orderPage.assertOrderList(bouquetName, bouquetPrice, deliveryPrice)
+        orderPage.simpleFillForm(yourName, yourEmail, yourPhone, name, phone, address)
+                .getRandomDeliveryDay()
+                .assertOrderList(bouquetName, bouquetPrice, deliveryPrice)
                 .pressPayButton();
 
         paymentPage.assertOrderList()
