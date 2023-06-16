@@ -1,6 +1,9 @@
 package tests;
 
+import com.beust.ah.A;
 import config.BaseConfig;
+import helpers.APIClient;
+import helpers.HelperPage;
 import io.restassured.path.json.JsonPath;
 import models.bouquet.BouquetDataItemDto;
 import org.aeonbits.owner.ConfigFactory;
@@ -87,32 +90,14 @@ public class CriticalPathTests extends TestBase {
         successPage.assertSuccessCreatedOrder();
     }
 
-    @Test
-    void test() {
-        String response = given()
-                .when()
-                .auth().basic("florist_api", "123")
-                .get("https://www.test.florist.local/api/city")
-                .then()
-                .extract()
-                .response()
-                .asString();
-
-        JsonPath jsonPath = new JsonPath(response);
-        Map<String, Map<String, Object>> data = jsonPath.getMap("data");
-        List<String> objectIds = data.entrySet()
-                .stream()
-                .filter(entry -> entry.getValue().containsKey("country") &&
-                        ((Map<String, Object>) entry.getValue().get("country")).containsValue("Россия"))
-                .map(Map.Entry::getKey)
-                .toList();
-
-        List<String> slugs = objectIds.stream()
-                .map(objectId -> data.get(objectId).get("slug").toString())
-                .toList();
-
-        for (String slug : slugs) {
-            System.out.println("Slug: " + slug);
-        }
-    }
+//    @Test
+//    void test() {
+//        APIClient apiClient = new APIClient();
+//        HelperPage helperPage = new HelperPage();
+//
+//        String randomRussianCityName = helperPage.getRandomRussianCityName();
+//        System.out.println(randomRussianCityName);
+//
+//        //String randomBouquet = helperPage.getRandomBouquetName(randomCityName);
+//    }
 }

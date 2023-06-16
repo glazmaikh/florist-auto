@@ -2,15 +2,23 @@ package helpers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.RestAssured;
+import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import io.restassured.response.ResponseBody;
 import io.restassured.specification.RequestSpecification;
 import lombok.SneakyThrows;
-import models.bouquet.BouquetDataDto;
-import models.city.CityDataDto;
+import models.cityAlias.ResponseData;
 import models.order.OrderData;
 
+import java.util.List;
+import java.util.Map;
+
+import static io.restassured.RestAssured.given;
+
 public class APIClient {
+
+    private ObjectMapper objectMapper = new ObjectMapper();
+
     @SneakyThrows
     public OrderData getOrderData() {
         RequestSpecification httpRequest = RestAssured.given();
@@ -21,9 +29,48 @@ public class APIClient {
                 .get("http://www.test.florist.local/api/order/byAccessKey");
         ResponseBody orderBody = responseOrderData.getBody();
 
-        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper = new ObjectMapper();
         return objectMapper.readValue(orderBody.asString(), OrderData.class);
     }
+
+//    public List<String> getRussianCitySlugList() {
+//        String response = given()
+//                .auth().basic("florist_api", "123")
+//                .get("https://www.test.florist.local/api/city")
+//                .then()
+//                .extract()
+//                .response()
+//                .asString();
+//
+//        JsonPath jsonPath = new JsonPath(response);
+//        Map<String, Map<String, Object>> data = jsonPath.getMap("data");
+//        List<String> objectIds = data.entrySet()
+//                .stream()
+//                .filter(e -> e.getValue().containsKey("country") &&
+//                        ((Map<String, Object>) e.getValue().get("country")).containsValue("Россия"))
+//                .map(Map.Entry::getKey)
+//                .toList();
+//
+//        return objectIds.stream()
+//                .map(objectId -> data.get(objectId).get("slug").toString())
+//                .toList();
+//    }
+//
+//    @SneakyThrows
+//    public String getCityName(String citySlug) {
+//        String response = given()
+//                .auth().basic("florist_api", "123")
+//                .param("alias", citySlug)
+//                .get("https://www.test.florist.local/api/city/0")
+//                .then()
+//                .extract()
+//                .response().getBody().asString();
+//
+//        objectMapper = new ObjectMapper();
+//
+//        ResponseData responseData = objectMapper.readValue(response, ResponseData.class);
+//        return responseData.getData().getName();
+//    }
 //
 //    RequestSpecification httpRequest = RestAssured.given();
 //    Response responseCity = httpRequest

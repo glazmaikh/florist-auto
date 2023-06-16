@@ -2,18 +2,21 @@ package helpers;
 
 import static com.codeborne.selenide.Selenide.*;
 
+import com.beust.ah.A;
 import com.codeborne.selenide.SelenideElement;
+import models.city.CityDataItemDto;
 
 import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Locale;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HelperPage {
+    private final APIClient apiClient = new APIClient();
     public static int totalPrice(int bouquetPrice, int deliveryPrice) {
         return bouquetPrice + deliveryPrice;
     }
@@ -59,5 +62,18 @@ public class HelperPage {
         return date.format(outputFormatter);
     }
 
+    public String getRandomItemFromList(List<String> list) {
+        Random random = new Random();
+        int randomIndex = random.nextInt(list.size());
+        return list.get(randomIndex);
+    }
 
+//    public String getRandomBouquetName(String cityName) {
+//
+//    }
+
+//    public String getRandomRussianCityName() {
+//        String citySlug = getRandomItemFromList(apiClient.getRussianCitySlugList());
+//        return apiClient.getCityName(citySlug);
+//    }
 }
