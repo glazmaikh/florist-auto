@@ -2,6 +2,7 @@ package pages;
 
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
+import helpers.ApiClient;
 import models.bouquet.BouquetDataItemDto;
 
 import java.time.Duration;
@@ -26,6 +27,7 @@ public class CatalogPage {
     private final ElementsCollection bouquetList = $$("._3fIsQ45s");
     private final SelenideElement findMoreButton = $("//span[text()='Показать ещё']");
     private final BouquetPage bouquetPage = new BouquetPage();
+    private final ApiClient apiClient = new ApiClient();
 
     public CatalogPage openCatalogPage(String baseUrl) {
         open(baseUrl);
@@ -52,6 +54,11 @@ public class CatalogPage {
         }
         assertEquals(city, selectedCity.getText(),
                 "На странице товаров не отображается выбранный город доставки");
+        return this;
+    }
+
+    public CatalogPage setRandomCity() {
+        apiClient.getRandomCityId();
         return this;
     }
 

@@ -2,9 +2,7 @@ package helpers;
 
 import static com.codeborne.selenide.Selenide.*;
 
-import com.beust.ah.A;
 import com.codeborne.selenide.SelenideElement;
-import models.city.CityDataItemDto;
 
 import java.text.DecimalFormat;
 import java.time.LocalDate;
@@ -16,7 +14,7 @@ import java.util.regex.Pattern;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HelperPage {
-    private final APIClient apiClient = new APIClient();
+    private final ApiClient apiClient = new ApiClient();
     public static int totalPrice(int bouquetPrice, int deliveryPrice) {
         return bouquetPrice + deliveryPrice;
     }

@@ -2,7 +2,7 @@ package pages;
 
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
-import helpers.APIClient;
+import helpers.ApiClient;
 import helpers.HelperPage;
 import lombok.SneakyThrows;
 import models.order.OrderData;
@@ -25,7 +25,7 @@ public class PaymentPage {
     private final SelenideElement header = $x("//h1");
     private final SelenideElement thanksFor = $x("//h1[text() ='Спасибо за заказ']");
     private final SuccessPage successPage = new SuccessPage();
-    private final APIClient apiClient = new APIClient();
+    private final ApiClient apiClient = new ApiClient();
 
     @SneakyThrows
     public PaymentPage assertOrderList() {

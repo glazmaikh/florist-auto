@@ -2,7 +2,7 @@ package pages;
 
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
-import helpers.APIClient;
+import helpers.ApiClient;
 import helpers.HelperPage;
 import lombok.SneakyThrows;
 import models.order.OrderData;
@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class SuccessPage {
     private final ElementsCollection orderList = $$x("//li");
     private final SelenideElement totalPrice = $(".no-wrap");
-    private final APIClient apiClient = new APIClient();
+    private final ApiClient apiClient = new ApiClient();
 
     @SneakyThrows
     public SuccessPage assertSuccessCreatedOrder() {

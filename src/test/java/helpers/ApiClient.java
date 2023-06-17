@@ -2,22 +2,24 @@ package helpers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.RestAssured;
-import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import io.restassured.response.ResponseBody;
 import io.restassured.specification.RequestSpecification;
 import lombok.SneakyThrows;
-import models.cityAlias.ResponseData;
+import models.city.CityDataDto;
+import models.city.CityDataItemDto;
 import models.order.OrderData;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import static io.restassured.RestAssured.given;
 
-public class APIClient {
-
+public class ApiClient {
     private ObjectMapper objectMapper = new ObjectMapper();
+    private CityDataItemDto city;
 
     @SneakyThrows
     public OrderData getOrderData() {
@@ -31,6 +33,30 @@ public class APIClient {
 
         objectMapper = new ObjectMapper();
         return objectMapper.readValue(orderBody.asString(), OrderData.class);
+    }
+
+    @SneakyThrows
+    public String getRandomCityId() {
+        RequestSpecification httpRequest = RestAssured.given();
+        Response responseCity = httpRequest
+                .auth().basic("florist_api", "123")
+                .get("https://www.test.florist.local/api/city");
+        ResponseBody bodyCity = responseCity.getBody();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        CityDataDto cityData = objectMapper.readValue(bodyCity.asString(), CityDataDto.class);
+        city = getRandomCity(cityData.getData());
+        while (city.getCountry().getId().equals("2")) {
+            city = getRandomCity(cityData.getData());
+        }
+        return city.getId();
+    }
+
+    //public String getRandomBouquetName()
+
+    private CityDataItemDto getRandomCity(Map<String, CityDataItemDto> cityMap) {
+        List<CityDataItemDto> values = new ArrayList<>(cityMap.values());
+        return values.get(new Random().nextInt(values.size()));
     }
 
 //    public List<String> getRussianCitySlugList() {
@@ -72,24 +98,5 @@ public class APIClient {
 //        return responseData.getData().getName();
 //    }
 //
-//    RequestSpecification httpRequest = RestAssured.given();
-//    Response responseCity = httpRequest
-//            .auth().basic("florist_api", "123")
-//            .get("https://www.test.florist.local/api/city");
-//    ResponseBody bodyCity = responseCity.getBody();
-//
-//    ObjectMapper objectMapper = new ObjectMapper();
-//    CityDataDto cityData = objectMapper.readValue(bodyCity.asString(), CityDataDto.class);
-//    city = getRandomCity(cityData.getData());
-//
-//    Response responseBouquet = httpRequest
-//            .auth().basic("florist_api", "123")
-//            .param("city", city.getId())
-//            .param("showPrices", 1)
-//            .param("includeIflorist", 1)
-//            .get("https://www.test.florist.local/api/bouquet");
-//    ResponseBody bodyBouquet = responseBouquet.getBody();
-//
-//    BouquetDataDto bouquetData = objectMapper.readValue(bodyBouquet.asString(), BouquetDataDto.class);
 
 }

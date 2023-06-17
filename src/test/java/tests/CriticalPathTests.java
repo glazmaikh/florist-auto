@@ -1,19 +1,14 @@
 package tests;
 
-import com.beust.ah.A;
 import config.BaseConfig;
-import helpers.APIClient;
+import helpers.ApiClient;
 import helpers.HelperPage;
-import io.restassured.path.json.JsonPath;
 import models.bouquet.BouquetDataItemDto;
 import org.aeonbits.owner.ConfigFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pages.*;
-
-import java.util.List;
-import java.util.Map;
 
 import static io.restassured.RestAssured.given;
 
@@ -90,14 +85,18 @@ public class CriticalPathTests extends TestBase {
         successPage.assertSuccessCreatedOrder();
     }
 
-//    @Test
-//    void test() {
-//        APIClient apiClient = new APIClient();
-//        HelperPage helperPage = new HelperPage();
-//
+    @Test
+    void test() {
+        ApiClient apiClient = new ApiClient();
+        HelperPage helperPage = new HelperPage();
+
+        System.out.println(apiClient.getRandomCityId());
+        //catalogPage.openCatalogPage(baseUrl);
+        //catalogPage.setRandomCity();
+
 //        String randomRussianCityName = helperPage.getRandomRussianCityName();
 //        System.out.println(randomRussianCityName);
-//
-//        //String randomBouquet = helperPage.getRandomBouquetName(randomCityName);
-//    }
+
+        //String randomBouquet = helperPage.getRandomBouquetName(randomCityName);
+    }
 }
