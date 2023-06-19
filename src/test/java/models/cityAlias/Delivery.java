@@ -6,7 +6,7 @@ import lombok.Data;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public @Data class Delivery {
     private double RUB;
-    private double USD;
+    private int USD;
     private double EUR;
-    private double KZT;
+    private int KZT;
 }

@@ -1,13 +1,12 @@
 package models.cityAlias;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.Data;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public @Data class ResponseData {
+public @lombok.Data class CityDataAliasDto {
     private int ok;
     private String error;
-    private models.cityAlias.Data data;
+    private CityDataAliasItemDto cityDataAliasItemDto;
     private Object meta;
     private double t;
 }

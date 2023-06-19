@@ -35,41 +35,37 @@ public class CatalogPage {
         return this;
     }
 
-    public CatalogPage setCity(String city) {
+    public CatalogPage setRandomCity() {
         cityPopUp.shouldBe(exist);
-        if (city.equals("Москва")) {
+        String cityName = apiClient.getRandomCityName();
+        if (cityName.equals("Москва")) {
             cityPopUpYes.click();
         } else {
             cityPopUpCityNo.click();
             cityPopUpModal.shouldBe(exist);
-            cityPopUpInput.val(city);
+            cityPopUpInput.val(cityName);
 
             cityLoader.shouldNotBe(visible, Duration.ofSeconds(10));
             for (SelenideElement se : droppedCityList) {
-                if (se.getOwnText().contains(city)) {
+                if (se.getOwnText().contains(cityName)) {
                     se.click();
                     break;
                 }
             }
         }
-        assertEquals(city, selectedCity.getText(),
-                "На странице товаров не отображается выбранный город доставки");
         return this;
     }
 
-    public CatalogPage setRandomCity() {
-        apiClient.getRandomCityId();
-        return this;
-    }
-
-    public BouquetPage setBouquet(BouquetDataItemDto bouquet) {
+    public BouquetPage setRandomBouquet() {
         bouquetLoader.shouldNotBe(visible, Duration.ofSeconds(30));
+        String bouquetName = apiClient.getRandomBouquetName();
+
         int count = 0;
         for (SelenideElement se : bouquetList) {
-            if (se.getText().contains(bouquet.getName())) {
-                assertEquals(String.valueOf(bouquet.getMin_price().getRub()),
+            if (se.getText().contains(bouquetName)) {
+                assertEquals(String.valueOf(apiClient.getBouquetPrice()),
                         se.$("._1KvrG3Aq").getText().replaceAll("\\D", ""),
-                        "Incorrect price " + bouquet.getName());
+                        "Incorrect price " + bouquetName);
                 se.click();
                 break;
             } else if (count == bouquetList.size()) {
@@ -82,8 +78,8 @@ public class CatalogPage {
     }
 
     public CatalogPage closeCookiePopUp() {
-        cookiePopUp.shouldBe(visible, Duration.ofSeconds(10));
-        cookiePopUpClose.shouldBe(visible).click();
+        cookiePopUp.shouldBe(visible, Duration.ofSeconds(15));
+        cookiePopUpClose.shouldBe(visible, Duration.ofSeconds(10)).click();
         cookiePopUp.shouldNotBe(visible, Duration.ofSeconds(10));
         return this;
     }

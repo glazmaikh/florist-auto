@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Map;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public @lombok.Data class Data {
+public @lombok.Data class CityDataAliasItemDto {
     private int id;
     private String slug;
     private String name;

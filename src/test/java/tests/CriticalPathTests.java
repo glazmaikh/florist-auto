@@ -4,6 +4,7 @@ import config.BaseConfig;
 import helpers.ApiClient;
 import helpers.HelperPage;
 import models.bouquet.BouquetDataItemDto;
+import models.city.CityDataItemDto;
 import org.aeonbits.owner.ConfigFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,6 +32,7 @@ public class CriticalPathTests extends TestBase {
     private int deliveryPrice;
     private String yourName, yourEmail, yourPhone, name, phone, address;
     private int bouquetPrice;
+    //private final ApiClient apiClient = new ApiClient();
 
     @BeforeAll
     static void setConfig() {
@@ -48,7 +50,7 @@ public class CriticalPathTests extends TestBase {
         citySlug = testData.getCitySlug();
         bouquetId = testData.getBouquetId();
         bouquetName = testData.getBouquetName();
-        deliveryPrice = testData.getDeliveryPrice();
+        //deliveryPrice = testData.getDeliveryPrice();
         yourName = testData.getYourName();
         yourEmail = testData.getYourEmail();
         yourPhone = testData.getYourPhone();
@@ -62,8 +64,8 @@ public class CriticalPathTests extends TestBase {
     void criticalPathTest() {
         catalogPage.openCatalogPage(baseUrl)
                 .closeCookiePopUp()
-                .setCity(cityName)
-                .setBouquet(bouquet);
+                .setRandomCity()
+                .setRandomBouquet();
 
         bouquetPage.openBouquetPage(baseUrl, citySlug, bouquetId)
                 .assertBouquetName(bouquetName)
@@ -87,16 +89,25 @@ public class CriticalPathTests extends TestBase {
 
     @Test
     void test() {
-        ApiClient apiClient = new ApiClient();
-        HelperPage helperPage = new HelperPage();
+        catalogPage.openCatalogPage(baseUrl)
+                .closeCookiePopUp()
+                .setRandomCity()
+                .setRandomBouquet();
 
-        System.out.println(apiClient.getRandomCityId());
-        //catalogPage.openCatalogPage(baseUrl);
-        //catalogPage.setRandomCity();
+        bouquetPage.openBouquetPage(baseUrl, citySlug, bouquetId);
 
-//        String randomRussianCityName = helperPage.getRandomRussianCityName();
-//        System.out.println(randomRussianCityName);
-
-        //String randomBouquet = helperPage.getRandomBouquetName(randomCityName);
+//        String cityName = apiClient.getRandomCityName();
+//        System.out.println(cityName);
+//
+//        String cityId = apiClient.getRandomCityId();
+//        System.out.println(cityId);
+//
+//        String bouquetName = apiClient.getRandomBouquetName(cityId);
+//        System.out.println(bouquetName);
+//
+//        String slug = apiClient.getSlug();
+//        System.out.println(slug);
+//
+//        apiClient.getDeliveryPrice(slug);
     }
 }
