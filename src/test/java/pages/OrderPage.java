@@ -4,6 +4,7 @@ import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
+import helpers.ApiClient;
 import helpers.HelperPage;
 import org.openqa.selenium.JavascriptExecutor;
 
@@ -32,6 +33,11 @@ public class OrderPage {
     private final SelenideElement priceSection = payButton.$(".no-wrap");
     private final SelenideElement orderList = $("._2pTgtswS  ");
     private final ElementsCollection orderListPrices = orderList.$$(".no-wrap");
+    private final ApiClient apiClient;
+
+    public OrderPage(ApiClient apiClient) {
+        this.apiClient = apiClient;
+    }
 
     public OrderPage simpleFillForm(String yourName, String yourEmail, String yourPhone, String name, String phone, String address) {
         yourNameInput.val(yourName);
@@ -50,17 +56,19 @@ public class OrderPage {
         return this;
     }
 
-    public OrderPage assertOrderList(String bouquetName, int bouquetPrice, int deliveryPrice) {
-        orderList.shouldBe(text(bouquetName));
-        HelperPage.assertBouquetPrice(bouquetPrice, orderListPrices.get(0));
+    public OrderPage assertOrderList() {
+        orderList.shouldBe(text(apiClient.getBouquetName()));
+        HelperPage.assertBouquetPrice(apiClient.getBouquetPrice(), orderListPrices.get(0));
 
+        int deliveryPrice = apiClient.getDeliveryPrice();
         if (deliveryPrice > 100) {
             HelperPage.assertDeliveryPrice(deliveryPrice, orderListPrices.get(1));
             assertThat(HelperPage.priceRegex(orderListPrices.get(2)),
-                    equalTo(String.valueOf(HelperPage.totalPrice(bouquetPrice, deliveryPrice))));
+                    equalTo(String.valueOf(HelperPage.totalPrice(apiClient.getBouquetPrice(), deliveryPrice))));
         } else {
             orderList.shouldBe(text("бесплатно"));
-            assertThat(HelperPage.priceRegex(orderListPrices.get(2)), equalTo(String.valueOf(bouquetPrice)));
+            assertThat(HelperPage.priceRegex(orderListPrices.get(2)),
+                    equalTo(String.valueOf(apiClient.getBouquetPrice())));
         }
         return this;
     }
@@ -77,8 +85,12 @@ public class OrderPage {
     // 1. передавать ВСЕ недизейбл дни
     // 2. сделать тесты для выбора конкретного дня
     public OrderPage getRandomDeliveryDay() {
-        SelenideElement randomDeliveryDay = deliveryDay.get(new Random().nextInt(deliveryDay.size()));
+        SelenideElement randomDeliveryDay = getRandomDay(deliveryDay);
         randomDeliveryDay.click();
         return this;
+    }
+
+    public SelenideElement getRandomDay(ElementsCollection collection) {
+        return collection.get(new Random().nextInt(collection.size()));
     }
 }

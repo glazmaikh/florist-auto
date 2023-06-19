@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public @lombok.Data class CityDataAliasDto {
     private int ok;
     private String error;
-    private CityDataAliasItemDto cityDataAliasItemDto;
+    private Data data;
     private Object meta;
     private double t;
 }

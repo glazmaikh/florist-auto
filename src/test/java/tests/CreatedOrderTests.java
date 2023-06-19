@@ -45,7 +45,7 @@ public class CreatedOrderTests {
         String slug = apiClient.getSlug();
         System.out.println(slug);
 
-        apiClient.getDeliveryPrice(slug);
+        //apiClient.getDeliveryPrice(slug);
 
 //        String deliveryPrice = apiClient.getDeliveryPrice();
 //        System.out.println(deliveryPrice);

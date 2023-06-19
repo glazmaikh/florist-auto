@@ -13,6 +13,7 @@ import static com.codeborne.selenide.WebDriverConditions.url;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CatalogPage {
+    private ApiClient apiClient;
     private final SelenideElement cookiePopUp = $("._3bcT6MiV");
     private final SelenideElement cookiePopUpClose = $(".lkfJru7k");
     private final SelenideElement cityPopUp = $("#confirm");
@@ -26,8 +27,10 @@ public class CatalogPage {
     private final SelenideElement bouquetLoader = $(".w0pOM9kK");
     private final ElementsCollection bouquetList = $$("._3fIsQ45s");
     private final SelenideElement findMoreButton = $("//span[text()='Показать ещё']");
-    private final BouquetPage bouquetPage = new BouquetPage();
-    private final ApiClient apiClient = new ApiClient();
+
+    public CatalogPage(ApiClient apiClient) {
+        this.apiClient = apiClient;
+    }
 
     public CatalogPage openCatalogPage(String baseUrl) {
         open(baseUrl);
@@ -58,7 +61,7 @@ public class CatalogPage {
 
     public BouquetPage setRandomBouquet() {
         bouquetLoader.shouldNotBe(visible, Duration.ofSeconds(30));
-        String bouquetName = apiClient.getRandomBouquetName();
+        String bouquetName = apiClient.getBouquetName();
 
         int count = 0;
         for (SelenideElement se : bouquetList) {
@@ -74,7 +77,7 @@ public class CatalogPage {
                 count++;
             }
         }
-        return bouquetPage;
+        return new BouquetPage(apiClient);
     }
 
     public CatalogPage closeCookiePopUp() {

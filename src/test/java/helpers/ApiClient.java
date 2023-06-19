@@ -8,9 +8,10 @@ import io.restassured.specification.RequestSpecification;
 import lombok.SneakyThrows;
 import models.bouquet.BouquetDataDto;
 import models.bouquet.BouquetDataItemDto;
+import models.bouquet.PriceItemDto;
 import models.city.CityDataDto;
 import models.city.CityDataItemDto;
-import models.cityAlias.CityDataAliasItemDto;
+import models.cityAlias.Data;
 import models.cityAlias.CityDataAliasDto;
 import models.order.OrderData;
 
@@ -22,8 +23,8 @@ import java.util.Random;
 public class ApiClient {
     private final RequestSpecification httpRequest = RestAssured.given();
     private final CityDataItemDto city = getRandomCityFromList();
-    private BouquetDataItemDto bouquet = getRandomBouquetByCityID(city.getId());
-    private CityDataAliasItemDto cityDataAliasItemDto;
+    private final BouquetDataItemDto bouquet = getRandomBouquetByCityID(city.getId());
+    private Data data = getDeliveryPriceByCitySlug(city.getSlug());
 
     // получение рандомного города из списка всех городов
     @SneakyThrows
@@ -59,7 +60,7 @@ public class ApiClient {
     }
 
     @SneakyThrows
-    public CityDataAliasItemDto getDeliveryPriceByCitySlug(String citySlug) {
+    public Data getDeliveryPriceByCitySlug(String citySlug) {
         Response responseCitySlug = httpRequest
                 .auth().basic("florist_api", "123")
                 .param("alias", city.getSlug())
@@ -68,8 +69,8 @@ public class ApiClient {
 
         ObjectMapper objectMapper = new ObjectMapper();
         CityDataAliasDto cityDataAliasDto = objectMapper.readValue(responseBody.asString(), CityDataAliasDto.class);
-        cityDataAliasItemDto = cityDataAliasDto.getCityDataAliasItemDto();
-        return cityDataAliasItemDto;
+        data = cityDataAliasDto.getData();
+        return data;
     }
 
     public String getRandomCityName() {
@@ -84,17 +85,24 @@ public class ApiClient {
         return city.getSlug();
     }
 
-    public void getDeliveryPrice(String slug) {
-        cityDataAliasItemDto = getDeliveryPriceByCitySlug(slug);
-        System.out.println(cityDataAliasItemDto.getDelivery().get("RUB"));
+    public int getDeliveryPrice() {
+        return data.getDelivery().get("RUB").intValue();
     }
 
-    public String getRandomBouquetName() {
+    public String getBouquetName() {
         return bouquet.getName();
     }
 
     public int getBouquetPrice() {
         return bouquet.getMin_price().getRub();
+    }
+
+    public int getBouquetId() {
+        return bouquet.getId();
+    }
+
+    public List<PriceItemDto> getPriceList() {
+        return bouquet.getPriceList();
     }
 
     @SneakyThrows

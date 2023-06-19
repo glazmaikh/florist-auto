@@ -11,7 +11,7 @@ import models.bouquet.BouquetDataDto;
 import models.bouquet.BouquetDataItemDto;
 import models.city.CityDataDto;
 import models.city.CityDataItemDto;
-import models.cityAlias.CityDataAliasItemDto;
+import models.cityAlias.Data;
 import models.cityAlias.CityDataAliasDto;
 
 import java.util.*;
@@ -27,7 +27,7 @@ public class TestData {
     String phone = faker.phoneNumber().cellPhone();
     String address = faker.address().streetAddress();
 
-    CityDataAliasItemDto cityDataAliasItemDto;
+    Data data;
     public String getYourName() {
         return yourName;
     }
@@ -71,7 +71,7 @@ public class TestData {
         ResponseBody responseBody = responseCitySlug.getBody();
 
         CityDataAliasDto cityDataAliasDto = objectMapper.readValue(responseBody.asString(), CityDataAliasDto.class);
-        cityDataAliasItemDto = cityDataAliasDto.getCityDataAliasItemDto();
+        data = cityDataAliasDto.getData();
 
         Response responseBouquet = httpRequest
                 .auth().basic("florist_api", "123")
@@ -94,7 +94,7 @@ public class TestData {
     }
 
     public int getDeliveryPrice() {
-        return cityDataAliasItemDto.getDelivery().get("RUB").intValue();
+        return data.getDelivery().get("RUB").intValue();
     }
 
     public int getBouquetId() {

@@ -16,7 +16,6 @@ import java.util.regex.Pattern;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HelperPage {
-    //private final ApiClient apiClient = new ApiClient();
     public static int totalPrice(int bouquetPrice, int deliveryPrice) {
         return bouquetPrice + deliveryPrice;
     }

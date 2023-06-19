@@ -11,28 +11,19 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pages.*;
 
-import static io.restassured.RestAssured.given;
-
 public class CriticalPathTests extends TestBase {
     private final TestData testData = new TestData();
-    private final CatalogPage catalogPage = new CatalogPage();
-    private final BouquetPage bouquetPage = new BouquetPage();
-    private final OrderPage orderPage = new OrderPage();
+    private final ApiClient apiClient = new ApiClient();
+    private final CatalogPage catalogPage = new CatalogPage(apiClient);
+    private final BouquetPage bouquetPage = new BouquetPage(apiClient);
+    private final OrderPage orderPage = new OrderPage(apiClient);
     private final PaymentPage paymentPage = new PaymentPage();
     private final SuccessPage successPage = new SuccessPage();
     private static String baseUrl;
     private static String cardNumber;
     private static String expireNumber;
     private static String cvcNumber;
-    private String cityName;
-    private BouquetDataItemDto bouquet;
-    private String citySlug;
-    private int bouquetId;
-    private String bouquetName;
-    private int deliveryPrice;
     private String yourName, yourEmail, yourPhone, name, phone, address;
-    private int bouquetPrice;
-    //private final ApiClient apiClient = new ApiClient();
 
     @BeforeAll
     static void setConfig() {
@@ -45,19 +36,12 @@ public class CriticalPathTests extends TestBase {
 
     @BeforeEach
     void setData() {
-        cityName = testData.getRandomCityName();
-        bouquet = testData.getBouquet();
-        citySlug = testData.getCitySlug();
-        bouquetId = testData.getBouquetId();
-        bouquetName = testData.getBouquetName();
-        //deliveryPrice = testData.getDeliveryPrice();
         yourName = testData.getYourName();
         yourEmail = testData.getYourEmail();
         yourPhone = testData.getYourPhone();
         name = testData.getName();
         phone = testData.getPhone();
         address = testData.getAddress();
-        bouquetPrice = testData.getBouquetPrice();
     }
 
     @Test
@@ -67,16 +51,16 @@ public class CriticalPathTests extends TestBase {
                 .setRandomCity()
                 .setRandomBouquet();
 
-        bouquetPage.openBouquetPage(baseUrl, citySlug, bouquetId)
-                .assertBouquetName(bouquetName)
-                .assertVariationsPrices(bouquet)
-                .assertDeliveryPrice(deliveryPrice)
+        bouquetPage.openBouquetPage(baseUrl)
+                .assertBouquetName()
+                .assertVariationsPrices()
+                .assertDeliveryPrice()
                 .getFirstVariation()
                 .addToCard();
 
         orderPage.simpleFillForm(yourName, yourEmail, yourPhone, name, phone, address)
                 .getRandomDeliveryDay()
-                .assertOrderList(bouquetName, bouquetPrice, deliveryPrice)
+                .assertOrderList()
                 .pressPayButton();
 
         paymentPage.assertOrderList()
@@ -85,29 +69,5 @@ public class CriticalPathTests extends TestBase {
                 .confirm();
 
         successPage.assertSuccessCreatedOrder();
-    }
-
-    @Test
-    void test() {
-        catalogPage.openCatalogPage(baseUrl)
-                .closeCookiePopUp()
-                .setRandomCity()
-                .setRandomBouquet();
-
-        bouquetPage.openBouquetPage(baseUrl, citySlug, bouquetId);
-
-//        String cityName = apiClient.getRandomCityName();
-//        System.out.println(cityName);
-//
-//        String cityId = apiClient.getRandomCityId();
-//        System.out.println(cityId);
-//
-//        String bouquetName = apiClient.getRandomBouquetName(cityId);
-//        System.out.println(bouquetName);
-//
-//        String slug = apiClient.getSlug();
-//        System.out.println(slug);
-//
-//        apiClient.getDeliveryPrice(slug);
     }
 }

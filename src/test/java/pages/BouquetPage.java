@@ -3,8 +3,8 @@ package pages;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
+import helpers.ApiClient;
 import helpers.HelperPage;
-import models.bouquet.BouquetDataItemDto;
 import models.bouquet.PriceItemDto;
 
 import java.time.Duration;
@@ -20,21 +20,25 @@ public class BouquetPage {
     private final SelenideElement bouquetSection = $("#bouquet-main");
     private final SelenideElement deliveryPriceSection = $(".UFVGkjKP");
     private final ElementsCollection variation = $$x("//div[@class='hmJhIXSe']/div/div");
-    private final OrderPage orderPage = new OrderPage();
+    private final ApiClient apiClient;
 
-    public BouquetPage openBouquetPage(String baseUrl, String citySlug, int bouquetId) {
-        webdriver().shouldHave(url(baseUrl + citySlug + "/bouquet-" + bouquetId));
+    public BouquetPage(ApiClient apiClient) {
+        this.apiClient = apiClient;
+    }
+
+    public BouquetPage openBouquetPage(String baseUrl) {
+        webdriver().shouldHave(url(baseUrl + apiClient.getSlug() + "/bouquet-" + apiClient.getBouquetId()));
         return this;
     }
 
-    public BouquetPage assertBouquetName(String bouquet) {
-        bouquetSection.shouldHave(text(bouquet));
+    public BouquetPage assertBouquetName() {
+        bouquetSection.shouldHave(text(apiClient.getBouquetName()));
         return this;
     }
 
-    public BouquetPage assertVariationsPrices(BouquetDataItemDto bouquet) {
-        List<PriceItemDto> priceList = bouquet.getPriceList();
-        assertEquals(variation.size(), priceList.size(), "where is your variation?");
+    public BouquetPage assertVariationsPrices() {
+        List<PriceItemDto> priceList = apiClient.getPriceList();
+        assertEquals(variation.size(), priceList.size(), "where is your variations?");
 
         for (int i = 0; i < priceList.size(); i++) {
             assertEquals(Integer.parseInt(variation.get(i).getText().replaceAll("[\\s₽]", "")),
@@ -43,8 +47,9 @@ public class BouquetPage {
         return this;
     }
 
-    public BouquetPage assertDeliveryPrice(int deliveryPrice) {
+    public BouquetPage assertDeliveryPrice() {
         // сделать тест на бесплатную/платную доставку
+        int deliveryPrice = apiClient.getDeliveryPrice();
         if (deliveryPrice > 100) {
             assertEquals(HelperPage.priceRegex(deliveryPriceSection.$(".no-wrap")),
                     String.valueOf(deliveryPrice), "Delivery price on Bouquet Page is not equals");
@@ -61,6 +66,6 @@ public class BouquetPage {
 
     public OrderPage addToCard() {
         addToCardButton.shouldBe(Condition.exist, Duration.ofSeconds(3)).click();
-        return orderPage;
+        return new OrderPage(apiClient);
     }
 }
