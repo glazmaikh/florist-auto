@@ -3,7 +3,6 @@ package pages;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import helpers.ApiClient;
-import models.bouquet.BouquetDataItemDto;
 
 import java.time.Duration;
 
@@ -21,7 +20,6 @@ public class CatalogPage {
     private final SelenideElement cityPopUpCityNo = $x("//span[text()='Другой город']");
     private final SelenideElement cityPopUpModal = $x("//span[text()='Укажите город доставки в поле:']");
     private final SelenideElement cityPopUpInput = $("#location-select");
-    private final SelenideElement selectedCity = $(".CUvbyl33");
     private final SelenideElement cityLoader = $(".css-1gl4k7y");
     private final ElementsCollection droppedCityList = $$("._8PeWF0tD");
     private final SelenideElement bouquetLoader = $(".w0pOM9kK");

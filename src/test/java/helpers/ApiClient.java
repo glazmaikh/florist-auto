@@ -63,7 +63,7 @@ public class ApiClient {
     public Data getDeliveryPriceByCitySlug(String citySlug) {
         Response responseCitySlug = httpRequest
                 .auth().basic("florist_api", "123")
-                .param("alias", city.getSlug())
+                .param("alias", citySlug)
                 .get("http://www.test.florist.local/api/city/0");
         ResponseBody responseBody = responseCitySlug.getBody();
 
@@ -75,10 +75,6 @@ public class ApiClient {
 
     public String getRandomCityName() {
         return city.getName();
-    }
-
-    public String getCityId() {
-        return city.getId();
     }
 
     public String getSlug() {
@@ -128,47 +124,4 @@ public class ApiClient {
         List<BouquetDataItemDto> values = new ArrayList<>(bouquetMap.values());
         return values.get(new Random().nextInt(values.size()));
     }
-
-
-//    public List<String> getRussianCitySlugList() {
-//        String response = given()
-//                .auth().basic("florist_api", "123")
-//                .get("https://www.test.florist.local/api/city")
-//                .then()
-//                .extract()
-//                .response()
-//                .asString();
-//
-//        JsonPath jsonPath = new JsonPath(response);
-//        Map<String, Map<String, Object>> data = jsonPath.getMap("data");
-//        List<String> objectIds = data.entrySet()
-//                .stream()
-//                .filter(e -> e.getValue().containsKey("country") &&
-//                        ((Map<String, Object>) e.getValue().get("country")).containsValue("Россия"))
-//                .map(Map.Entry::getKey)
-//                .toList();
-//
-//        return objectIds.stream()
-//                .map(objectId -> data.get(objectId).get("slug").toString())
-//                .toList();
-//    }
-//
-
-//
-
-
-//
-
-//
-//    Response responseBouquet = httpRequest
-//            .auth().basic("florist_api", "123")
-//            .param("city", city.getId())
-//            .param("showPrices", 1)
-//            .param("includeIflorist", 1)
-//            .get("https://www.test.florist.local/api/bouquet");
-//    ResponseBody bodyBouquet = responseBouquet.getBody();
-//
-//    BouquetDataDto bouquetData = objectMapper.readValue(bodyBouquet.asString(), BouquetDataDto.class);
-//    bouquet = getRandomBouquet(bouquetData.getData());
-
 }

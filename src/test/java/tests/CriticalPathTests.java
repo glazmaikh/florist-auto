@@ -2,9 +2,6 @@ package tests;
 
 import config.BaseConfig;
 import helpers.ApiClient;
-import helpers.HelperPage;
-import models.bouquet.BouquetDataItemDto;
-import models.city.CityDataItemDto;
 import org.aeonbits.owner.ConfigFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,7 +42,7 @@ public class CriticalPathTests extends TestBase {
     }
 
     @Test
-    void criticalPathTest() {
+    void createNewOrderTest() {
         catalogPage.openCatalogPage(baseUrl)
                 .closeCookiePopUp()
                 .setRandomCity()
