@@ -73,6 +73,20 @@ public class ApiClient {
         return data;
     }
 
+    @SneakyThrows
+    public OrderData getOrderData() {
+        RequestSpecification httpRequest = RestAssured.given();
+        Response responseOrderData = httpRequest
+                .auth().basic("florist_api", "123")
+                .param("id", HelperPage.getOrderNumber())
+                .param("access_key", HelperPage.getOrderAccessKey())
+                .get("http://www.test.florist.local/api/order/byAccessKey");
+        ResponseBody orderBody = responseOrderData.getBody();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.readValue(orderBody.asString(), OrderData.class);
+    }
+
     public String getRandomCityName() {
         return city.getName();
     }
@@ -81,8 +95,8 @@ public class ApiClient {
         return city.getSlug();
     }
 
-    public int getDeliveryPrice() {
-        return data.getDelivery().get("RUB").intValue();
+    public double getDeliveryPrice() {
+        return data.getDelivery().get("RUB");
     }
 
     public String getBouquetName() {
@@ -99,20 +113,6 @@ public class ApiClient {
 
     public List<PriceItemDto> getPriceList() {
         return bouquet.getPriceList();
-    }
-
-    @SneakyThrows
-    public OrderData getOrderData() {
-        RequestSpecification httpRequest = RestAssured.given();
-        Response responseOrderData = httpRequest
-                .auth().basic("florist_api", "123")
-                .param("id", HelperPage.getOrderNumber())
-                .param("access_key", HelperPage.getOrderAccessKey())
-                .get("http://www.test.florist.local/api/order/byAccessKey");
-        ResponseBody orderBody = responseOrderData.getBody();
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.readValue(orderBody.asString(), OrderData.class);
     }
 
     private CityDataItemDto getRandomCityObject(Map<String, CityDataItemDto> cityMap) {

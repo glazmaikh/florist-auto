@@ -13,7 +13,11 @@ import static org.junit.jupiter.api.Assertions.*;
 public class SuccessPage {
     private final ElementsCollection orderList = $$x("//li");
     private final SelenideElement totalPrice = $(".no-wrap");
-    private final ApiClient apiClient = new ApiClient();
+    private final ApiClient apiClient;
+
+    public SuccessPage(ApiClient apiClient) {
+    this.apiClient = apiClient;
+    }
 
     @SneakyThrows
     public SuccessPage assertSuccessCreatedOrder() {

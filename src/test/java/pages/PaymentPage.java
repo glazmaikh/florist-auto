@@ -24,14 +24,17 @@ public class PaymentPage {
     private final ElementsCollection orderList = $$x("//div[@class='AEYhRIG-']//span");
     private final SelenideElement header = $x("//h1");
     private final SelenideElement thanksFor = $x("//h1[text() ='Спасибо за заказ']");
-    private final SuccessPage successPage = new SuccessPage();
-    private final ApiClient apiClient = new ApiClient();
+    private final ApiClient apiClient;
+
+    public PaymentPage(ApiClient apiClient) {
+        this.apiClient = apiClient;
+    }
 
     @SneakyThrows
     public PaymentPage assertOrderList() {
         header.shouldHave(textCaseSensitive("Оплата заказа"));
-        OrderData orderData = apiClient.getOrderData();
 
+        OrderData orderData = apiClient.getOrderData();
         assertEquals(String.valueOf(orderData.getData().getId()), header.getText().replaceAll("[^0-9]", ""),
                 "incorrect order number on PaymentPage");
 
@@ -43,6 +46,12 @@ public class PaymentPage {
         String deliveryPrice = HelperPage.formatPrice(orderData.getData().getCart().get("1").getPrice().getRUB());
         String totalPrice = HelperPage.formatPrice(orderData.getData().getTotal().getRUB());
 
+        if (!deliveryPrice.equals("0")) {
+            assertTrue(orderList.stream().anyMatch(e -> e.text().equals(deliveryPrice)), "incorrect delivery price");
+        } else {
+            assertTrue(orderList.stream().anyMatch(e -> e.text().equals("Бесплатно")), "incorrect delivery price");
+        }
+
         assertAll(
                 "Проверка состава заказа на странице оплаты",
                 () -> assertTrue(orderData.getData().getStatus_text().contains("Ожидает оплаты")),
@@ -51,7 +60,6 @@ public class PaymentPage {
                 () -> assertTrue(orderList.stream().anyMatch(e -> e.text().equals(count)), "incorrect bouquet count"),
                 () -> assertTrue(orderList.stream().anyMatch(e -> e.text().equals(price)), "incorrect bouquet price"),
                 () -> assertTrue(orderList.stream().anyMatch(e -> e.text().equals(deliveryDateData)), "incorrect delivery city"),
-                () -> assertTrue(orderList.stream().anyMatch(e -> e.text().equals(deliveryPrice)), "incorrect delivery price"),
                 () -> assertTrue(orderList.stream().anyMatch(e -> e.text().equals(totalPrice)), "incorrect total price")
         );
         return this;
@@ -75,6 +83,6 @@ public class PaymentPage {
         switchTo().frame(iframeAssist);
         confirmSubmitButton.shouldBe(exist, Duration.ofSeconds(15)).click();
         thanksFor.shouldBe(visible, Duration.ofSeconds(15));
-        return successPage;
+        return new SuccessPage(apiClient);
     }
 }

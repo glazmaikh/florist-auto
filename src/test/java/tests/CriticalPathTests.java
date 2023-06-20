@@ -11,8 +11,8 @@ public class CriticalPathTests extends TestBase {
     private final CatalogPage catalogPage = new CatalogPage(apiClient);
     private final BouquetPage bouquetPage = new BouquetPage(apiClient);
     private final OrderPage orderPage = new OrderPage(apiClient);
-    private final PaymentPage paymentPage = new PaymentPage();
-    private final SuccessPage successPage = new SuccessPage();
+    private final PaymentPage paymentPage = new PaymentPage(apiClient);
+    private final SuccessPage successPage = new SuccessPage(apiClient);
     private String yourName, yourEmail, yourPhone, name, phone, address;
 
     @BeforeEach

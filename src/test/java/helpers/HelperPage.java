@@ -16,6 +16,10 @@ import java.util.regex.Pattern;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HelperPage {
+
+    public static int doubleToIntRound(Double value) {
+        return (int) Math.round(value);
+    }
     public static int totalPrice(int bouquetPrice, int deliveryPrice) {
         return bouquetPrice + deliveryPrice;
     }

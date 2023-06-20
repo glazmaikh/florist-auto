@@ -36,21 +36,21 @@ public class BouquetPage {
         bouquetSection.shouldHave(text(apiClient.getBouquetName()));
         return this;
     }
-
+    // не сработает для акции, вариации не по порядку
     public BouquetPage assertVariationsPrices() {
         List<PriceItemDto> priceList = apiClient.getPriceList();
         assertEquals(variation.size(), priceList.size(), "where is your variations?");
 
         for (int i = 0; i < priceList.size(); i++) {
             assertEquals(Integer.parseInt(variation.get(i).getText().replaceAll("[\\s₽]", "")),
-                    priceList.get(i).getPrice().get("RUB").intValue(), "Variations price is not equals");
+                    HelperPage.doubleToIntRound(priceList.get(i).getPrice().get("RUB")), "Variations price is not equals");
         }
         return this;
     }
 
     public BouquetPage assertDeliveryPrice() {
         // сделать тест на бесплатную/платную доставку
-        int deliveryPrice = apiClient.getDeliveryPrice();
+        int deliveryPrice = HelperPage.doubleToIntRound(apiClient.getDeliveryPrice());
         if (deliveryPrice > 100) {
             assertEquals(HelperPage.priceRegex(deliveryPriceSection.$(".no-wrap")),
                     String.valueOf(deliveryPrice), "Delivery price on Bouquet Page is not equals");

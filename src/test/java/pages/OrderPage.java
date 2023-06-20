@@ -60,14 +60,14 @@ public class OrderPage {
         orderList.shouldBe(text(apiClient.getBouquetName()));
         HelperPage.assertBouquetPrice(apiClient.getBouquetPrice(), orderListPrices.get(0));
 
-        int deliveryPrice = apiClient.getDeliveryPrice();
+        int deliveryPrice = HelperPage.doubleToIntRound(apiClient.getDeliveryPrice());
         if (deliveryPrice > 100) {
             HelperPage.assertDeliveryPrice(deliveryPrice, orderListPrices.get(1));
             assertThat(HelperPage.priceRegex(orderListPrices.get(2)),
                     equalTo(String.valueOf(HelperPage.totalPrice(apiClient.getBouquetPrice(), deliveryPrice))));
         } else {
             orderList.shouldBe(text("бесплатно"));
-            assertThat(HelperPage.priceRegex(orderListPrices.get(2)),
+            assertThat(HelperPage.priceRegex(orderListPrices.get(1)),
                     equalTo(String.valueOf(apiClient.getBouquetPrice())));
         }
         return this;
@@ -79,7 +79,7 @@ public class OrderPage {
         Selenide.Wait().until(webDriver -> {
             return ((JavascriptExecutor) webDriver).executeScript("return document.readyState").equals("complete");
         });
-        return new PaymentPage();
+        return new PaymentPage(apiClient);
     }
 
     // 1. передавать ВСЕ недизейбл дни
