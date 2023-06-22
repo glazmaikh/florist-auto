@@ -2,6 +2,7 @@ package tests;
 
 import helpers.ApiClient;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import pages.*;
 
@@ -26,6 +27,7 @@ public class CriticalPathTests extends TestBase {
     }
 
     @Test
+    @Tag("create_order")
     void createNewOrderTest() {
         catalogPage.openCatalogPage(baseUrl)
                 .closeCookiePopUp()
