@@ -12,6 +12,7 @@ import java.time.Duration;
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selectors.byName;
 import static com.codeborne.selenide.Selenide.*;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class PaymentPage {
@@ -38,29 +39,36 @@ public class PaymentPage {
         assertEquals(String.valueOf(orderData.getData().getId()), header.getText().replaceAll("[^0-9]", ""),
                 "incorrect order number on PaymentPage");
 
-        String bouquetName =  orderData.getData().getCart().get("0").getName();
-        String price = HelperPage.formatPrice(orderData.getData().getCart().get("0").getPrice().getRUB());
+        String bouquetName = orderData.getData().getCart().get("0").getName();
+        String price = HelperPage.formatPriceRub(String.valueOf(orderData.getData().getCart().get("0").getPrice().getRUB()));
         String variation = orderData.getData().getCart().get("0").getVariation();
         String count = orderData.getData().getCart().get("0").getCount() + " шт.";
         String deliveryDateData = orderData.getData().getCart().get("1").getName();
-        String deliveryPrice = HelperPage.formatPrice(orderData.getData().getCart().get("1").getPrice().getRUB());
-        String totalPrice = HelperPage.formatPrice(orderData.getData().getTotal().getRUB());
+        String deliveryPrice = HelperPage.formatPriceRub(String.valueOf(orderData.getData().getCart().get("1").getPrice().getRUB()));
+        String totalPrice = HelperPage.formatPriceRub(String.valueOf(orderData.getData().getTotal().getRUB()));
 
-        if (!deliveryPrice.equals("0")) {
-            assertTrue(orderList.stream().anyMatch(e -> e.text().equals(deliveryPrice)), "incorrect delivery price");
-        } else {
+        if (deliveryPrice.equals("0")) {
             assertTrue(orderList.stream().anyMatch(e -> e.text().equals("Бесплатно")), "incorrect delivery price");
+        } else {
+            assertTrue(orderList.stream().anyMatch(e -> HelperPage.formatPriceRub(e.text()).equals(HelperPage.formatPriceRub(deliveryPrice))),
+                    "incorrect delivery price");
         }
 
         assertAll(
                 "Проверка состава заказа на странице оплаты",
                 () -> assertTrue(orderData.getData().getStatus_text().contains("Ожидает оплаты")),
-                () -> assertTrue(orderList.stream().anyMatch(e -> e.text().equals(bouquetName)), "incorrect bouquet name"),
-                () -> assertTrue(orderList.stream().anyMatch(e -> e.text().equals(variation)), "incorrect bouquet variation"),
-                () -> assertTrue(orderList.stream().anyMatch(e -> e.text().equals(count)), "incorrect bouquet count"),
-                () -> assertTrue(orderList.stream().anyMatch(e -> e.text().equals(price)), "incorrect bouquet price"),
-                () -> assertTrue(orderList.stream().anyMatch(e -> e.text().equals(deliveryDateData)), "incorrect delivery city and date"),
-                () -> assertTrue(orderList.stream().anyMatch(e -> e.text().equals(totalPrice)), "incorrect total price")
+                () -> assertTrue(orderList.stream().anyMatch(e -> e.text().equals(bouquetName)),
+                        "incorrect bouquet name"),
+                () -> assertTrue(orderList.stream().anyMatch(e -> e.text().equals(variation)),
+                        "incorrect bouquet variation"),
+                () -> assertTrue(orderList.stream().anyMatch(e -> e.text().equals(count)),
+                        "incorrect bouquet count"),
+                () -> assertTrue(orderList.stream().anyMatch(e -> HelperPage.formatPriceRub(e.text()).equals(HelperPage.formatPriceRub(price))),
+                        "incorrect bouquet price"),
+                () -> assertTrue(orderList.stream().anyMatch(e -> e.text().equals(deliveryDateData)),
+                        "incorrect delivery city and date"),
+                () -> assertTrue(orderList.stream().anyMatch(e -> HelperPage.formatPriceRub(e.text()).equals(HelperPage.formatPriceRub(totalPrice))),
+                        "incorrect total price")
         );
         return this;
     }

@@ -19,11 +19,11 @@ public class TestBase {
     static String cvcNumber;
     @BeforeAll
     static void setUp() {
-        //System.setProperty("webdriver.chrome.driver", "C://webdrivers/chromedriver114.exe");
-        System.getProperty("browser", "chrome");
+        System.setProperty("webdriver.chrome.driver", "C://webdrivers/chromedriver114.exe");
+        //Configuration.baseUrl = System.getProperty("base_url", "https://www.stage.florist.local/");
+        //Configuration.browser = System.getProperty("browser", "chrome");
         Configuration.holdBrowserOpen = true;
         Configuration.remote = "http://10.201.0.139:4444/wd/hub";
-        Configuration.browser = "edge";
 
 
         BaseConfig config = ConfigFactory.create(BaseConfig.class, System.getProperties());

@@ -11,7 +11,6 @@ import java.time.Duration;
 import java.util.List;
 
 import static com.codeborne.selenide.Condition.text;
-import static com.codeborne.selenide.Configuration.baseUrl;
 import static com.codeborne.selenide.Selenide.*;
 import static com.codeborne.selenide.WebDriverConditions.url;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -65,8 +64,9 @@ public class BouquetPage {
         return this;
     }
 
-    public OrderPage addToCard() {
-        addToCardButton.shouldBe(Condition.exist, Duration.ofSeconds(3)).click();
+    public OrderPage addToCard(String baseUrl) {
+        addToCardButton.shouldBe(Condition.exist, Duration.ofSeconds(5)).click();
+        webdriver().shouldHave(url(baseUrl + apiClient.getSlug() + "/checkout"), Duration.ofSeconds(10));
         return new OrderPage(apiClient);
     }
 }

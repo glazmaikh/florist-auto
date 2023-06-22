@@ -39,7 +39,7 @@ public class CriticalPathTests extends TestBase {
                 .assertVariationsPrices()
                 .assertDeliveryPrice()
                 .getFirstVariation()
-                .addToCard();
+                .addToCard(baseUrl);
 
         orderPage.simpleFillForm(yourName, yourEmail, yourPhone, name, phone, address)
                 .getRandomDeliveryDay()
@@ -51,6 +51,6 @@ public class CriticalPathTests extends TestBase {
                 .pay()
                 .confirm();
 
-        successPage.assertSuccessCreatedOrder();
+        successPage.assertSuccessCreatedOrder(baseUrl);
     }
 }

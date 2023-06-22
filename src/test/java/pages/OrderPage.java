@@ -58,11 +58,11 @@ public class OrderPage {
 
     public OrderPage assertOrderList() {
         orderList.shouldBe(text(apiClient.getBouquetName()));
-        HelperPage.assertBouquetPrice(apiClient.getBouquetPrice(), orderListPrices.get(0));
+        HelperPage.assertPrice(apiClient.getBouquetPrice(), orderListPrices.get(0));
 
         int deliveryPrice = HelperPage.doubleToIntRound(apiClient.getDeliveryPrice());
         if (deliveryPrice > 100) {
-            HelperPage.assertDeliveryPrice(deliveryPrice, orderListPrices.get(1));
+            HelperPage.assertPrice(deliveryPrice, orderListPrices.get(1));
             assertThat(HelperPage.priceRegex(orderListPrices.get(2)),
                     equalTo(String.valueOf(HelperPage.totalPrice(apiClient.getBouquetPrice(), deliveryPrice))));
         } else {

@@ -7,7 +7,6 @@ import helpers.ApiClient;
 import java.time.Duration;
 
 import static com.codeborne.selenide.Condition.*;
-import static com.codeborne.selenide.Configuration.baseUrl;
 import static com.codeborne.selenide.Selenide.*;
 import static com.codeborne.selenide.WebDriverConditions.url;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -81,7 +80,7 @@ public class CatalogPage {
 
     public CatalogPage closeCookiePopUp() {
         cookiePopUp.shouldBe(visible, Duration.ofSeconds(15));
-        cookiePopUpClose.shouldBe(visible, Duration.ofSeconds(10)).click();
+        cookiePopUpClose.shouldBe(visible, Duration.ofSeconds(15)).click();
         cookiePopUp.shouldNotBe(visible, Duration.ofSeconds(10));
         return this;
     }
