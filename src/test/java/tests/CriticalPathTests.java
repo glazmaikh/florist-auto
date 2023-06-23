@@ -62,6 +62,7 @@ public class CriticalPathTests extends TestBase {
         catalogPage.openCatalogPage(baseUrl)
                 .closeCookiePopUp()
                 .openRegisterModal()
-                .fillRegisterForm(yourName, phone, yourEmail, password);
+                .fillRegisterForm(yourName, phone, yourEmail, password)
+                .makeCaptcha();
     }
 }

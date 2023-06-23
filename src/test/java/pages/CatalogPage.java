@@ -34,9 +34,10 @@ public class CatalogPage {
     private final SelenideElement passwordInput = $(byName("password"));
     private final SelenideElement repeatPasswordInput = $(byName("repeatPassword"));
     private final SelenideElement subscribeInput = $("._1zXA0QMS ");
-    private final SelenideElement captchaInput = $("#recaptcha-anchor-label");
+    private final SelenideElement captchaInput = $("#recaptcha-anchor");
     private final SelenideElement privacyPolicyInput = $x("//div[@class='boxes_item']//label");
     private final SelenideElement privacyAlert = $x("//span[text()='Вы должны согласиться с условиями']");
+    private final SelenideElement iframeReCaptcha = $("iframe[title='reCAPTCHA']");
 
     public CatalogPage(ApiClient apiClient) {
         this.apiClient = apiClient;
@@ -112,7 +113,13 @@ public class CatalogPage {
         repeatPasswordInput.sendKeys(password);
         privacyPolicyInput.click();
         privacyAlert.shouldNotBe(exist);
-        captchaInput.shouldBe(exist).click();
+        return this;
+    }
+
+    public CatalogPage makeCaptcha() {
+        iframeReCaptcha.shouldBe(exist, Duration.ofSeconds(5));
+        switchTo().frame(iframeReCaptcha);
+        captchaInput.click();
         return this;
     }
 }
