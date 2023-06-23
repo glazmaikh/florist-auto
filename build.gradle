@@ -70,6 +70,12 @@ task register_test(type: Test) {
     }
 }
 
+task auth_test(type: Test) {
+    useJUnitPlatform {
+        includeTags("auth")
+    }
+}
+
 task regress_test(type: Test) {
     useJUnitPlatform {
         includeTags("create_order")

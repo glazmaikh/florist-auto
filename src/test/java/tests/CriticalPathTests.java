@@ -11,10 +11,11 @@ public class CriticalPathTests extends TestBase {
     private final ApiClient apiClient = new ApiClient();
     private final CatalogPage catalogPage = new CatalogPage(apiClient);
     private final BouquetPage bouquetPage = new BouquetPage(apiClient);
-    private final OrderPage orderPage = new OrderPage(apiClient);
+    private final CreatingOrderPage creatingOrderPage = new CreatingOrderPage(apiClient);
     private final PaymentPage paymentPage = new PaymentPage(apiClient);
     private final SuccessPage successPage = new SuccessPage(apiClient);
-    private String yourName, yourEmail, yourPhone, firstName, lastName, phone, address, password;
+    private final OrderPage orderPage = new OrderPage(apiClient);
+    private String yourName, yourEmail, yourPhone, firstName, phone, address, password;
 
     @BeforeEach
     void setData() {
@@ -24,7 +25,6 @@ public class CriticalPathTests extends TestBase {
         firstName = testData.getFirstName();
         phone = testData.getPhone();
         address = testData.getAddress();
-        lastName = testData.getLastName();
         password = testData.getPassword();
     }
 
@@ -43,7 +43,7 @@ public class CriticalPathTests extends TestBase {
                 .getFirstVariation()
                 .addToCard(baseUrl);
 
-        orderPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
+        creatingOrderPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
                 .getRandomDeliveryDay()
                 .assertOrderList()
                 .pressPayButton();
@@ -64,5 +64,16 @@ public class CriticalPathTests extends TestBase {
                 .openRegisterModal()
                 .fillRegisterForm(yourName, phone, yourEmail, password)
                 .makeCaptcha();
+    }
+
+    @Test
+    @Tag("auth")
+    void authTest() {
+        catalogPage.openCatalogPage(baseUrl)
+                .closeCookiePopUp()
+                .openAuthModal()
+                .fillAuthForm("test123123@test.ru", "123123");
+
+        orderPage.assertAuth();
     }
 }

@@ -64,9 +64,9 @@ public class BouquetPage {
         return this;
     }
 
-    public OrderPage addToCard(String baseUrl) {
+    public CreatingOrderPage addToCard(String baseUrl) {
         addToCardButton.shouldBe(Condition.exist, Duration.ofSeconds(5)).click();
         webdriver().shouldHave(url(baseUrl + apiClient.getSlug() + "/checkout"), Duration.ofSeconds(10));
-        return new OrderPage(apiClient);
+        return new CreatingOrderPage(apiClient);
     }
 }

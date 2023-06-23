@@ -13,7 +13,7 @@ import static com.codeborne.selenide.WebDriverConditions.url;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CatalogPage {
-    private ApiClient apiClient;
+    private final ApiClient apiClient;
     private final SelenideElement cookiePopUp = $("._3bcT6MiV");
     private final SelenideElement cookiePopUpClose = $(".lkfJru7k");
     private final SelenideElement cityPopUp = $("#confirm");
@@ -33,11 +33,14 @@ public class CatalogPage {
     private final SelenideElement emailInput = $(byName("email"));
     private final SelenideElement passwordInput = $(byName("password"));
     private final SelenideElement repeatPasswordInput = $(byName("repeatPassword"));
+    private final SelenideElement loginInput = $(byName("login"));
     private final SelenideElement subscribeInput = $("._1zXA0QMS ");
     private final SelenideElement captchaInput = $("#recaptcha-anchor");
     private final SelenideElement privacyPolicyInput = $x("//div[@class='boxes_item']//label");
     private final SelenideElement privacyAlert = $x("//span[text()='Вы должны согласиться с условиями']");
+    private final SelenideElement emptyFieldAlert = $x("//span[text()='Поле обязательно для заполнения']");
     private final SelenideElement iframeReCaptcha = $("iframe[title='reCAPTCHA']");
+    private final SelenideElement submitButton = $("button[type='submit']");
 
     public CatalogPage(ApiClient apiClient) {
         this.apiClient = apiClient;
@@ -99,8 +102,8 @@ public class CatalogPage {
     }
 
     public CatalogPage openRegisterModal() {
-        authRegisterButton.shouldHave(exist).click();
-        createAccountTab.shouldHave(exist).click();
+        authRegisterButton.shouldBe(exist).click();
+        createAccountTab.shouldBe(exist).click();
         return this;
     }
 
@@ -121,5 +124,21 @@ public class CatalogPage {
         switchTo().frame(iframeReCaptcha);
         captchaInput.click();
         return this;
+    }
+
+    public CatalogPage openAuthModal() {
+        authRegisterButton.shouldBe(exist).click();
+        return this;
+    }
+
+    public OrderPage fillAuthForm(String email, String password) {
+        loginInput.sendKeys(email);
+        emptyFieldAlert.shouldNotBe(exist);
+
+        passwordInput.sendKeys(password);
+        emptyFieldAlert.shouldNotBe(exist);
+
+        submitButton.shouldNotBe(disabled).click();
+        return new OrderPage(apiClient);
     }
 }

@@ -6,6 +6,8 @@ import io.restassured.response.Response;
 import io.restassured.response.ResponseBody;
 import io.restassured.specification.RequestSpecification;
 import lombok.SneakyThrows;
+import models.auth.AuthDto;
+import models.auth.User;
 import models.bouquet.BouquetDataDto;
 import models.bouquet.BouquetDataItemDto;
 import models.bouquet.PriceItemDto;
@@ -25,6 +27,7 @@ public class ApiClient {
     private final CityDataItemDto city = getRandomCityFromList();
     private final BouquetDataItemDto bouquet = getRandomBouquetByCityID(city.getId());
     private Data data = getDeliveryPriceByCitySlug(city.getSlug());
+    //private User user = getUser("test123123@test.ru", "123123");
 
     // получение рандомного города из списка всех городов
     @SneakyThrows
@@ -86,6 +89,29 @@ public class ApiClient {
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.readValue(orderBody.asString(), OrderData.class);
     }
+
+    @SneakyThrows
+    public User getUser(String login, String password) {
+        System.out.println(login + " login");
+        System.out.println(password + " pass");
+        Response userAuthData = httpRequest
+                .auth().basic("florist_api", "123")
+                .param("login", login)
+                .param("password", password)
+                .get("http://www.test.florist.local/api/user/login");
+        ResponseBody userAuthDataBody = userAuthData.getBody();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        AuthDto authDto = objectMapper.readValue(userAuthDataBody.asString(), AuthDto.class);
+        User user = authDto.getUser();
+        System.out.println(user + " user");
+        System.out.println(user.getName() + " userName");
+        return user;
+    }
+
+//    public String getUserName() {
+//        return user.getName();
+//    }
 
     public String getRandomCityName() {
         return city.getName();
