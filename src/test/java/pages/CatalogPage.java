@@ -7,6 +7,7 @@ import helpers.ApiClient;
 import java.time.Duration;
 
 import static com.codeborne.selenide.Condition.*;
+import static com.codeborne.selenide.Selectors.byName;
 import static com.codeborne.selenide.Selenide.*;
 import static com.codeborne.selenide.WebDriverConditions.url;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -25,6 +26,17 @@ public class CatalogPage {
     private final SelenideElement bouquetLoader = $(".w0pOM9kK");
     private final ElementsCollection bouquetList = $$("._3fIsQ45s");
     private final SelenideElement findMoreButton = $("//span[text()='Показать ещё']");
+    private final SelenideElement authRegisterButton = $("button[aria-label='Войти на сайт']");
+    private final SelenideElement createAccountTab = $x("//ul/span[text()='Создать аккаунт']");
+    private final SelenideElement nameInput = $(byName("name"));
+    private final SelenideElement phoneInput = $(byName("phone"));
+    private final SelenideElement emailInput = $(byName("email"));
+    private final SelenideElement passwordInput = $(byName("password"));
+    private final SelenideElement repeatPasswordInput = $(byName("repeatPassword"));
+    private final SelenideElement subscribeInput = $("._1zXA0QMS ");
+    private final SelenideElement captchaInput = $("#recaptcha-anchor-label");
+    private final SelenideElement privacyPolicyInput = $x("//div[@class='boxes_item']//label");
+    private final SelenideElement privacyAlert = $x("//span[text()='Вы должны согласиться с условиями']");
 
     public CatalogPage(ApiClient apiClient) {
         this.apiClient = apiClient;
@@ -82,6 +94,25 @@ public class CatalogPage {
         cookiePopUp.shouldBe(visible, Duration.ofSeconds(15));
         cookiePopUpClose.shouldBe(visible, Duration.ofSeconds(15)).click();
         cookiePopUp.shouldNotBe(visible, Duration.ofSeconds(10));
+        return this;
+    }
+
+    public CatalogPage openRegisterModal() {
+        authRegisterButton.shouldHave(exist).click();
+        createAccountTab.shouldHave(exist).click();
+        return this;
+    }
+
+    public CatalogPage fillRegisterForm(String name, String phone, String email, String password) {
+        nameInput.shouldBe(exist).sendKeys(name);
+        phoneInput.sendKeys(phone);
+        emailInput.sendKeys(email);
+        phoneInput.sendKeys(email);
+        passwordInput.sendKeys(password);
+        repeatPasswordInput.sendKeys(password);
+        privacyPolicyInput.click();
+        privacyAlert.shouldNotBe(exist);
+        captchaInput.shouldBe(exist).click();
         return this;
     }
 }

@@ -20,7 +20,7 @@ public class SuccessPage {
     }
 
     @SneakyThrows
-    public SuccessPage assertSuccessCreatedOrder(String baseUrl) {
+    public SuccessPage assertSuccessCreatedOrder() {
         assertTrue(webdriver().driver().url().contains("success"));
         OrderData orderData = apiClient.getOrderData();
 

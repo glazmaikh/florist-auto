@@ -14,16 +14,18 @@ public class CriticalPathTests extends TestBase {
     private final OrderPage orderPage = new OrderPage(apiClient);
     private final PaymentPage paymentPage = new PaymentPage(apiClient);
     private final SuccessPage successPage = new SuccessPage(apiClient);
-    private String yourName, yourEmail, yourPhone, name, phone, address;
+    private String yourName, yourEmail, yourPhone, firstName, lastName, phone, address, password;
 
     @BeforeEach
     void setData() {
-        yourName = testData.getYourName();
+        yourName = testData.getYourFullName();
         yourEmail = testData.getYourEmail();
         yourPhone = testData.getYourPhone();
-        name = testData.getName();
+        firstName = testData.getFirstName();
         phone = testData.getPhone();
         address = testData.getAddress();
+        lastName = testData.getLastName();
+        password = testData.getPassword();
     }
 
     @Test
@@ -41,7 +43,7 @@ public class CriticalPathTests extends TestBase {
                 .getFirstVariation()
                 .addToCard(baseUrl);
 
-        orderPage.simpleFillForm(yourName, yourEmail, yourPhone, name, phone, address)
+        orderPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
                 .getRandomDeliveryDay()
                 .assertOrderList()
                 .pressPayButton();
@@ -51,6 +53,15 @@ public class CriticalPathTests extends TestBase {
                 .pay()
                 .confirm();
 
-        successPage.assertSuccessCreatedOrder(baseUrl);
+        successPage.assertSuccessCreatedOrder();
+    }
+
+    @Test
+    @Tag("register")
+    void registerTest() {
+        catalogPage.openCatalogPage(baseUrl)
+                .closeCookiePopUp()
+                .openRegisterModal()
+                .fillRegisterForm(yourName, phone, yourEmail, password);
     }
 }

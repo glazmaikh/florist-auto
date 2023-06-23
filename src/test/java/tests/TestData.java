@@ -6,35 +6,36 @@ import java.util.*;
 
 public class TestData {
     Faker faker = new Faker(new Locale("ru"));
-    String yourName = faker.name().fullName();
-    String yourEmail = faker.internet().emailAddress("en");
-    String yourPhone = faker.phoneNumber().cellPhone();
-    String name = faker.name().firstName();
-    String phone = faker.phoneNumber().cellPhone();
-    String address = faker.address().streetAddress();
 
-    public String getYourName() {
-        return yourName;
+    public String getLastName() {
+        return faker.name().lastName();
+    }
+
+    public String getPassword() {
+        return faker.internet().password(6, 20);
+    }
+
+    public String getYourFullName() {
+        return faker.name().fullName();
     }
 
     public String getYourEmail() {
-        return yourEmail;
+        return faker.internet().emailAddress("en");
     }
 
     public String getYourPhone() {
-        return yourPhone;
+        return faker.phoneNumber().cellPhone().replaceAll("\\p{Punct}","");
     }
 
-    public String getName() {
-        return name;
+    public String getFirstName() {
+        return faker.name().firstName();
     }
 
     public String getPhone() {
-        return phone;
+        return faker.phoneNumber().cellPhone();
     }
 
     public String getAddress() {
-        return address;
+        return faker.address().streetAddress();
     }
-
 }

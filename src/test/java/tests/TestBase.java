@@ -23,7 +23,7 @@ public class TestBase {
         //Configuration.baseUrl = System.getProperty("base_url", "https://www.stage.florist.local/");
         //Configuration.browser = System.getProperty("browser", "chrome");
         Configuration.holdBrowserOpen = true;
-        Configuration.remote = "http://10.201.0.139:4444/wd/hub";
+        //Configuration.remote = "http://10.201.0.139:4444/wd/hub";
 
 
         BaseConfig config = ConfigFactory.create(BaseConfig.class, System.getProperties());

@@ -40,7 +40,7 @@ public class OrderPage {
     }
 
     public OrderPage simpleFillForm(String yourName, String yourEmail, String yourPhone, String name, String phone, String address) {
-        yourNameInput.val(yourName);
+        yourNameInput.shouldBe(exist).val(yourName);
         yourEmailInput.val(yourEmail);
         yourPhoneInput.val(yourPhone);
         nameInput.val(name);
