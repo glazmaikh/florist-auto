@@ -7,10 +7,6 @@ import java.util.*;
 public class TestData {
     Faker faker = new Faker(new Locale("ru"));
 
-    public String getLastName() {
-        return faker.name().lastName();
-    }
-
     public String getPassword() {
         return faker.internet().password(6, 20);
     }
@@ -20,7 +16,9 @@ public class TestData {
     }
 
     public String getYourEmail() {
-        return faker.internet().emailAddress("en");
+        String uniqueId = UUID.randomUUID().toString().replace("-","");
+        String domain = "test.com";
+        return uniqueId + "@" + domain;
     }
 
     public String getYourPhone() {

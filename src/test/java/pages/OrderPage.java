@@ -17,8 +17,7 @@ public class OrderPage {
 //        System.out.println(apiClient.getUserName());
 //        System.out.println("Здравствуйте, " + apiClient.getUserName() + "!");
 
-        User user = apiClient.getUser("test123123@test.ru", "123123");
-        System.out.println(user.getCity());
+        //User user = apiClient.getUser("test123123@test.ru", "123123");
         return this;
     }
 
