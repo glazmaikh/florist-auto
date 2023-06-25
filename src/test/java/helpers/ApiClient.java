@@ -24,21 +24,24 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.equalTo;
+
 public class ApiClient {
-    private final RequestSpecification httpRequest = RestAssured.given();
+    private final RequestSpecification httpRequest = given();
     private final CityDataItemDto city = getRandomCityFromList();
     private final BouquetDataItemDto bouquet = getRandomBouquetByCityID(city.getId());
     private Data data = getDeliveryPriceByCitySlug(city.getSlug());
-    private final ObjectMapper objectMapper = new ObjectMapper();
 
     // получение рандомного города из списка всех городов
     @SneakyThrows
     private CityDataItemDto getRandomCityFromList() {
         Response responseCity = httpRequest
                 .auth().basic("florist_api", "123")
-                .get("https://www.test.florist.local/api/city");
+                .get("api/city");
         ResponseBody bodyCity = responseCity.getBody();
 
+        ObjectMapper objectMapper = new ObjectMapper();
         CityDataDto cityData = objectMapper.readValue(bodyCity.asString(), CityDataDto.class);
         CityDataItemDto city = getRandomCityObject(cityData.getData());
         while (city.getCountry().getId().equals("2")) {
@@ -55,9 +58,10 @@ public class ApiClient {
                 .param("city", cityId)
                 .param("showPrices", 1)
                 .param("includeIflorist", 1)
-                .get("https://www.test.florist.local/api/bouquet");
+                .get("api/bouquet");
         ResponseBody bodyBouquet = responseBouquet.getBody();
 
+        ObjectMapper objectMapper = new ObjectMapper();
         BouquetDataDto bouquetData = objectMapper.readValue(bodyBouquet.asString(), BouquetDataDto.class);
         return getRandomBouquetObject(bouquetData.getData());
     }
@@ -67,9 +71,10 @@ public class ApiClient {
         Response responseCitySlug = httpRequest
                 .auth().basic("florist_api", "123")
                 .param("alias", citySlug)
-                .get("http://www.test.florist.local/api/city/0");
+                .get("api/city/0");
         ResponseBody responseBody = responseCitySlug.getBody();
 
+        ObjectMapper objectMapper = new ObjectMapper();
         CityDataAliasDto cityDataAliasDto = objectMapper.readValue(responseBody.asString(), CityDataAliasDto.class);
         data = cityDataAliasDto.getData();
         return data;
@@ -81,8 +86,10 @@ public class ApiClient {
                 .auth().basic("florist_api", "123")
                 .param("id", HelperPage.getOrderNumber())
                 .param("access_key", HelperPage.getOrderAccessKey())
-                .get("http://www.test.florist.local/api/order/byAccessKey");
+                .get("api/order/byAccessKey");
         ResponseBody orderBody = responseOrderData.getBody();
+
+        ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.readValue(orderBody.asString(), OrderData.class);
     }
 
@@ -92,9 +99,10 @@ public class ApiClient {
                 .auth().basic("florist_api", "123")
                 .param("login", login)
                 .param("password", password)
-                .get("http://www.test.florist.local/api/user/login");
+                .get("api/user/login");
         ResponseBody userAuthDataBody = userAuthData.getBody();
 
+        ObjectMapper objectMapper = new ObjectMapper();
         AuthDto authDto = objectMapper.readValue(userAuthDataBody.asString(), AuthDto.class);
         models.auth.User user = authDto.getUser();
         return user;
@@ -104,20 +112,22 @@ public class ApiClient {
         User user = new User(login, email, phone, password);
         UserWrapper userWrapper = new UserWrapper(user);
 
+        ObjectMapper objectMapper = new ObjectMapper();
         try {
             String requestBody = objectMapper.writeValueAsString(userWrapper);
-            System.out.println(requestBody);
-
-            RestAssured.given()
+            Response response = given()
                     .auth().basic("florist_api", "123")
                     .contentType(ContentType.JSON)
                     .body(requestBody)
-                    .post("https://www.test.florist.local/api/user")
-                    .then()
-                    .log().all()
-                    .statusCode(200)
-                    .extract()
-                    .response();
+                    .post("api/user");
+
+            response.then().statusCode(200);
+
+            response.then().assertThat()
+                    .body("data.name", equalTo(user.getName()))
+                    .body("data.email", equalTo(user.getEmail()))
+                    .body("data.phone", equalTo(user.getPhone()))
+                    .body("data.password", equalTo(user.getPassword()));
         } catch (Exception e) {
             e.printStackTrace();
         }

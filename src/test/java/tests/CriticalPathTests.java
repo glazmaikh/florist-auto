@@ -69,15 +69,12 @@ public class CriticalPathTests extends TestBase {
     @Test
     @Tag("auth")
     void authTest() {
-        System.out.println(password + " before test");
-        catalogPage.registerUser(yourName, yourEmail, yourPhone, password);
-        System.out.println(password + " after test");
-        catalogPage.openCatalogPage(baseUrl)
+        catalogPage.registerUser(yourName, yourEmail, yourPhone, password)
+                .openCatalogPage(baseUrl)
                 .closeCookiePopUp()
                 .openAuthModal()
                 .fillAuthForm(yourEmail, password);
-        System.out.println(password + " after ui");
 
-        //orderPage.assertAuth();
+        orderPage.assertAuth(baseUrl, yourName);
     }
 }

@@ -22,7 +22,7 @@ public class TestData {
     }
 
     public String getYourPhone() {
-        return faker.phoneNumber().cellPhone().replaceAll("\\p{Punct}","");
+        return "+7" + faker.phoneNumber().cellPhone().replaceAll("[\\s\\p{Punct}]","");
     }
 
     public String getFirstName() {

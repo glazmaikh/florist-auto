@@ -143,9 +143,7 @@ public class CatalogPage {
     }
 
     public CatalogPage registerUser(String name, String email, String phone, String password) {
-        System.out.println(password + " catalog before");
         apiClient.registerUser(name, email, phone, password);
-        System.out.println(password + " catalog after");
         return this;
     }
 }

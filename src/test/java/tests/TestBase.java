@@ -5,6 +5,7 @@ import com.codeborne.selenide.logevents.SelenideLogger;
 import config.BaseConfig;
 import helpers.Attach;
 import io.qameta.allure.selenide.AllureSelenide;
+import io.restassured.RestAssured;
 import org.aeonbits.owner.ConfigFactory;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -19,18 +20,21 @@ public class TestBase {
     static String cvcNumber;
     @BeforeAll
     static void setUp() {
-        System.setProperty("webdriver.chrome.driver", "C://webdrivers/chromedriver114.exe");
-        //Configuration.baseUrl = System.getProperty("base_url", "https://www.stage.florist.local/");
-        //Configuration.browser = System.getProperty("browser", "chrome");
-        Configuration.holdBrowserOpen = true;
-        //Configuration.remote = "http://10.201.0.139:4444/wd/hub";
-
-
         BaseConfig config = ConfigFactory.create(BaseConfig.class, System.getProperties());
         baseUrl = config.getBaseUrl();
         cardNumber = config.getCardNumber();
         expireNumber = config.getExpireNumber();
         cvcNumber = config.getCvcNumber();
+
+        System.setProperty("webdriver.chrome.driver", "C://webdrivers/chromedriver114.exe");
+        //Configuration.baseUrl = System.getProperty("base_url", "https://www.stage.florist.local/");
+        //Configuration.browser = System.getProperty("browser", "chrome");
+        Configuration.holdBrowserOpen = true;
+        RestAssured.baseURI = baseUrl;
+        //Configuration.remote = "http://10.201.0.139:4444/wd/hub";
+
+
+
 
 //        SelenideLogger.addListener("allure", new AllureSelenide());
 //        DesiredCapabilities capabilities = new DesiredCapabilities();

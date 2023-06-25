@@ -1,23 +1,22 @@
 package pages;
 
+import com.codeborne.selenide.SelenideElement;
 import helpers.ApiClient;
-import models.auth.User;
 
-import static com.codeborne.selenide.Selenide.webdriver;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static com.codeborne.selenide.Selenide.*;
+import static com.codeborne.selenide.WebDriverConditions.url;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class OrderPage {
     private final ApiClient apiClient;
+    private final SelenideElement nameField = $x("//strong");
     public OrderPage(ApiClient apiClient) {
         this.apiClient = apiClient;
     }
 
-    public OrderPage assertAuth() {
-//        assertTrue(webdriver().driver().url().contains("/account/orders"));
-//        System.out.println(apiClient.getUserName());
-//        System.out.println("Здравствуйте, " + apiClient.getUserName() + "!");
-
-        //User user = apiClient.getUser("test123123@test.ru", "123123");
+    public OrderPage assertAuth(String baseUrl, String accountName) {
+        webdriver().shouldHave(url(baseUrl + "account/orders"));
+        assertEquals(accountName, nameField.getText(), "Incorrect account name");
         return this;
     }
 
