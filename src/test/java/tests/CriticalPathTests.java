@@ -62,7 +62,7 @@ public class CriticalPathTests extends TestBase {
                 .pay()
                 .confirm();
 
-        successPage.assertSuccessCreatedOrder();
+        successPage.assertSuccessCreatedOrder(baseUrl);
     }
 
     @Disabled("Before remade captcha")
