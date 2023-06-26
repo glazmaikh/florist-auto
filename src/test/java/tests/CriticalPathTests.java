@@ -2,19 +2,19 @@ package tests;
 
 import helpers.ApiClient;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import pages.*;
 
 public class CriticalPathTests extends TestBase {
     private final TestData testData = new TestData();
-    private final ApiClient apiClient = new ApiClient();
-    private final CatalogPage catalogPage = new CatalogPage(apiClient);
-    private final BouquetPage bouquetPage = new BouquetPage(apiClient);
-    private final CreatingOrderPage creatingOrderPage = new CreatingOrderPage(apiClient);
-    private final PaymentPage paymentPage = new PaymentPage(apiClient);
-    private final SuccessPage successPage = new SuccessPage(apiClient);
-    private final OrderPage orderPage = new OrderPage(apiClient);
+    private CatalogPage catalogPage;
+    private BouquetPage bouquetPage;
+    private CreatingOrderPage creatingOrderPage;
+    private PaymentPage paymentPage;
+    private SuccessPage successPage;
+    private OrderPage orderPage;
     private String yourName, yourEmail, yourPhone, firstName, phone, address, password;
 
     @BeforeEach
@@ -26,6 +26,15 @@ public class CriticalPathTests extends TestBase {
         phone = testData.getPhone();
         address = testData.getAddress();
         password = testData.getPassword();
+
+        ApiClient apiClient = new ApiClient();
+
+        catalogPage = new CatalogPage(apiClient);
+        bouquetPage = new BouquetPage(apiClient);
+        creatingOrderPage = new CreatingOrderPage(apiClient);
+        paymentPage = new PaymentPage(apiClient);
+        successPage = new SuccessPage(apiClient);
+        orderPage = new OrderPage(apiClient);
     }
 
     @Test
@@ -56,6 +65,7 @@ public class CriticalPathTests extends TestBase {
         successPage.assertSuccessCreatedOrder();
     }
 
+    @Disabled("Before remade captcha")
     @Test
     @Tag("register")
     void registerTest() {
