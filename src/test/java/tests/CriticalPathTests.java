@@ -79,7 +79,7 @@ public class CriticalPathTests extends TestBase {
     @Test
     @Tag("auth")
     void authTest() {
-        catalogPage.registerUser(yourName, yourEmail, yourPhone, password)
+        catalogPage.apiRegisterUser(yourName, yourEmail, yourPhone, password)
                 .openCatalogPage(baseUrl)
                 .closeCookiePopUp()
                 .openAuthModal()

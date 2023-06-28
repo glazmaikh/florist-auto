@@ -108,7 +108,7 @@ public class ApiClient {
         return user;
     }
 
-    public void registerUser(String login, String email, String phone, String password) {
+    public void apiRegisterUser(String login, String email, String phone, String password) {
         User user = new User(login, email, phone, password);
         UserWrapper userWrapper = new UserWrapper(user);
 

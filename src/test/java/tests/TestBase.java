@@ -12,14 +12,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.openqa.selenium.remote.DesiredCapabilities;
-
-import javax.net.ssl.*;
-import java.net.URL;
-import java.net.URLConnection;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.X509Certificate;
 
 public class TestBase {
     static String baseUrl;
@@ -34,11 +26,11 @@ public class TestBase {
         expireNumber = config.getExpireNumber();
         cvcNumber = config.getCvcNumber();
 
-        System.setProperty("webdriver.chrome.driver", "C://webdrivers/chromedriver114.exe");
+        //System.setProperty("webdriver.chrome.driver", "C://webdrivers/chromedriver114.exe");
         //Configuration.baseUrl = System.getProperty("base_url", "https://www.stage.florist.local/");
         //Configuration.browser = System.getProperty("browser", "chrome");
         RestAssured.baseURI = baseUrl;
-        //Configuration.remote = "http://10.201.0.139:4444/wd/hub";
+        Configuration.remote = "http://10.201.0.139:4444/wd/hub";
 
 //        SelenideLogger.addListener("allure", new AllureSelenide());
 //        DesiredCapabilities capabilities = new DesiredCapabilities();

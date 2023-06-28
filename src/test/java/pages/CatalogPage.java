@@ -143,8 +143,8 @@ public class CatalogPage {
         return new OrderPage(apiClient);
     }
 
-    public CatalogPage registerUser(String name, String email, String phone, String password) {
-        apiClient.registerUser(name, email, phone, password);
+    public CatalogPage apiRegisterUser(String name, String email, String phone, String password) {
+        apiClient.apiRegisterUser(name, email, phone, password);
         return this;
     }
 }
