@@ -99,13 +99,18 @@ public class CreatingOrderPage {
     public CreatingOrderPage getDeliveryDateWithoutDisabled() {
         List<String> disabledDaysList = apiClient.getDisabledDeliveryDaysList();
         List<String> convertedDisabledDaysList = HelperPage.convertDates(disabledDaysList);
+        System.out.println(convertedDisabledDaysList + " convert");
+
         List<String> uiDaysList = HelperPage.getListFromAriaLabelAttribute(deliveryAllDays);
+        System.out.println(uiDaysList + " uidays");
 
         uiDaysList.removeAll(convertedDisabledDaysList);
 
-        //ElementsCollection filteredElements = HelperPage.filterOutElementsByAriaLabel(deliveryAllDays, dates);
+        String randomDeliveryDay = HelperPage.getRandomStringFromList(uiDaysList);
+        deliveryAllDays.filterBy(Condition.attribute("aria-label", randomDeliveryDay))
+                .first()
+                .click();
         return this;
-
     }
 
     public SelenideElement getRandomDay(ElementsCollection collection) {

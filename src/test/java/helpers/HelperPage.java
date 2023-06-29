@@ -100,4 +100,11 @@ public class HelperPage {
         }
         return textList;
     }
+
+    public static String getRandomStringFromList(List<String> list) {
+        if (list == null || list.isEmpty()) {
+            return null;
+        }
+        return list.get(new Random().nextInt(list.size()));
+    }
 }
