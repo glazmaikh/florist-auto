@@ -28,15 +28,15 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 
 public class ApiClient {
-    private final RequestSpecification httpRequest = given();
     private final CityDataItemDto city = getRandomCityFromList();
     private final BouquetDataItemDto bouquet = getRandomBouquetByCityID(city.getId());
     private Data data = getDeliveryPriceByCitySlug(city.getSlug());
-    private final Map<String, String> disabledDates = getDisabledDate();
+    private final List<String> disabledDates = getDisabledDate();
 
     // получение рандомного города из списка всех городов
     @SneakyThrows
     private CityDataItemDto getRandomCityFromList() {
+        RequestSpecification httpRequest = given();
         Response responseCity = httpRequest
                 .auth().basic("florist_api", "123")
                 .get("api/city");
@@ -54,6 +54,7 @@ public class ApiClient {
     // получение рандомного букета по ID города
     @SneakyThrows
     public BouquetDataItemDto getRandomBouquetByCityID(String cityId) {
+        RequestSpecification httpRequest = given();
         Response responseBouquet = httpRequest
                 .auth().basic("florist_api", "123")
                 .param("city", cityId)
@@ -70,6 +71,7 @@ public class ApiClient {
     // получение цены доставки по slug города
     @SneakyThrows
     public Data getDeliveryPriceByCitySlug(String citySlug) {
+        RequestSpecification httpRequest = given();
         Response responseCitySlug = httpRequest
                 .auth().basic("florist_api", "123")
                 .param("alias", citySlug)
@@ -85,6 +87,7 @@ public class ApiClient {
     // получение даты о заказе из ERP
     @SneakyThrows
     public OrderData getOrderData() {
+        RequestSpecification httpRequest = given();
         Response responseOrderData = httpRequest
                 .auth().basic("florist_api", "123")
                 .param("id", HelperPage.getOrderNumber())
@@ -99,6 +102,7 @@ public class ApiClient {
     // для чего это?
     @SneakyThrows
     public models.auth.User getUser(String login, String password) {
+        RequestSpecification httpRequest = given();
         Response userAuthData = httpRequest
                 .auth().basic("florist_api", "123")
                 .param("login", login)
@@ -139,18 +143,16 @@ public class ApiClient {
     }
 
     @SneakyThrows
-    private Map<String, String> getDisabledDate() {
+    private List<String> getDisabledDate() {
         RequestSpecification httpRequest = given();
         Response responseDisabledData = httpRequest
                 .auth().basic("florist_api", "123")
-                .param("country", 1)
-                //.param("ids", bouquet.getId())
                 .get("/api/delivery/date");
         ResponseBody responseBody = responseDisabledData.getBody();
 
         ObjectMapper objectMapper = new ObjectMapper();
         DisabledDeliveryDateResponse disabledDate = objectMapper.readValue(responseBody.asString(), DisabledDeliveryDateResponse.class);
-        return disabledDate.getData().getDisabled_dates();
+        return new ArrayList<>(disabledDate.getData().getDisabled_dates().values());
     }
 
     public String getRandomCityName() {
@@ -193,6 +195,6 @@ public class ApiClient {
     }
 
     public List<String> getDisabledDeliveryDaysList() {
-        return new ArrayList<>(disabledDates.values());
+        return disabledDates;
     }
 }
