@@ -102,6 +102,18 @@ public class CriticalPathTests extends TestBase {
     @Test
     void test() {
         catalogPage.openCatalogPage(baseUrl)
+                .closeCookiePopUp()
+                .setRandomCity()
+                .setRandomBouquet();
+
+        bouquetPage.openBouquetPage(baseUrl)
+                .assertBouquetName()
+                .assertVariationsPrices()
+                .assertDeliveryPrice()
+                .getFirstVariation()
+                .addToCard(baseUrl);
+
+        creatingOrderPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
                 .getDeliveryDateWithoutDisabled();
     }
 }

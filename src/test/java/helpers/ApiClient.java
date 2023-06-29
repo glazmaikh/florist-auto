@@ -188,7 +188,7 @@ public class ApiClient {
         return values.get(new Random().nextInt(values.size()));
     }
 
-    // иногда error must be positive
+    // иногда error index must be positive
     private BouquetDataItemDto getRandomBouquetObject(Map<String, BouquetDataItemDto> bouquetMap) {
         List<BouquetDataItemDto> values = new ArrayList<>(bouquetMap.values());
         return values.get(new Random().nextInt(values.size()));

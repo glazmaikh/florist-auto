@@ -62,14 +62,6 @@ public class CatalogPage {
         return this;
     }
 
-    public CatalogPage getDeliveryDateWithoutDisabled() {
-        List<String> list = apiClient.getDisabledDeliveryDaysList();
-        for (String li : list) {
-            System.out.println(li + " day");
-        }
-        return this;
-    }
-
     public CatalogPage setRandomCity() {
         cityPopUp.shouldBe(exist);
         String cityName = apiClient.getRandomCityName();

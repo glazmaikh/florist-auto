@@ -2,6 +2,7 @@ package helpers;
 
 import static com.codeborne.selenide.Selenide.*;
 
+import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 
 import java.time.LocalDate;
@@ -55,5 +56,48 @@ public class HelperPage {
                 .ofPattern("d MMMM yyyy 'г.'", new Locale("ru"));
         LocalDate date = LocalDate.parse(formatDate, inputFormatter);
         return date.format(outputFormatter);
+    }
+
+    public static List<String> convertDates(List<String> dates) {
+        List<String> convertedDates = new ArrayList<>();
+        Pattern pattern = Pattern.compile("(\\d{4})-(\\d{2})-(\\d{2})");
+
+        for (String date : dates) {
+            Matcher matcher = pattern.matcher(date);
+
+            if (matcher.matches()) {
+                int day = Integer.parseInt(matcher.group(3));
+                int month = Integer.parseInt(matcher.group(2));
+                int year = Integer.parseInt(matcher.group(1));
+
+                String formattedDate = String.format("%d %s %d г.", day, getMonthName(month), year);
+                convertedDates.add(formattedDate);
+            } else {
+                convertedDates.add("Invalid date format");
+            }
+        }
+
+        return convertedDates;
+    }
+
+    private static String getMonthName(int month) {
+        String[] monthNames = {
+                "января", "февраля", "марта", "апреля",
+                "мая", "июня", "июля", "августа",
+                "сентября", "октября", "ноября", "декабря"
+        };
+        return monthNames[month - 1];
+    }
+
+    public static List<String> getListFromAriaLabelAttribute(ElementsCollection collection) {
+        List<String> textList = new ArrayList<>();
+
+        for (SelenideElement element : collection) {
+            String ariaLabel = element.getAttribute("aria-label");
+            if (ariaLabel != null && !ariaLabel.isEmpty()) {
+                textList.add(ariaLabel);
+            }
+        }
+        return textList;
     }
 }
