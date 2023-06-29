@@ -1,7 +1,6 @@
 package helpers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import io.restassured.response.ResponseBody;
@@ -15,6 +14,7 @@ import models.city.CityDataDto;
 import models.city.CityDataItemDto;
 import models.cityAlias.Data;
 import models.cityAlias.CityDataAliasDto;
+import models.disabledDelivery.DisabledDeliveryDateResponse;
 import models.order.OrderData;
 import models.register.User;
 import models.register.UserWrapper;
@@ -32,6 +32,7 @@ public class ApiClient {
     private final CityDataItemDto city = getRandomCityFromList();
     private final BouquetDataItemDto bouquet = getRandomBouquetByCityID(city.getId());
     private Data data = getDeliveryPriceByCitySlug(city.getSlug());
+    private final Map<String, String> disabledDates = getDisabledDate();
 
     // получение рандомного города из списка всех городов
     @SneakyThrows
@@ -66,6 +67,7 @@ public class ApiClient {
         return getRandomBouquetObject(bouquetData.getData());
     }
 
+    // получение цены доставки по slug города
     @SneakyThrows
     public Data getDeliveryPriceByCitySlug(String citySlug) {
         Response responseCitySlug = httpRequest
@@ -80,6 +82,7 @@ public class ApiClient {
         return data;
     }
 
+    // получение даты о заказе из ERP
     @SneakyThrows
     public OrderData getOrderData() {
         Response responseOrderData = httpRequest
@@ -93,6 +96,7 @@ public class ApiClient {
         return objectMapper.readValue(orderBody.asString(), OrderData.class);
     }
 
+    // для чего это?
     @SneakyThrows
     public models.auth.User getUser(String login, String password) {
         Response userAuthData = httpRequest
@@ -108,6 +112,7 @@ public class ApiClient {
         return user;
     }
 
+    // метод регистрации клиента на сайте
     public void apiRegisterUser(String login, String email, String phone, String password) {
         User user = new User(login, email, phone, password);
         UserWrapper userWrapper = new UserWrapper(user);
@@ -131,6 +136,21 @@ public class ApiClient {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @SneakyThrows
+    private Map<String, String> getDisabledDate() {
+        RequestSpecification httpRequest = given();
+        Response responseDisabledData = httpRequest
+                .auth().basic("florist_api", "123")
+                .param("country", 1)
+                //.param("ids", bouquet.getId())
+                .get("/api/delivery/date");
+        ResponseBody responseBody = responseDisabledData.getBody();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        DisabledDeliveryDateResponse disabledDate = objectMapper.readValue(responseBody.asString(), DisabledDeliveryDateResponse.class);
+        return disabledDate.getData().getDisabled_dates();
     }
 
     public String getRandomCityName() {
@@ -166,8 +186,13 @@ public class ApiClient {
         return values.get(new Random().nextInt(values.size()));
     }
 
+    // иногда error must be positive
     private BouquetDataItemDto getRandomBouquetObject(Map<String, BouquetDataItemDto> bouquetMap) {
         List<BouquetDataItemDto> values = new ArrayList<>(bouquetMap.values());
         return values.get(new Random().nextInt(values.size()));
+    }
+
+    public List<String> getDisabledDeliveryDaysList() {
+        return new ArrayList<>(disabledDates.values());
     }
 }

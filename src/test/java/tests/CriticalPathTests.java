@@ -1,11 +1,22 @@
 package tests;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import helpers.ApiClient;
+
+import io.restassured.response.Response;
+import io.restassured.response.ResponseBody;
+import io.restassured.specification.RequestSpecification;
+import models.disabledDelivery.DisabledDeliveryDateResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import pages.*;
+
+import java.util.Map;
+
+import static io.restassured.RestAssured.given;
 
 public class CriticalPathTests extends TestBase {
     private final TestData testData = new TestData();
@@ -86,5 +97,11 @@ public class CriticalPathTests extends TestBase {
                 .fillAuthForm(yourEmail, password);
 
         orderPage.assertAuth(baseUrl, yourName);
+    }
+
+    @Test
+    void test() {
+        catalogPage.openCatalogPage(baseUrl)
+                .getDeliveryDateWithoutDisabled();
     }
 }

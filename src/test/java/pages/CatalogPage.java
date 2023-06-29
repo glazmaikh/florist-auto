@@ -2,15 +2,24 @@ package pages;
 
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import helpers.ApiClient;
+import io.restassured.response.Response;
+import io.restassured.response.ResponseBody;
+import io.restassured.specification.RequestSpecification;
+import models.disabledDelivery.DisabledDeliveryDateResponse;
 
 import java.time.Duration;
+import java.util.List;
+import java.util.Map;
 
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Configuration.baseUrl;
 import static com.codeborne.selenide.Selectors.byName;
 import static com.codeborne.selenide.Selenide.*;
 import static com.codeborne.selenide.WebDriverConditions.url;
+import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CatalogPage {
@@ -50,6 +59,14 @@ public class CatalogPage {
     public CatalogPage openCatalogPage(String baseUrl) {
         open(baseUrl);
         webdriver().shouldHave(url(baseUrl));
+        return this;
+    }
+
+    public CatalogPage getDeliveryDateWithoutDisabled() {
+        List<String> list = apiClient.getDisabledDeliveryDaysList();
+        for (String li : list) {
+            System.out.println(li + " day");
+        }
         return this;
     }
 

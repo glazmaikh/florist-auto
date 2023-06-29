@@ -46,7 +46,7 @@ public class HelperPage {
     }
 
     public static String formatPriceRub(String formatPrice) {
-        return formatPrice.replaceAll("[ ,.\"\\n]", "").trim() + "₽";
+        return formatPrice.replaceAll("[ ,.₽\"\\n]", "").trim() + "₽";
     }
 
     public static String formatCreatedDate(String formatDate) {
