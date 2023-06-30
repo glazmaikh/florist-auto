@@ -46,7 +46,7 @@ public class CreatingOrderPage {
     }
 
     public CreatingOrderPage simpleFillForm(String name, String phone, String address) {
-        nameInput.val(name);
+        nameInput.shouldBe(exist).val(name);
         phoneInput.val(phone);
 
         try {
@@ -102,13 +102,9 @@ public class CreatingOrderPage {
         return new PaymentPage(apiClient);
     }
 
-    // 2. сделать тесты для выбора конкретного дня
-//    public CreatingOrderPage getRandomDeliveryDay() {
-//        SelenideElement randomDeliveryDay = getRandomDay(deliveryDay);
-//        randomDeliveryDay.click();
-//        return this;
-//    }
-
+    // 1. сделать тесты для выбора конкретного дня
+    // 2. указать время доставки
+    // 3. вызвать getRandomDay
     public CreatingOrderPage getDeliveryDateWithoutDisabled() {
         List<String> disabledDaysList = apiClient.getDisabledDeliveryDaysList();
         List<String> convertedDisabledDaysList = HelperPage.convertDates(disabledDaysList);
@@ -117,7 +113,6 @@ public class CreatingOrderPage {
         uiDaysList.removeAll(convertedDisabledDaysList);
 
         String randomDeliveryDay = HelperPage.getRandomStringFromList(uiDaysList);
-        System.out.println(randomDeliveryDay);
         deliveryAllDays.filterBy(Condition.attribute("aria-label", randomDeliveryDay))
                 .first()
                 .click();

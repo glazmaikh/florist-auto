@@ -32,6 +32,7 @@ public class ApiClient {
     private final BouquetDataItemDto bouquet = getRandomBouquetByCityID(city.getId());
     private Data data = getDeliveryPriceByCitySlug(city.getSlug());
     private final List<String> disabledDates = getDisabledDate();
+    private OrderData orderData;
 
     // получение рандомного города из списка всех городов
     @SneakyThrows
@@ -85,8 +86,22 @@ public class ApiClient {
     }
 
     // получение даты о заказе из ERP
+//    @SneakyThrows
+//    public OrderData getOrderData() {
+//        RequestSpecification httpRequest = given();
+//        Response responseOrderData = httpRequest
+//                .auth().basic("florist_api", "123")
+//                .param("id", HelperPage.getOrderNumber())
+//                .param("access_key", HelperPage.getOrderAccessKey())
+//                .get("api/order/byAccessKey");
+//        ResponseBody orderBody = responseOrderData.getBody();
+//
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        return objectMapper.readValue(orderBody.asString(), OrderData.class);
+//    }
+
     @SneakyThrows
-    public OrderData getOrderData() {
+    public void getOrderData() {
         RequestSpecification httpRequest = given();
         Response responseOrderData = httpRequest
                 .auth().basic("florist_api", "123")
@@ -96,7 +111,47 @@ public class ApiClient {
         ResponseBody orderBody = responseOrderData.getBody();
 
         ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.readValue(orderBody.asString(), OrderData.class);
+        orderData = objectMapper.readValue(orderBody.asString(), OrderData.class);
+    }
+
+    public int getOrderId() {
+        return orderData.getData().getId();
+    }
+
+    public String getOrderBouquetName() {
+        return orderData.getData().getCart().get("0").getName();
+    }
+
+    public int getOrderPrice() {
+        return orderData.getData().getCart().get("0").getPrice().getRUB();
+    }
+
+    public String getOrderVariation() {
+        return orderData.getData().getCart().get("0").getVariation();
+    }
+
+    public int getOrderCount() {
+        return orderData.getData().getCart().get("0").getCount();
+    }
+
+    public String getOrderDeliveryDate() {
+        return orderData.getData().getCart().get("1").getName();
+    }
+
+    public int getOrderDeliveryPrice() {
+        return orderData.getData().getCart().get("1").getPrice().getRUB();
+    }
+
+    public int getOrderTotalPrice() {
+        return orderData.getData().getTotal().getRUB();
+    }
+
+    public String getOrderStatus() {
+        return orderData.getData().getStatus_text();
+    }
+
+    public String getOrderCreatedAt() {
+        return orderData.getData().getCreated_at();
     }
 
     // для чего это?

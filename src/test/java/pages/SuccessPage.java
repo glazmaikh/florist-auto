@@ -25,22 +25,22 @@ public class SuccessPage {
     @SneakyThrows
     public SuccessPage assertSuccessCreatedOrder(String baseUrl) {
         webdriver().shouldHave(url(baseUrl + apiClient.getSlug() + "/order/payment/" + HelperPage.getOrderNumber() + "/success/" + HelperPage.getOrderAccessKey()), Duration.ofSeconds(10));
-        OrderData orderData = apiClient.getOrderData();
+        apiClient.getOrderData();
 
-        String id = String.valueOf(orderData.getData().getId());
-        String orderCreatedDate = HelperPage.formatCreatedDate(orderData.getData().getCreated_at());
-        String totalDataPrice = HelperPage.formatPriceRub(String.valueOf(orderData.getData().getTotal().getRUB()));
+        String orderId = String.valueOf(apiClient.getOrderId());
+        String orderCreatedDate = HelperPage.formatCreatedDate(apiClient.getOrderCreatedAt());
+        String totalDataPrice = HelperPage.formatPriceRub(String.valueOf(apiClient.getOrderTotalPrice()));
 
         assertAll(
                 "Проверка состава заказа на странице успешно оплаченного заказа",
-                () -> assertTrue(orderList.stream().anyMatch(e -> e.getOwnText().replaceAll("\\s+", "").equals(id)),
-                        "incorrect order number"),
+                () -> assertTrue(orderList.stream().anyMatch(e -> e.getOwnText().replaceAll("\\s+", "")
+                                .equals(orderId)), "incorrect order number"),
                 () -> assertTrue(orderList.stream().anyMatch(e -> e.getOwnText().trim().equals(orderCreatedDate)),
                         "incorrect order created time"),
                 () -> assertEquals(totalDataPrice, totalPrice.text().replaceAll("[ ,.\"\\n]", "").trim() ,
                         "incorrect total price")
         );
-        assertTrue(orderData.getData().getStatus_text().contains("Оплачен"), "order has not been paid");
+        assertTrue(apiClient.getOrderStatus().contains("Оплачен"), "order has not been paid");
         return this;
     }
 }

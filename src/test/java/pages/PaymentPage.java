@@ -34,21 +34,19 @@ public class PaymentPage {
     @SneakyThrows
     public PaymentPage assertOrderList() {
         header.shouldHave(textCaseSensitive("Оплата заказа"));
-
-        OrderData orderData = apiClient.getOrderData();
-        assertEquals(String.valueOf(orderData.getData().getId()), header.getText().replaceAll("[^0-9]", ""),
+        apiClient.getOrderData();
+        assertEquals(String.valueOf(apiClient.getOrderId()), header.getText().replaceAll("[^0-9]", ""),
                 "incorrect order number on PaymentPage");
 
-        String bouquetName = orderData.getData().getCart().get("0").getName();
-        String price = HelperPage.formatPriceRub(String.valueOf(orderData.getData().getCart().get("0").getPrice().getRUB()));
-        String variation = orderData.getData().getCart().get("0").getVariation();
-        String count = orderData.getData().getCart().get("0").getCount() + " шт.";
-        String deliveryDateData = orderData.getData().getCart().get("1").getName();
-        String deliveryPrice = HelperPage.formatPriceRub(String.valueOf(orderData.getData().getCart().get("1").getPrice().getRUB()));
-        String totalPrice = HelperPage.formatPriceRub(String.valueOf(orderData.getData().getTotal().getRUB()));
+        String bouquetName = apiClient.getOrderBouquetName();
+        String price = HelperPage.formatPriceRub(String.valueOf(apiClient.getOrderPrice()));
+        String variation = apiClient.getOrderVariation();
+        String count = apiClient.getOrderCount() + " шт.";
+        String deliveryDate = apiClient.getOrderDeliveryDate();
+        String deliveryPrice = HelperPage.formatPriceRub(String.valueOf(apiClient.getOrderDeliveryPrice()));
+        String totalPrice = HelperPage.formatPriceRub(String.valueOf(apiClient.getOrderTotalPrice()));
 
-        System.out.println(deliveryPrice + " dp");
-        if (orderData.getData().getCart().get("1").getPrice().getRUB() == 0) {
+        if (apiClient.getOrderDeliveryPrice() == 0) {
             assertTrue(orderList.stream().anyMatch(e -> e.text().equals("Бесплатно")), "incorrect delivery price");
         } else {
             assertTrue(orderList.stream().anyMatch(e -> HelperPage.formatPriceRub(e.text()).equals(HelperPage.formatPriceRub(deliveryPrice))),
@@ -57,7 +55,7 @@ public class PaymentPage {
 
         assertAll(
                 "Проверка состава заказа на странице оплаты",
-                () -> assertTrue(orderData.getData().getStatus_text().contains("Ожидает оплаты")),
+                () -> assertTrue(apiClient.getOrderStatus().contains("Ожидает оплаты")),
                 () -> assertTrue(orderList.stream().anyMatch(e -> e.text().equals(bouquetName)),
                         "incorrect bouquet name"),
                 () -> assertTrue(orderList.stream().anyMatch(e -> e.text().equals(variation)),
@@ -66,7 +64,7 @@ public class PaymentPage {
                         "incorrect bouquet count"),
                 () -> assertTrue(orderList.stream().anyMatch(e -> HelperPage.formatPriceRub(e.text()).equals(HelperPage.formatPriceRub(price))),
                         "incorrect bouquet price"),
-                () -> assertTrue(orderList.stream().anyMatch(e -> e.text().equals(deliveryDateData)),
+                () -> assertTrue(orderList.stream().anyMatch(e -> e.text().equals(deliveryDate)),
                         "incorrect delivery city and date"),
                 () -> assertTrue(orderList.stream().anyMatch(e -> HelperPage.formatPriceRub(e.text()).equals(HelperPage.formatPriceRub(totalPrice))),
                         "incorrect total price")

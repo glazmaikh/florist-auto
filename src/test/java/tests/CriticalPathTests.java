@@ -1,20 +1,12 @@
 package tests;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import helpers.ApiClient;
 
-import io.restassured.response.Response;
-import io.restassured.response.ResponseBody;
-import io.restassured.specification.RequestSpecification;
-import models.disabledDelivery.DisabledDeliveryDateResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import pages.*;
-
-import java.util.Map;
 
 import static io.restassured.RestAssured.given;
 
@@ -25,7 +17,7 @@ public class CriticalPathTests extends TestBase {
     private CreatingOrderPage creatingOrderPage;
     private PaymentPage paymentPage;
     private SuccessPage successPage;
-    private OrderPage orderPage;
+    private AccountOrderPage accountOrderPage;
     private String yourName, yourEmail, yourPhone, firstName, phone, address, password;
 
     @BeforeEach
@@ -45,7 +37,7 @@ public class CriticalPathTests extends TestBase {
         creatingOrderPage = new CreatingOrderPage(apiClient);
         paymentPage = new PaymentPage(apiClient);
         successPage = new SuccessPage(apiClient);
-        orderPage = new OrderPage(apiClient);
+        accountOrderPage = new AccountOrderPage(apiClient);
     }
 
     @Test
@@ -96,10 +88,11 @@ public class CriticalPathTests extends TestBase {
                 .openAuthModal()
                 .fillAuthForm(yourEmail, password);
 
-        orderPage.assertAuth(baseUrl, yourName);
+        accountOrderPage.assertAuth(baseUrl, yourName);
     }
 
     @Test
+    @Tag("create_order")
     void creatingNewOrderAnAuthUserTest() {
         catalogPage.apiRegisterUser(yourName, yourEmail, yourPhone, password)
                 .openCatalogPage(baseUrl)
@@ -107,7 +100,7 @@ public class CriticalPathTests extends TestBase {
                 .openAuthModal()
                 .fillAuthForm(yourEmail, password);
 
-        orderPage.assertAuth(baseUrl, yourName);
+        accountOrderPage.assertAuth(baseUrl, yourName);
 
         catalogPage.openCatalogPage(baseUrl)
                 .setRandomDeliveryCity()
@@ -131,5 +124,7 @@ public class CriticalPathTests extends TestBase {
                 .confirm();
 
         successPage.assertSuccessCreatedOrder(baseUrl);
+        catalogPage.openAccountOrderPage();
+        accountOrderPage.assertCreatedOrder(baseUrl, firstName);
     }
 }

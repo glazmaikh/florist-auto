@@ -2,33 +2,20 @@ package pages;
 
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import helpers.ApiClient;
-import io.restassured.response.Response;
-import io.restassured.response.ResponseBody;
-import io.restassured.specification.RequestSpecification;
-import models.disabledDelivery.DisabledDeliveryDateResponse;
 
 import java.time.Duration;
-import java.util.List;
-import java.util.Map;
 
 import static com.codeborne.selenide.Condition.*;
-import static com.codeborne.selenide.Configuration.baseUrl;
 import static com.codeborne.selenide.Selectors.byName;
 import static com.codeborne.selenide.Selenide.*;
 import static com.codeborne.selenide.WebDriverConditions.url;
-import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CatalogPage {
     private final ApiClient apiClient;
     private final SelenideElement cookiePopUp = $("._3bcT6MiV");
     private final SelenideElement cookiePopUpClose = $(".lkfJru7k");
-    private final SelenideElement cityPopUp = $("#confirm");
-    private final SelenideElement cityPopUpYes = $x("//span[text()='Да']");
-    private final SelenideElement cityPopUpCityNo = $x("//span[text()='Другой город']");
     private final SelenideElement deliveryCityModal = $x("//span[text()='Укажите город доставки в поле:']");
     private final SelenideElement cityPopUpInput = $("#location-select");
     private final SelenideElement cityLoader = $(".css-1gl4k7y");
@@ -44,7 +31,6 @@ public class CatalogPage {
     private final SelenideElement passwordInput = $(byName("password"));
     private final SelenideElement repeatPasswordInput = $(byName("repeatPassword"));
     private final SelenideElement loginInput = $(byName("login"));
-    private final SelenideElement subscribeInput = $("._1zXA0QMS ");
     private final SelenideElement captchaInput = $("#recaptcha-anchor");
     private final SelenideElement privacyPolicyInput = $x("//div[@class='boxes_item']//label");
     private final SelenideElement privacyAlert = $x("//span[text()='Вы должны согласиться с условиями']");
@@ -52,6 +38,7 @@ public class CatalogPage {
     private final SelenideElement iframeReCaptcha = $("iframe[title='reCAPTCHA']");
     private final SelenideElement submitButton = $("button[type='submit']");
     private final SelenideElement deliveryCity = $(".CUvbyl33");
+    private final SelenideElement accountOrdersButton = $("button[aria-label='Перейти в личный кабинет']");
 
     public CatalogPage(ApiClient apiClient) {
         this.apiClient = apiClient;
@@ -61,6 +48,11 @@ public class CatalogPage {
         open(baseUrl);
         webdriver().shouldHave(url(baseUrl));
         return this;
+    }
+
+    public AccountOrderPage openAccountOrderPage() {
+        accountOrdersButton.shouldBe(exist).click();
+        return new AccountOrderPage(apiClient);
     }
 
     public CatalogPage setRandomDeliveryCity() {
@@ -138,7 +130,7 @@ public class CatalogPage {
         return this;
     }
 
-    public OrderPage fillAuthForm(String email, String password) {
+    public AccountOrderPage fillAuthForm(String email, String password) {
         loginInput.sendKeys(email);
         emptyFieldAlert.shouldNotBe(exist);
 
@@ -146,7 +138,7 @@ public class CatalogPage {
         emptyFieldAlert.shouldNotBe(exist);
 
         submitButton.shouldNotBe(disabled).click();
-        return new OrderPage(apiClient);
+        return new AccountOrderPage(apiClient);
     }
 
     public CatalogPage apiRegisterUser(String name, String email, String phone, String password) {
