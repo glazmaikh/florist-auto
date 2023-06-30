@@ -50,10 +50,10 @@ public class CriticalPathTests extends TestBase {
 
     @Test
     @Tag("create_order")
-    void createNewOrderTest() {
+    void creatingNewOrderTest() {
         catalogPage.openCatalogPage(baseUrl)
                 .closeCookiePopUp()
-                .setRandomCity()
+                .setRandomDeliveryCity()
                 .setRandomBouquet();
 
         bouquetPage.openBouquetPage(baseUrl)
@@ -100,10 +100,17 @@ public class CriticalPathTests extends TestBase {
     }
 
     @Test
-    void test() {
-        catalogPage.openCatalogPage(baseUrl)
+    void creatingNewOrderAnAuthUserTest() {
+        catalogPage.apiRegisterUser(yourName, yourEmail, yourPhone, password)
+                .openCatalogPage(baseUrl)
                 .closeCookiePopUp()
-                .setRandomCity()
+                .openAuthModal()
+                .fillAuthForm(yourEmail, password);
+
+        orderPage.assertAuth(baseUrl, yourName);
+
+        catalogPage.openCatalogPage(baseUrl)
+                .setRandomDeliveryCity()
                 .setRandomBouquet();
 
         bouquetPage.openBouquetPage(baseUrl)
@@ -113,7 +120,16 @@ public class CriticalPathTests extends TestBase {
                 .getFirstVariation()
                 .addToCard(baseUrl);
 
-        creatingOrderPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
-                .getDeliveryDateWithoutDisabled();
+        creatingOrderPage.simpleFillForm(firstName, phone, address)
+                .getDeliveryDateWithoutDisabled()
+                .assertOrderList()
+                .pressPayButton();
+
+        paymentPage.assertOrderList()
+                .fillCard(cardNumber, expireNumber, cvcNumber)
+                .pay()
+                .confirm();
+
+        successPage.assertSuccessCreatedOrder(baseUrl);
     }
 }

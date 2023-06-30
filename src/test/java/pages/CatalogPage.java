@@ -29,7 +29,7 @@ public class CatalogPage {
     private final SelenideElement cityPopUp = $("#confirm");
     private final SelenideElement cityPopUpYes = $x("//span[text()='Да']");
     private final SelenideElement cityPopUpCityNo = $x("//span[text()='Другой город']");
-    private final SelenideElement cityPopUpModal = $x("//span[text()='Укажите город доставки в поле:']");
+    private final SelenideElement deliveryCityModal = $x("//span[text()='Укажите город доставки в поле:']");
     private final SelenideElement cityPopUpInput = $("#location-select");
     private final SelenideElement cityLoader = $(".css-1gl4k7y");
     private final ElementsCollection droppedCityList = $$("._8PeWF0tD");
@@ -51,6 +51,7 @@ public class CatalogPage {
     private final SelenideElement emptyFieldAlert = $x("//span[text()='Поле обязательно для заполнения']");
     private final SelenideElement iframeReCaptcha = $("iframe[title='reCAPTCHA']");
     private final SelenideElement submitButton = $("button[type='submit']");
+    private final SelenideElement deliveryCity = $(".CUvbyl33");
 
     public CatalogPage(ApiClient apiClient) {
         this.apiClient = apiClient;
@@ -62,22 +63,18 @@ public class CatalogPage {
         return this;
     }
 
-    public CatalogPage setRandomCity() {
-        cityPopUp.shouldBe(exist);
-        String cityName = apiClient.getRandomCityName();
-        if (cityName.equals("Москва")) {
-            cityPopUpYes.click();
-        } else {
-            cityPopUpCityNo.click();
-            cityPopUpModal.shouldBe(exist);
-            cityPopUpInput.val(cityName);
+    public CatalogPage setRandomDeliveryCity() {
+        deliveryCity.shouldBe(exist).click();
+        deliveryCityModal.shouldBe(exist);
 
-            cityLoader.shouldNotBe(visible, Duration.ofSeconds(10));
-            for (SelenideElement se : droppedCityList) {
-                if (se.getOwnText().contains(cityName)) {
-                    se.click();
-                    break;
-                }
+        String cityName = apiClient.getRandomCityName();
+        cityPopUpInput.val(cityName);
+
+        cityLoader.shouldNotBe(visible, Duration.ofSeconds(10));
+        for (SelenideElement se : droppedCityList) {
+            if (se.getOwnText().contains(cityName)) {
+                se.click();
+                break;
             }
         }
         return this;

@@ -45,6 +45,20 @@ public class CreatingOrderPage {
         this.apiClient = apiClient;
     }
 
+    public CreatingOrderPage simpleFillForm(String name, String phone, String address) {
+        nameInput.val(name);
+        phoneInput.val(phone);
+
+        try {
+            addressDaDataInput.shouldBe(exist).val(address);
+        } catch (AssertionError e) {
+            addressInput.shouldNotBe(hidden).val(address);
+        }
+
+        deliveryDateInput.click();
+        return this;
+    }
+
     public CreatingOrderPage simpleFillForm(String yourName, String yourEmail, String yourPhone, String name, String phone, String address) {
         yourNameInput.shouldBe(exist).val(yourName);
         yourEmailInput.val(yourEmail);
@@ -88,13 +102,12 @@ public class CreatingOrderPage {
         return new PaymentPage(apiClient);
     }
 
-    // 1. передавать ВСЕ недизейбл дни
     // 2. сделать тесты для выбора конкретного дня
-    public CreatingOrderPage getRandomDeliveryDay() {
-        SelenideElement randomDeliveryDay = getRandomDay(deliveryDay);
-        randomDeliveryDay.click();
-        return this;
-    }
+//    public CreatingOrderPage getRandomDeliveryDay() {
+//        SelenideElement randomDeliveryDay = getRandomDay(deliveryDay);
+//        randomDeliveryDay.click();
+//        return this;
+//    }
 
     public CreatingOrderPage getDeliveryDateWithoutDisabled() {
         List<String> disabledDaysList = apiClient.getDisabledDeliveryDaysList();
