@@ -47,7 +47,8 @@ public class PaymentPage {
         String deliveryPrice = HelperPage.formatPriceRub(String.valueOf(orderData.getData().getCart().get("1").getPrice().getRUB()));
         String totalPrice = HelperPage.formatPriceRub(String.valueOf(orderData.getData().getTotal().getRUB()));
 
-        if (deliveryPrice.equals("0")) {
+        System.out.println(deliveryPrice + " dp");
+        if (orderData.getData().getCart().get("1").getPrice().getRUB() == 0) {
             assertTrue(orderList.stream().anyMatch(e -> e.text().equals("Бесплатно")), "incorrect delivery price");
         } else {
             assertTrue(orderList.stream().anyMatch(e -> HelperPage.formatPriceRub(e.text()).equals(HelperPage.formatPriceRub(deliveryPrice))),

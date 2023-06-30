@@ -99,14 +99,12 @@ public class CreatingOrderPage {
     public CreatingOrderPage getDeliveryDateWithoutDisabled() {
         List<String> disabledDaysList = apiClient.getDisabledDeliveryDaysList();
         List<String> convertedDisabledDaysList = HelperPage.convertDates(disabledDaysList);
-        System.out.println(convertedDisabledDaysList + " convert");
 
         List<String> uiDaysList = HelperPage.getListFromAriaLabelAttribute(deliveryAllDays);
-        System.out.println(uiDaysList + " uidays");
-
         uiDaysList.removeAll(convertedDisabledDaysList);
 
         String randomDeliveryDay = HelperPage.getRandomStringFromList(uiDaysList);
+        System.out.println(randomDeliveryDay);
         deliveryAllDays.filterBy(Condition.attribute("aria-label", randomDeliveryDay))
                 .first()
                 .click();

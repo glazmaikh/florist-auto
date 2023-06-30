@@ -64,7 +64,7 @@ public class CriticalPathTests extends TestBase {
                 .addToCard(baseUrl);
 
         creatingOrderPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
-                .getRandomDeliveryDay()
+                .getDeliveryDateWithoutDisabled()
                 .assertOrderList()
                 .pressPayButton();
 

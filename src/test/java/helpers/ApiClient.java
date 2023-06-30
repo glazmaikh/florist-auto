@@ -147,6 +147,8 @@ public class ApiClient {
         RequestSpecification httpRequest = given();
         Response responseDisabledData = httpRequest
                 .auth().basic("florist_api", "123")
+                .param("city", city.getId())
+                .param("ids", bouquet.getId())
                 .get("/api/delivery/date");
         ResponseBody responseBody = responseDisabledData.getBody();
 
