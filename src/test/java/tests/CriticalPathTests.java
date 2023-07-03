@@ -125,6 +125,6 @@ public class CriticalPathTests extends TestBase {
 
         successPage.assertSuccessCreatedOrder(baseUrl);
         catalogPage.openAccountOrderPage();
-        accountOrderPage.assertCreatedOrder(baseUrl, firstName);
+        accountOrderPage.assertCreatedOrderFromAuthUser(baseUrl, yourName);
     }
 }

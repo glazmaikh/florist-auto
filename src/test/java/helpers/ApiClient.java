@@ -154,6 +154,10 @@ public class ApiClient {
         return orderData.getData().getCreated_at();
     }
 
+    public String getRecipientName() {
+        return orderData.getData().getRecipient_name();
+    }
+
     // для чего это?
     @SneakyThrows
     public models.auth.User getUser(String login, String password) {

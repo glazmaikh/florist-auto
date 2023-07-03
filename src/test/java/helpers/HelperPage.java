@@ -1,16 +1,14 @@
 package helpers;
 
-import static com.codeborne.selenide.Selenide.*;
-
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
-
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.codeborne.selenide.Selenide.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HelperPage {
@@ -106,5 +104,10 @@ public class HelperPage {
             return null;
         }
         return list.get(new Random().nextInt(list.size()));
+    }
+
+    public static String deliveryDataRegex(String date) {
+        String[] parts = date.split(" ");
+        return parts[parts.length - 1];
     }
 }
