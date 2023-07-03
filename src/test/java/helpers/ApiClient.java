@@ -158,6 +158,10 @@ public class ApiClient {
         return orderData.getData().getRecipient_name();
     }
 
+    public String getMaxPaidDate() {
+        return orderData.getData().getMax_paid_date();
+    }
+
     // для чего это?
     @SneakyThrows
     public models.auth.User getUser(String login, String password) {

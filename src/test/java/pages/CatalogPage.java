@@ -3,6 +3,7 @@ package pages;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import helpers.ApiClient;
+import helpers.HelperPage;
 
 import java.time.Duration;
 
@@ -11,6 +12,7 @@ import static com.codeborne.selenide.Selectors.byName;
 import static com.codeborne.selenide.Selenide.*;
 import static com.codeborne.selenide.WebDriverConditions.url;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CatalogPage {
     private final ApiClient apiClient;
@@ -39,6 +41,9 @@ public class CatalogPage {
     private final SelenideElement submitButton = $("button[type='submit']");
     private final SelenideElement deliveryCity = $(".CUvbyl33");
     private final SelenideElement accountOrdersButton = $("button[aria-label='Перейти в личный кабинет']");
+    private final SelenideElement header = $x("//h1");
+    private final SelenideElement createdOrderText = $("._2fUGBItB");
+    private final SelenideElement returnToPayButton = $x("//a[@class='btn']");
 
     public CatalogPage(ApiClient apiClient) {
         this.apiClient = apiClient;
@@ -144,5 +149,15 @@ public class CatalogPage {
     public CatalogPage apiRegisterUser(String name, String email, String phone, String password) {
         apiClient.apiRegisterUser(name, email, phone, password);
         return this;
+    }
+
+    public PaymentPage assertOrderAndBackToPay() {
+        header.scrollTo().shouldHave(textCaseSensitive("Заказ оформлен"));
+        createdOrderText.shouldHave(text(String.valueOf(apiClient.getOrderId())));
+        createdOrderText.shouldHave(text(HelperPage.regexMaxPaidDate(apiClient.getMaxPaidDate())));
+        assertTrue(apiClient.getOrderStatus().contains("Ожидает оплаты"));
+
+        returnToPayButton.shouldBe(exist).click();
+        return new PaymentPage(apiClient);
     }
 }

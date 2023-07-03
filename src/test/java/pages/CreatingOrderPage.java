@@ -9,12 +9,8 @@ import helpers.HelperPage;
 import org.openqa.selenium.JavascriptExecutor;
 
 import java.time.Duration;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.function.UnaryOperator;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selectors.byName;
@@ -32,8 +28,6 @@ public class CreatingOrderPage {
     private final SelenideElement addressDaDataInput = $(byName("recipientAddressSource"));
     private final SelenideElement addressInput = $(byName("recipientAddress"));
     private final SelenideElement deliveryDateInput = $(byName("deliveryDateSource"));
-    private final ElementsCollection deliveryDay =
-            $$x("//div[@class='react-calendar__month-view__days']//button[not(@disabled)]");
     private final ElementsCollection deliveryAllDays = $$x("//button[contains(@class, 'react-calendar__tile') and not(@disabled)]/abbr");
     private final SelenideElement payButton = $(byText("Оплатить"));
     private final SelenideElement priceSection = payButton.$(".no-wrap");
@@ -117,9 +111,5 @@ public class CreatingOrderPage {
                 .first()
                 .click();
         return this;
-    }
-
-    public SelenideElement getRandomDay(ElementsCollection collection) {
-        return collection.get(new Random().nextInt(collection.size()));
     }
 }

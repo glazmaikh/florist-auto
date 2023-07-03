@@ -110,4 +110,18 @@ public class HelperPage {
         String[] parts = date.split(" ");
         return parts[parts.length - 1];
     }
+
+    public static String regexMaxPaidDate(String date) {
+        String[] parts = date.split(" ");
+        String datePart = parts[0];
+        String timePart = parts[1];
+
+        String[] dateParts = datePart.split("-");
+        String year = dateParts[0];
+        String month = dateParts[1];
+        String day = dateParts[2];
+        String formattedDate = String.format("%s.%s.%s", day, month, year);
+
+        return formattedDate + ", " + timePart;
+    }
 }

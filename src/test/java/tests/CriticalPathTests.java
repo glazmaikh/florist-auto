@@ -8,8 +8,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import pages.*;
 
-import static io.restassured.RestAssured.given;
-
 public class CriticalPathTests extends TestBase {
     private final TestData testData = new TestData();
     private CatalogPage catalogPage;
@@ -62,6 +60,38 @@ public class CriticalPathTests extends TestBase {
 
         paymentPage.assertOrderList()
                 .fillCard(cardNumber, expireNumber, cvcNumber)
+                .pay()
+                .confirm();
+
+        successPage.assertSuccessCreatedOrder(baseUrl);
+    }
+
+    @Test
+    @Tag("create_order")
+    void usingBackAfterCreatedOrderTest() {
+        catalogPage.openCatalogPage(baseUrl)
+                .closeCookiePopUp()
+                .setRandomDeliveryCity()
+                .setRandomBouquet();
+
+        bouquetPage.openBouquetPage(baseUrl)
+                .assertBouquetName()
+                .assertVariationsPrices()
+                .assertDeliveryPrice()
+                .getFirstVariation()
+                .addToCard(baseUrl);
+
+        creatingOrderPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
+                .getDeliveryDateWithoutDisabled()
+                .assertOrderList()
+                .pressPayButton();
+
+        paymentPage.assertOrderList()
+                .backOnPrevious();
+
+        catalogPage.assertOrderAndBackToPay();
+
+        paymentPage.fillCard(cardNumber, expireNumber, cvcNumber)
                 .pay()
                 .confirm();
 

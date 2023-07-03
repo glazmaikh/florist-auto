@@ -5,7 +5,6 @@ import com.codeborne.selenide.SelenideElement;
 import helpers.ApiClient;
 import helpers.HelperPage;
 import lombok.SneakyThrows;
-import models.order.OrderData;
 
 import java.time.Duration;
 
@@ -90,6 +89,11 @@ public class PaymentPage {
         switchTo().frame(iframeAssist);
         confirmSubmitButton.shouldBe(exist, Duration.ofSeconds(15)).click();
         thanksFor.shouldBe(visible, Duration.ofSeconds(15));
+        return new SuccessPage(apiClient);
+    }
+
+    public SuccessPage backOnPrevious() {
+        back();
         return new SuccessPage(apiClient);
     }
 }
