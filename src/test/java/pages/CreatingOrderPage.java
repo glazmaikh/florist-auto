@@ -70,22 +70,22 @@ public class CreatingOrderPage {
         return this;
     }
 
-//    public CreatingOrderPage assertOrderList() {
-//        orderList.shouldBe(text(apiClient.getBouquetName()));
-//        HelperPage.assertPrice(apiClient.getBouquetPrice(), orderListPrices.get(0));
-//
-//        int deliveryPrice = HelperPage.doubleToIntRound(apiClient.getDeliveryPrice());
-//        if (deliveryPrice > 100) {
-//            HelperPage.assertPrice(deliveryPrice, orderListPrices.get(1));
-//            assertThat(HelperPage.priceRegex(orderListPrices.get(2)),
-//                    equalTo(String.valueOf(HelperPage.totalPrice(apiClient.getBouquetPrice(), deliveryPrice))));
-//        } else {
-//            orderList.shouldBe(text("бесплатно"));
-//            assertThat(HelperPage.priceRegex(orderListPrices.get(1)),
-//                    equalTo(String.valueOf(apiClient.getBouquetPrice())));
-//        }
-//        return this;
-//    }
+    public CreatingOrderPage assertOrderList() {
+        orderList.shouldBe(text(apiClient.getBouquetName()));
+        HelperPage.assertPrice(apiClient.getBouquetPrice(), orderListPrices.get(0));
+
+        int deliveryPrice = HelperPage.doubleToIntRound(apiClient.getDeliveryPrice());
+        if (deliveryPrice > 100) {
+            HelperPage.assertPrice(deliveryPrice, orderListPrices.get(1));
+            assertThat(HelperPage.priceRegex(orderListPrices.get(2)),
+                    equalTo(String.valueOf(HelperPage.totalPrice(apiClient.getBouquetPrice(), deliveryPrice))));
+        } else {
+            orderList.shouldBe(text("бесплатно"));
+            assertThat(HelperPage.priceRegex(orderListPrices.get(1)),
+                    equalTo(String.valueOf(apiClient.getBouquetPrice())));
+        }
+        return this;
+    }
 
     public PaymentPage pressPayButton() {
         priceSection.shouldBe(Condition.visible, Duration.ofSeconds(5)).click();
@@ -99,17 +99,17 @@ public class CreatingOrderPage {
     // 1. сделать тесты для выбора конкретного дня
     // 2. указать время доставки
     // 3. вызвать getRandomDay
-//    public CreatingOrderPage getDeliveryDateWithoutDisabled() {
-//        List<String> disabledDaysList = apiClient.getDisabledDeliveryDaysList();
-//        List<String> convertedDisabledDaysList = HelperPage.convertDates(disabledDaysList);
-//
-//        List<String> uiDaysList = HelperPage.getListFromAriaLabelAttribute(deliveryAllDays);
-//        uiDaysList.removeAll(convertedDisabledDaysList);
-//
-//        String randomDeliveryDay = HelperPage.getRandomStringFromList(uiDaysList);
-//        deliveryAllDays.filterBy(Condition.attribute("aria-label", randomDeliveryDay))
-//                .first()
-//                .click();
-//        return this;
-//    }
+    public CreatingOrderPage getDeliveryDateWithoutDisabled() {
+        List<String> disabledDaysList = apiClient.getDisabledDeliveryDaysList();
+        List<String> convertedDisabledDaysList = HelperPage.convertDates(disabledDaysList);
+
+        List<String> uiDaysList = HelperPage.getListFromAriaLabelAttribute(deliveryAllDays);
+        uiDaysList.removeAll(convertedDisabledDaysList);
+
+        String randomDeliveryDay = HelperPage.getRandomStringFromList(uiDaysList);
+        deliveryAllDays.filterBy(Condition.attribute("aria-label", randomDeliveryDay))
+                .first()
+                .click();
+        return this;
+    }
 }

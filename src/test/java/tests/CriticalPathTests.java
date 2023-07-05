@@ -38,65 +38,93 @@ public class CriticalPathTests extends TestBase {
         accountOrderPage = new AccountOrderPage(apiClient);
     }
 
-//    @Test
-//    @Tag("create_order")
-//    void creatingNewOrderTest() {
-//        catalogPage.openCatalogPage(baseUrl)
-//                .closeCookiePopUp()
-//                .setRandomDeliveryCity()
-//                .setRandomBouquet();
-//
-//        bouquetPage.openBouquetPage(baseUrl)
-//                .assertBouquetName()
-//                .assertVariationsPrices()
-//                .assertDeliveryPrice()
-//                .getFirstVariation()
-//                .addToCard(baseUrl);
-//
-//        creatingOrderPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
-//                .getDeliveryDateWithoutDisabled()
-//                .assertOrderList()
-//                .pressPayButton();
-//
-//        paymentPage.assertOrderList()
-//                .fillCard(cardNumber, expireNumber, cvcNumber)
-//                .pay()
-//                .confirm();
-//
-//        successPage.assertSuccessCreatedOrder(baseUrl);
-//    }
+    @Test
+    @Tag("create_order")
+    void createNewFloristRuOrderTest() {
+        catalogPage.openCatalogPage(baseUrl)
+                .closeCookiePopUp()
+                .setDeliveryCity()
+                .setFloristRuBouquet();
 
-//    @Test
-//    @Tag("create_order")
-//    void usingBackAfterCreatedOrderTest() {
-//        catalogPage.openCatalogPage(baseUrl)
-//                .closeCookiePopUp()
-//                .setRandomDeliveryCity()
-//                .setRandomBouquet();
-//
-//        bouquetPage.openBouquetPage(baseUrl)
-//                .assertBouquetName()
-//                .assertVariationsPrices()
-//                .assertDeliveryPrice()
-//                .getFirstVariation()
-//                .addToCard(baseUrl);
-//
-//        creatingOrderPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
-//                .getDeliveryDateWithoutDisabled()
-//                .assertOrderList()
-//                .pressPayButton();
-//
-//        paymentPage.assertOrderList()
-//                .backOnPrevious();
-//
-//        catalogPage.assertOrderAndBackToPay();
-//
-//        paymentPage.fillCard(cardNumber, expireNumber, cvcNumber)
-//                .pay()
-//                .confirm();
-//
-//        successPage.assertSuccessCreatedOrder(baseUrl);
-//    }
+        bouquetPage.openBouquetPage(baseUrl)
+                .assertBouquetName()
+                .assertVariationsPrices()
+                .assertDeliveryPrice()
+                .getFirstVariation()
+                .addToCard(baseUrl);
+
+        creatingOrderPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
+                .getDeliveryDateWithoutDisabled()
+                .assertOrderList()
+                .pressPayButton();
+
+        paymentPage.assertOrderList()
+                .fillCard(cardNumber, expireNumber, cvcNumber)
+                .pay()
+                .confirm();
+
+        successPage.assertSuccessCreatedOrder(baseUrl);
+    }
+
+    @Test
+    @Tag("create_order")
+    void createNewIFloristOrderTest() {
+        catalogPage.openCatalogPage(baseUrl)
+                .closeCookiePopUp()
+                .setDeliveryCity()
+                .setIFloristBouquet();
+
+        bouquetPage.openBouquetPage(baseUrl)
+                .assertBouquetName()
+                .assertVariationsPrices()
+                .assertDeliveryPrice()
+                .getFirstVariation()
+                .addToCard(baseUrl);
+
+        creatingOrderPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
+                .getDeliveryDateWithoutDisabled()
+                .assertOrderList()
+                .pressPayButton();
+
+        paymentPage.assertOrderList()
+                .fillCard(cardNumber, expireNumber, cvcNumber)
+                .pay()
+                .confirm();
+
+        successPage.assertSuccessCreatedOrder(baseUrl);
+    }
+
+    @Test
+    @Tag("create_order")
+    void usingBackAfterCreatedOrderTest() {
+        catalogPage.openCatalogPage(baseUrl)
+                .closeCookiePopUp()
+                .setDeliveryCity()
+                .setRandomBouquet();
+
+        bouquetPage.openBouquetPage(baseUrl)
+                .assertBouquetName()
+                .assertVariationsPrices()
+                .assertDeliveryPrice()
+                .getFirstVariation()
+                .addToCard(baseUrl);
+
+        creatingOrderPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
+                .getDeliveryDateWithoutDisabled()
+                .assertOrderList()
+                .pressPayButton();
+
+        paymentPage.assertOrderList()
+                .backOnPrevious();
+
+        catalogPage.assertOrderAndBackToPay();
+
+        paymentPage.fillCard(cardNumber, expireNumber, cvcNumber)
+                .pay()
+                .confirm();
+
+        successPage.assertSuccessCreatedOrder(baseUrl);
+    }
 
     @Disabled("Before remade captcha")
     @Test
@@ -121,47 +149,40 @@ public class CriticalPathTests extends TestBase {
         accountOrderPage.assertAuth(baseUrl, yourName);
     }
 
-//    @Test
-//    @Tag("create_order")
-//    void creatingNewOrderAnAuthUserTest() {
-//        catalogPage.apiRegisterUser(yourName, yourEmail, yourPhone, password)
-//                .openCatalogPage(baseUrl)
-//                .closeCookiePopUp()
-//                .openAuthModal()
-//                .fillAuthForm(yourEmail, password);
-//
-//        accountOrderPage.assertAuth(baseUrl, yourName);
-//
-//        catalogPage.openCatalogPage(baseUrl)
-//                .setRandomDeliveryCity()
-//                .setRandomBouquet();
-//
-//        bouquetPage.openBouquetPage(baseUrl)
-//                .assertBouquetName()
-//                .assertVariationsPrices()
-//                .assertDeliveryPrice()
-//                .getFirstVariation()
-//                .addToCard(baseUrl);
-//
-//        creatingOrderPage.simpleFillForm(firstName, phone, address)
-//                .getDeliveryDateWithoutDisabled()
-//                .assertOrderList()
-//                .pressPayButton();
-//
-//        paymentPage.assertOrderList()
-//                .fillCard(cardNumber, expireNumber, cvcNumber)
-//                .pay()
-//                .confirm();
-//
-//        successPage.assertSuccessCreatedOrder(baseUrl);
-//        catalogPage.openAccountOrderPage();
-//        accountOrderPage.assertCreatedOrderFromAuthUser(baseUrl, yourName);
-//    }
-
     @Test
-    void test() {
+    @Tag("create_order")
+    void creatingNewOrderAnAuthUserTest() {
+        catalogPage.apiRegisterUser(yourName, yourEmail, yourPhone, password)
+                .openCatalogPage(baseUrl)
+                .closeCookiePopUp()
+                .openAuthModal()
+                .fillAuthForm(yourEmail, password);
+
+        accountOrderPage.assertAuth(baseUrl, yourName);
+
         catalogPage.openCatalogPage(baseUrl)
-               // .closeCookiePopUp()
-                .getCity();
+                .setDeliveryCity()
+                .setRandomBouquet();
+
+        bouquetPage.openBouquetPage(baseUrl)
+                .assertBouquetName()
+                .assertVariationsPrices()
+                .assertDeliveryPrice()
+                .getFirstVariation()
+                .addToCard(baseUrl);
+
+        creatingOrderPage.simpleFillForm(firstName, phone, address)
+                .getDeliveryDateWithoutDisabled()
+                .assertOrderList()
+                .pressPayButton();
+
+        paymentPage.assertOrderList()
+                .fillCard(cardNumber, expireNumber, cvcNumber)
+                .pay()
+                .confirm();
+
+        successPage.assertSuccessCreatedOrder(baseUrl);
+        catalogPage.openAccountOrderPage();
+        accountOrderPage.assertCreatedOrderFromAuthUser(baseUrl, yourName);
     }
 }
