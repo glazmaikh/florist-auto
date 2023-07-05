@@ -49,6 +49,15 @@ public class CatalogPage {
         this.apiClient = apiClient;
     }
 
+    public void getCity() {
+        System.out.println(apiClient.getCityName());
+        System.out.println(apiClient.getCityId());
+        System.out.println(apiClient.getCitySlug());
+
+        apiClient.initBouquetFloristRu(false);
+        System.out.println(apiClient.getBouquetId());
+    }
+
     public CatalogPage openCatalogPage(String baseUrl) {
         open(baseUrl);
         webdriver().shouldHave(url(baseUrl));
@@ -64,7 +73,7 @@ public class CatalogPage {
         deliveryCity.shouldBe(exist).click();
         deliveryCityModal.shouldBe(exist);
 
-        String cityName = apiClient.getRandomCityName();
+        String cityName = apiClient.getCityName();
         cityPopUpInput.val(cityName);
 
         cityLoader.shouldNotBe(visible, Duration.ofSeconds(10));
@@ -77,26 +86,26 @@ public class CatalogPage {
         return this;
     }
 
-    public BouquetPage setRandomBouquet() {
-        bouquetLoader.shouldNotBe(visible, Duration.ofSeconds(30));
-        String bouquetName = apiClient.getBouquetName();
-
-        int count = 0;
-        for (SelenideElement se : bouquetList) {
-            if (se.getText().contains(bouquetName)) {
-                assertEquals(String.valueOf(apiClient.getBouquetPrice()),
-                        se.$("._1KvrG3Aq").getText().replaceAll("\\D", ""),
-                        "Incorrect price " + bouquetName);
-                se.click();
-                break;
-            } else if (count == bouquetList.size()) {
-                findMoreButton.shouldBe(exist, Duration.ofSeconds(30)).click();
-            } else {
-                count++;
-            }
-        }
-        return new BouquetPage(apiClient);
-    }
+//    public BouquetPage setRandomBouquet() {
+//        bouquetLoader.shouldNotBe(visible, Duration.ofSeconds(30));
+//        String bouquetName = apiClient.getBouquetName();
+//
+//        int count = 0;
+//        for (SelenideElement se : bouquetList) {
+//            if (se.getText().contains(bouquetName)) {
+//                assertEquals(String.valueOf(apiClient.getBouquetPrice()),
+//                        se.$("._1KvrG3Aq").getText().replaceAll("\\D", ""),
+//                        "Incorrect price " + bouquetName);
+//                se.click();
+//                break;
+//            } else if (count == bouquetList.size()) {
+//                findMoreButton.shouldBe(exist, Duration.ofSeconds(30)).click();
+//            } else {
+//                count++;
+//            }
+//        }
+//        return new BouquetPage(apiClient);
+//    }
 
     public CatalogPage closeCookiePopUp() {
         cookiePopUp.shouldBe(visible, Duration.ofSeconds(15));

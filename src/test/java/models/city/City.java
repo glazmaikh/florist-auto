@@ -4,9 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public @Data class Country {
-    private int id;
+public @Data class City {
     private String name;
-    private boolean foreign;
-    private String isoCode;
+    private String declension_name;
+    private int id;
 }
