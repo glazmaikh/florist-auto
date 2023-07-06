@@ -21,7 +21,7 @@ public class AccountOrderPage {
     }
 
     public AccountOrderPage assertCreatedOrderFromAuthUser(String baseUrl, String accountName) {
-        webdriver().shouldHave(url(baseUrl + apiClient.getSlug() + "/account/orders"));
+        webdriver().shouldHave(url(baseUrl + apiClient.getCitySlug() + "/account/orders"));
 
         table.shouldHave(text(String.valueOf(apiClient.getOrderId())));
         table.shouldHave(text(HelperPage.deliveryDataRegex(apiClient.getOrderDeliveryDate())));

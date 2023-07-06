@@ -27,7 +27,7 @@ public class BouquetPage {
     }
 
     public BouquetPage openBouquetPage(String baseUrl) {
-        webdriver().shouldHave(url(baseUrl + apiClient.getSlug() + "/bouquet-" + apiClient.getBouquetId()));
+        webdriver().shouldHave(url(baseUrl + apiClient.getCitySlug() + "/bouquet-" + apiClient.getBouquetId()));
         return this;
     }
 
@@ -35,7 +35,7 @@ public class BouquetPage {
         bouquetSection.shouldHave(text(apiClient.getBouquetName()));
         return this;
     }
-    // не сработает для акции, вариации не по порядку
+//    // не сработает для акции, вариации не по порядку
     public BouquetPage assertVariationsPrices() {
         List<PriceItemDto> priceList = apiClient.getPriceList();
         assertEquals(variation.size(), priceList.size(), "where is your variations?");
@@ -66,7 +66,7 @@ public class BouquetPage {
 
     public CreatingOrderPage addToCard(String baseUrl) {
         addToCardButton.shouldBe(Condition.exist, Duration.ofSeconds(5)).click();
-        webdriver().shouldHave(url(baseUrl + apiClient.getSlug() + "/checkout"), Duration.ofSeconds(10));
+        webdriver().shouldHave(url(baseUrl + apiClient.getCitySlug() + "/checkout"), Duration.ofSeconds(10));
         return new CreatingOrderPage(apiClient);
     }
 }

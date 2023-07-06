@@ -10,8 +10,8 @@ import models.auth.AuthDto;
 import models.bouquet.BouquetDataDto;
 import models.bouquet.BouquetDataItemDto;
 import models.bouquet.PriceItemDto;
-import models.city.CityDataDto;
-import models.city.CityDataItemDto;
+import models.city.CityData;
+import models.city.CityResponse;
 import models.cityAlias.Data;
 import models.cityAlias.CityDataAliasDto;
 import models.disabledDelivery.DisabledDeliveryDateResponse;
@@ -23,42 +23,69 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 
 public class ApiClient {
-    private final CityDataItemDto city = getRandomCityFromList();
-    private final BouquetDataItemDto bouquet = getRandomBouquetByCityID(city.getId());
-    private Data data = getDeliveryPriceByCitySlug(city.getSlug());
-    private final List<String> disabledDates = getDisabledDate();
+    private final CityData city = getCity();
+    private BouquetDataItemDto bouquet;
     private OrderData orderData;
+    private final Data data = getDeliveryPriceByCitySlug();
 
-    // получение рандомного города из списка всех городов
+    // Получение обьекта города Астрахань
     @SneakyThrows
-    private CityDataItemDto getRandomCityFromList() {
+    private CityData getCity() {
         RequestSpecification httpRequest = given();
         Response responseCity = httpRequest
                 .auth().basic("florist_api", "123")
-                .get("api/city");
+                .param("p", "Астрахань")
+                .param("mode", "geocity")
+                .get("api/city/search");
         ResponseBody bodyCity = responseCity.getBody();
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        CityDataDto cityData = objectMapper.readValue(bodyCity.asString(), CityDataDto.class);
-        CityDataItemDto city = getRandomCityObject(cityData.getData());
-        while (city.getCountry().getId().equals("2")) {
-            city = getRandomCityObject(cityData.getData());
-        }
-        return city;
+        ObjectMapper mapper = new ObjectMapper();
+        CityResponse cityResponse = mapper.readValue(bodyCity.asString(), CityResponse.class);
+        return cityResponse.getData().get(0);
     }
 
-    // получение рандомного букета по ID города
+    // методы для взаимодействия с обьектом города Астрахань
+    public String getCityName() {
+        return city.getShort_name();
+    }
+
+    public int getCityId() {
+        return city.getGeo().getCity().getId();
+    }
+
+    public String getCitySlug() {
+        return city.getSlug();
+    }
+
+    // получение рандомного букета floristRu/Iflorist по ID города
     @SneakyThrows
-    public BouquetDataItemDto getRandomBouquetByCityID(String cityId) {
+    private void getRandomFloristRuBouquetByCityID() {
         RequestSpecification httpRequest = given();
         Response responseBouquet = httpRequest
                 .auth().basic("florist_api", "123")
-                .param("city", cityId)
+                .param("city", getCityId())
+                .param("showPrices", 1)
+                .param("includeIflorist", 0)
+                .get("api/bouquet");
+        ResponseBody bodyBouquet = responseBouquet.getBody();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        BouquetDataDto bouquetData = objectMapper.readValue(bodyBouquet.asString(), BouquetDataDto.class);
+        bouquet = getRandomBouquetFloristRu(bouquetData.getData());
+    }
+
+    @SneakyThrows
+    private void getRandomIFloristBouquetByCityID() {
+        RequestSpecification httpRequest = given();
+        Response responseBouquet = httpRequest
+                .auth().basic("florist_api", "123")
+                .param("city", getCityId())
                 .param("showPrices", 1)
                 .param("includeIflorist", 1)
                 .get("api/bouquet");
@@ -66,40 +93,78 @@ public class ApiClient {
 
         ObjectMapper objectMapper = new ObjectMapper();
         BouquetDataDto bouquetData = objectMapper.readValue(bodyBouquet.asString(), BouquetDataDto.class);
-        return getRandomBouquetObject(bouquetData.getData());
+        bouquet = getBouquetIFloristList(bouquetData.getData());
     }
 
-    // получение цены доставки по slug города
     @SneakyThrows
-    public Data getDeliveryPriceByCitySlug(String citySlug) {
+    private void getRandomAllBouquetByCityID() {
+        RequestSpecification httpRequest = given();
+        Response responseBouquet = httpRequest
+                .auth().basic("florist_api", "123")
+                .param("city", getCityId())
+                .param("showPrices", 1)
+                .param("includeIflorist", 1)
+                .get("api/bouquet");
+        ResponseBody bodyBouquet = responseBouquet.getBody();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        BouquetDataDto bouquetData = objectMapper.readValue(bodyBouquet.asString(), BouquetDataDto.class);
+        bouquet = getRandomBouquet(bouquetData.getData());
+    }
+
+    public void initBouquet(BouquetType bouquetType) {
+        switch (bouquetType) {
+            case FLORIST_RU:
+                getRandomFloristRuBouquetByCityID();
+                break;
+            case IFLORIST:
+                getRandomIFloristBouquetByCityID();
+                break;
+            case ALL_BOUQUETS:
+                getRandomAllBouquetByCityID();
+                break;
+        }
+    }
+
+    // методы для взаимодействия с обьектом Букет
+    public int getBouquetId() {
+        return bouquet.getId();
+    }
+
+    public String getBouquetName() {
+        return bouquet.getName();
+    }
+
+    public int getBouquetPrice() {
+        return bouquet.getMin_price().getRub();
+    }
+
+    public List<PriceItemDto> getPriceList() {
+        return bouquet.getPriceList();
+    }
+
+
+    // получение обьекта Data - цены доставки по slug города
+    @SneakyThrows
+    public Data getDeliveryPriceByCitySlug() {
         RequestSpecification httpRequest = given();
         Response responseCitySlug = httpRequest
                 .auth().basic("florist_api", "123")
-                .param("alias", citySlug)
+                .param("alias", city.getSlug())
                 .get("api/city/0");
         ResponseBody responseBody = responseCitySlug.getBody();
 
         ObjectMapper objectMapper = new ObjectMapper();
         CityDataAliasDto cityDataAliasDto = objectMapper.readValue(responseBody.asString(), CityDataAliasDto.class);
-        data = cityDataAliasDto.getData();
-        return data;
+        return cityDataAliasDto.getData();
     }
 
-    // получение даты о заказе из ERP
-//    @SneakyThrows
-//    public OrderData getOrderData() {
-//        RequestSpecification httpRequest = given();
-//        Response responseOrderData = httpRequest
-//                .auth().basic("florist_api", "123")
-//                .param("id", HelperPage.getOrderNumber())
-//                .param("access_key", HelperPage.getOrderAccessKey())
-//                .get("api/order/byAccessKey");
-//        ResponseBody orderBody = responseOrderData.getBody();
-//
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        return objectMapper.readValue(orderBody.asString(), OrderData.class);
-//    }
+    // методы взаимодействия с обьектом Data - цен доставки по slug города
+    public double getDeliveryPrice() {
+        return data.getDelivery().get("RUB");
+    }
 
+    // получение обьекта OrderData о заказе из ERP
     @SneakyThrows
     public void getOrderData() {
         RequestSpecification httpRequest = given();
@@ -114,6 +179,7 @@ public class ApiClient {
         orderData = objectMapper.readValue(orderBody.asString(), OrderData.class);
     }
 
+    // методы для взаимодействия с обьектом OrderData о заказе из ERP
     public int getOrderId() {
         return orderData.getData().getId();
     }
@@ -162,6 +228,22 @@ public class ApiClient {
         return orderData.getData().getMax_paid_date();
     }
 
+    // Получение списка недоступных дней для доставки
+    @SneakyThrows
+    public List<String> getDisabledDeliveryDaysList() {
+        RequestSpecification httpRequest = given();
+        Response responseDisabledData = httpRequest
+                .auth().basic("florist_api", "123")
+                .param("city", getCityId())
+                .param("ids", bouquet.getId())
+                .get("/api/delivery/date");
+        ResponseBody responseBody = responseDisabledData.getBody();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        DisabledDeliveryDateResponse disabledDate = objectMapper.readValue(responseBody.asString(), DisabledDeliveryDateResponse.class);
+        return new ArrayList<>(disabledDate.getData().getDisabled_dates().values());
+    }
+
     // для чего это?
     @SneakyThrows
     public models.auth.User getUser(String login, String password) {
@@ -205,61 +287,23 @@ public class ApiClient {
         }
     }
 
-    @SneakyThrows
-    private List<String> getDisabledDate() {
-        RequestSpecification httpRequest = given();
-        Response responseDisabledData = httpRequest
-                .auth().basic("florist_api", "123")
-                .param("city", city.getId())
-                .param("ids", bouquet.getId())
-                .get("/api/delivery/date");
-        ResponseBody responseBody = responseDisabledData.getBody();
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        DisabledDeliveryDateResponse disabledDate = objectMapper.readValue(responseBody.asString(), DisabledDeliveryDateResponse.class);
-        return new ArrayList<>(disabledDate.getData().getDisabled_dates().values());
-    }
-
-    public String getRandomCityName() {
-        return city.getName();
-    }
-
-    public String getSlug() {
-        return city.getSlug();
-    }
-
-    public double getDeliveryPrice() {
-        return data.getDelivery().get("RUB");
-    }
-
-    public String getBouquetName() {
-        return bouquet.getName();
-    }
-
-    public int getBouquetPrice() {
-        return bouquet.getMin_price().getRub();
-    }
-
-    public int getBouquetId() {
-        return bouquet.getId();
-    }
-
-    public List<PriceItemDto> getPriceList() {
-        return bouquet.getPriceList();
-    }
-
-    private CityDataItemDto getRandomCityObject(Map<String, CityDataItemDto> cityMap) {
-        List<CityDataItemDto> values = new ArrayList<>(cityMap.values());
-        return values.get(new Random().nextInt(values.size()));
-    }
-
+    // методы получения рандомного обьекта Букета
     // иногда error index must be positive
-    private BouquetDataItemDto getRandomBouquetObject(Map<String, BouquetDataItemDto> bouquetMap) {
+    private BouquetDataItemDto getRandomBouquetFloristRu(Map<String, BouquetDataItemDto> bouquetMap) {
         List<BouquetDataItemDto> values = new ArrayList<>(bouquetMap.values());
         return values.get(new Random().nextInt(values.size()));
     }
 
-    public List<String> getDisabledDeliveryDaysList() {
-        return disabledDates;
+    private BouquetDataItemDto getBouquetIFloristList(Map<String, BouquetDataItemDto> bouquetMap) {
+        Map<String, BouquetDataItemDto> filteredMap = bouquetMap.entrySet()
+                .stream()
+                .filter(e -> e.getKey().startsWith("333"))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        return getRandomBouquet(filteredMap);
+    }
+
+    private BouquetDataItemDto getRandomBouquet(Map<String, BouquetDataItemDto> map) {
+        List<BouquetDataItemDto> values = new ArrayList<>(map.values());
+        return values.get(new Random().nextInt(values.size()));
     }
 }

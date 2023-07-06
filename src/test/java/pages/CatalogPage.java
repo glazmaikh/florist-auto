@@ -2,8 +2,12 @@ package pages;
 
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
+import com.codeborne.selenide.WebDriverRunner;
 import helpers.ApiClient;
+import helpers.BouquetType;
 import helpers.HelperPage;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 
@@ -13,6 +17,7 @@ import static com.codeborne.selenide.Selenide.*;
 import static com.codeborne.selenide.WebDriverConditions.url;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static tests.TestBase.baseUrl;
 
 public class CatalogPage {
     private final ApiClient apiClient;
@@ -24,7 +29,6 @@ public class CatalogPage {
     private final ElementsCollection droppedCityList = $$("._8PeWF0tD");
     private final SelenideElement bouquetLoader = $(".w0pOM9kK");
     private final ElementsCollection bouquetList = $$("._3fIsQ45s");
-    private final SelenideElement findMoreButton = $("//span[text()='Показать ещё']");
     private final SelenideElement authRegisterButton = $("button[aria-label='Войти на сайт']");
     private final SelenideElement createAccountTab = $x("//ul/span[text()='Создать аккаунт']");
     private final SelenideElement nameInput = $(byName("name"));
@@ -60,11 +64,11 @@ public class CatalogPage {
         return new AccountOrderPage(apiClient);
     }
 
-    public CatalogPage setRandomDeliveryCity() {
+    public CatalogPage setDeliveryCity() {
         deliveryCity.shouldBe(exist).click();
         deliveryCityModal.shouldBe(exist);
 
-        String cityName = apiClient.getRandomCityName();
+        String cityName = apiClient.getCityName();
         cityPopUpInput.val(cityName);
 
         cityLoader.shouldNotBe(visible, Duration.ofSeconds(10));
@@ -77,22 +81,28 @@ public class CatalogPage {
         return this;
     }
 
-    public BouquetPage setRandomBouquet() {
+    public BouquetPage setRandomBouquet(BouquetType bouquetType) {
+        apiClient.initBouquet(bouquetType);
         bouquetLoader.shouldNotBe(visible, Duration.ofSeconds(30));
         String bouquetName = apiClient.getBouquetName();
+        String bouquetPrice = String.valueOf(apiClient.getBouquetPrice());
+        int page = 1;
 
-        int count = 0;
-        for (SelenideElement se : bouquetList) {
-            if (se.getText().contains(bouquetName)) {
-                assertEquals(String.valueOf(apiClient.getBouquetPrice()),
-                        se.$("._1KvrG3Aq").getText().replaceAll("\\D", ""),
-                        "Incorrect price " + bouquetName);
-                se.click();
-                break;
-            } else if (count == bouquetList.size()) {
-                findMoreButton.shouldBe(exist, Duration.ofSeconds(30)).click();
-            } else {
-                count++;
+        boolean foundBouquet = false;
+        while (!foundBouquet) {
+            for (SelenideElement se : bouquetList) {
+                if (se.getText().contains(bouquetName)) {
+                    assertEquals(bouquetPrice, se.$("._1KvrG3Aq").getText().replaceAll("\\D", ""),
+                            "Incorrect price " + bouquetName);
+                    se.click();
+                    foundBouquet = true;
+                    break;
+                }
+            }
+            if (!foundBouquet) {
+                String nextPageUrl = baseUrl + "?page=" + (page + 1);
+                open(nextPageUrl);
+                page++;
             }
         }
         return new BouquetPage(apiClient);

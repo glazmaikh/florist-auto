@@ -1,4 +1,4 @@
-package models.city;
+package models.toDelete.city;
 
 import lombok.Data;
 

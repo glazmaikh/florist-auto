@@ -2,6 +2,7 @@ package tests;
 
 import helpers.ApiClient;
 
+import helpers.BouquetType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
@@ -40,11 +41,39 @@ public class CriticalPathTests extends TestBase {
 
     @Test
     @Tag("create_order")
-    void creatingNewOrderTest() {
+    void createNewFloristRuOrderTest() {
         catalogPage.openCatalogPage(baseUrl)
                 .closeCookiePopUp()
-                .setRandomDeliveryCity()
-                .setRandomBouquet();
+                .setDeliveryCity()
+                .setRandomBouquet(BouquetType.FLORIST_RU);
+
+        bouquetPage.openBouquetPage(baseUrl)
+                .assertBouquetName()
+                .assertVariationsPrices()
+                .assertDeliveryPrice()
+                .getFirstVariation()
+                .addToCard(baseUrl);
+
+        creatingOrderPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
+                .getDeliveryDateWithoutDisabled()
+                .assertOrderList()
+                .pressPayButton();
+
+        paymentPage.assertOrderList()
+                .fillCard(cardNumber, expireNumber, cvcNumber)
+                .pay()
+                .confirm();
+
+        successPage.assertSuccessCreatedOrder(baseUrl);
+    }
+
+    @Test
+    @Tag("create_order")
+    void createNewIFloristOrderTest() {
+        catalogPage.openCatalogPage(baseUrl)
+                .closeCookiePopUp()
+                .setDeliveryCity()
+                .setRandomBouquet(BouquetType.FLORIST_RU);
 
         bouquetPage.openBouquetPage(baseUrl)
                 .assertBouquetName()
@@ -71,8 +100,8 @@ public class CriticalPathTests extends TestBase {
     void usingBackAfterCreatedOrderTest() {
         catalogPage.openCatalogPage(baseUrl)
                 .closeCookiePopUp()
-                .setRandomDeliveryCity()
-                .setRandomBouquet();
+                .setDeliveryCity()
+                .setRandomBouquet(BouquetType.ALL_BOUQUETS);
 
         bouquetPage.openBouquetPage(baseUrl)
                 .assertBouquetName()
@@ -133,8 +162,8 @@ public class CriticalPathTests extends TestBase {
         accountOrderPage.assertAuth(baseUrl, yourName);
 
         catalogPage.openCatalogPage(baseUrl)
-                .setRandomDeliveryCity()
-                .setRandomBouquet();
+                .setDeliveryCity()
+                .setRandomBouquet(BouquetType.ALL_BOUQUETS);
 
         bouquetPage.openBouquetPage(baseUrl)
                 .assertBouquetName()

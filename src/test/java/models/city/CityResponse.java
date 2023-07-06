@@ -3,10 +3,9 @@ package models.city;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
+import java.util.List;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
-public @Data class Country {
-    private int id;
-    private String name;
-    private boolean foreign;
-    private String isoCode;
+public @Data class CityResponse {
+    private List<CityData> data;
 }
