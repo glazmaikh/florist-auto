@@ -82,7 +82,7 @@ public class CatalogPage {
     }
 
     public BouquetPage setRandomBouquet(BouquetType bouquetType) {
-        apiClient.initBouquetFloristRu(bouquetType);
+        apiClient.initBouquet(bouquetType);
         bouquetLoader.shouldNotBe(visible, Duration.ofSeconds(30));
         String bouquetName = apiClient.getBouquetName();
         String bouquetPrice = String.valueOf(apiClient.getBouquetPrice());

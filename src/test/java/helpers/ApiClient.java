@@ -112,7 +112,7 @@ public class ApiClient {
         bouquet = getRandomBouquet(bouquetData.getData());
     }
 
-    public void initBouquetFloristRu(BouquetType bouquetType) {
+    public void initBouquet(BouquetType bouquetType) {
         switch (bouquetType) {
             case FLORIST_RU:
                 getRandomFloristRuBouquetByCityID();
