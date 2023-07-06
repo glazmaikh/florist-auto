@@ -2,6 +2,7 @@ package tests;
 
 import helpers.ApiClient;
 
+import helpers.BouquetType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
@@ -44,7 +45,7 @@ public class CriticalPathTests extends TestBase {
         catalogPage.openCatalogPage(baseUrl)
                 .closeCookiePopUp()
                 .setDeliveryCity()
-                .setFloristRuBouquet();
+                .setRandomBouquet(BouquetType.FLORIST_RU);
 
         bouquetPage.openBouquetPage(baseUrl)
                 .assertBouquetName()
@@ -72,7 +73,7 @@ public class CriticalPathTests extends TestBase {
         catalogPage.openCatalogPage(baseUrl)
                 .closeCookiePopUp()
                 .setDeliveryCity()
-                .setIFloristBouquet();
+                .setRandomBouquet(BouquetType.FLORIST_RU);
 
         bouquetPage.openBouquetPage(baseUrl)
                 .assertBouquetName()
@@ -100,7 +101,7 @@ public class CriticalPathTests extends TestBase {
         catalogPage.openCatalogPage(baseUrl)
                 .closeCookiePopUp()
                 .setDeliveryCity()
-                .setRandomBouquet();
+                .setRandomBouquet(BouquetType.ALL_BOUQUETS);
 
         bouquetPage.openBouquetPage(baseUrl)
                 .assertBouquetName()
@@ -162,7 +163,7 @@ public class CriticalPathTests extends TestBase {
 
         catalogPage.openCatalogPage(baseUrl)
                 .setDeliveryCity()
-                .setRandomBouquet();
+                .setRandomBouquet(BouquetType.ALL_BOUQUETS);
 
         bouquetPage.openBouquetPage(baseUrl)
                 .assertBouquetName()
