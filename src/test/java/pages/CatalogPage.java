@@ -48,6 +48,7 @@ public class CatalogPage {
     private final SelenideElement header = $x("//h1");
     private final SelenideElement createdOrderText = $("._2fUGBItB");
     private final SelenideElement returnToPayButton = $x("//a[@class='btn']");
+    private final SelenideElement registerNewAccountButton = $x("//span[text()='Создать аккаунт']/parent::button");
 
     public CatalogPage(ApiClient apiClient) {
         this.apiClient = apiClient;
@@ -130,13 +131,8 @@ public class CatalogPage {
         repeatPasswordInput.sendKeys(password);
         privacyPolicyInput.click();
         privacyAlert.shouldNotBe(exist);
-        return this;
-    }
 
-    public CatalogPage makeCaptcha() {
-        iframeReCaptcha.shouldBe(exist, Duration.ofSeconds(5));
-        switchTo().frame(iframeReCaptcha);
-        captchaInput.click();
+        registerNewAccountButton.shouldBe(exist).click();
         return this;
     }
 

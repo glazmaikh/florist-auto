@@ -127,7 +127,6 @@ public class CriticalPathTests extends TestBase {
         successPage.assertSuccessCreatedOrder(baseUrl);
     }
 
-    @Disabled("Before remade captcha")
     @Test
     @Tag("register")
     void registerTest() {
@@ -135,7 +134,9 @@ public class CriticalPathTests extends TestBase {
                 .closeCookiePopUp()
                 .openRegisterModal()
                 .fillRegisterForm(yourName, phone, yourEmail, password)
-                .makeCaptcha();
+                .fillAuthForm(yourEmail, password);
+
+        accountOrderPage.assertAuth(baseUrl, yourName);
     }
 
     @Test
