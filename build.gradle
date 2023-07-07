@@ -23,11 +23,11 @@ allure {
     }
 }
 
-task generateAllureReport(type: Exec) {
+tasks.register('generateAllureReport', Exec) {
     commandLine "allure", "generate build/allure-results"
 }
 
-tasks.withType(JavaCompile) {
+tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
 }
 
@@ -46,8 +46,10 @@ dependencies {
     )
 }
 
-tasks.withType(Test) {
+test {
     systemProperties(System.getProperties())
+    systemProperty "javax.net.ssl.trustStore", "none"
+
     useJUnitPlatform()
 
     testLogging {
@@ -58,25 +60,25 @@ tasks.withType(Test) {
     }
 }
 
-task create_order_test(type: Test) {
+tasks.register('create_order_test', Test) {
     useJUnitPlatform {
         includeTags("create_order")
     }
 }
 
-task register_test(type: Test) {
+tasks.register('register_test', Test) {
     useJUnitPlatform {
         includeTags("register")
     }
 }
 
-task auth_test(type: Test) {
+tasks.register('auth_test', Test) {
     useJUnitPlatform {
         includeTags("auth")
     }
 }
 
-task regress_test(type: Test) {
+tasks.register('regress_test', Test) {
     useJUnitPlatform {
         includeTags("create_order")
         includeTags("auth")
