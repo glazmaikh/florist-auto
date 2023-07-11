@@ -40,7 +40,7 @@ public class ApiClient {
         RequestSpecification httpRequest = given();
         Response responseCity = httpRequest
                 .auth().basic("florist_api", "123")
-                .param("p", "Красноярск")
+                .param("p", "Астрахань")
                 .param("mode", "geocity")
                 .get("api/city/search");
         ResponseBody bodyCity = responseCity.getBody();
