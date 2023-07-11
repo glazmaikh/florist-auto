@@ -40,7 +40,7 @@ public class CreatingOrderPage {
     }
 
     public CreatingOrderPage simpleFillForm(String name, String phone, String address) {
-        nameInput.shouldBe(exist).val(name);
+        nameInput.shouldBe(exist, Duration.ofSeconds(10)).val(name);
         phoneInput.val(phone);
 
         try {
@@ -54,7 +54,7 @@ public class CreatingOrderPage {
     }
 
     public CreatingOrderPage simpleFillForm(String yourName, String yourEmail, String yourPhone, String name, String phone, String address) {
-        yourNameInput.shouldBe(exist).val(yourName);
+        yourNameInput.shouldBe(exist, Duration.ofSeconds(10)).val(yourName);
         yourEmailInput.val(yourEmail);
         yourPhoneInput.val(yourPhone);
         nameInput.val(name);
