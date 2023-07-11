@@ -10,7 +10,6 @@ import org.openqa.selenium.JavascriptExecutor;
 
 import java.time.Duration;
 import java.util.List;
-import java.util.Random;
 
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selectors.byName;
@@ -18,6 +17,7 @@ import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CreatingOrderPage {
     private final SelenideElement yourNameInput = $(byName("customerName"));
@@ -33,6 +33,9 @@ public class CreatingOrderPage {
     private final SelenideElement priceSection = payButton.$(".no-wrap");
     private final SelenideElement orderList = $("._2pTgtswS  ");
     private final ElementsCollection orderListPrices = orderList.$$(".no-wrap");
+    private final SelenideElement header = $x("//h1");
+    private final SelenideElement createdOrderText = $("._2fUGBItB");
+    private final SelenideElement returnToPayButton = $x("//a[@class='btn']");
     private final ApiClient apiClient;
 
     public CreatingOrderPage(ApiClient apiClient) {
@@ -111,5 +114,18 @@ public class CreatingOrderPage {
                 .first()
                 .click();
         return this;
+    }
+
+    public PaymentPage assertOrderAndBackToPay() {
+        header.scrollTo().shouldHave(textCaseSensitive("Заказ оформлен"));
+        System.out.println(createdOrderText.getText() + " createdOrderText getText");
+        System.out.println(apiClient.getMaxPaidDate() + " getMaxPaidDate");
+
+        createdOrderText.shouldHave(text(String.valueOf(apiClient.getOrderId())));
+        createdOrderText.shouldHave(text(HelperPage.regexMaxPaidDate(apiClient.getMaxPaidDate())));
+        assertTrue(apiClient.getOrderStatus().contains("Ожидает оплаты"));
+
+        returnToPayButton.shouldBe(exist).click();
+        return new PaymentPage(apiClient);
     }
 }

@@ -118,7 +118,7 @@ public class CriticalPathTests extends TestBase {
         paymentPage.assertOrderList()
                 .backOnPrevious();
 
-        catalogPage.assertOrderAndBackToPay();
+        creatingOrderPage.assertOrderAndBackToPay();
 
         paymentPage.fillCard(cardNumber, expireNumber, cvcNumber)
                 .pay()

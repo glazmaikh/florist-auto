@@ -2,12 +2,8 @@ package pages;
 
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
-import com.codeborne.selenide.WebDriverRunner;
 import helpers.ApiClient;
 import helpers.BouquetType;
-import helpers.HelperPage;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 
@@ -16,7 +12,6 @@ import static com.codeborne.selenide.Selectors.byName;
 import static com.codeborne.selenide.Selenide.*;
 import static com.codeborne.selenide.WebDriverConditions.url;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.TestBase.baseUrl;
 
 public class CatalogPage {
@@ -37,7 +32,6 @@ public class CatalogPage {
     private final SelenideElement passwordInput = $(byName("password"));
     private final SelenideElement repeatPasswordInput = $(byName("repeatPassword"));
     private final SelenideElement loginInput = $(byName("login"));
-    private final SelenideElement captchaInput = $("#recaptcha-anchor");
     private final SelenideElement privacyPolicyInput = $x("//div[@class='boxes_item']//label");
     private final SelenideElement privacyAlert = $x("//span[text()='Вы должны согласиться с условиями']");
     private final SelenideElement emptyFieldAlert = $x("//span[text()='Поле обязательно для заполнения']");
@@ -45,9 +39,6 @@ public class CatalogPage {
     private final SelenideElement submitButton = $("button[type='submit']");
     private final SelenideElement deliveryCity = $(".CUvbyl33");
     private final SelenideElement accountOrdersButton = $("button[aria-label='Перейти в личный кабинет']");
-    private final SelenideElement header = $x("//h1");
-    private final SelenideElement createdOrderText = $("._2fUGBItB");
-    private final SelenideElement returnToPayButton = $x("//a[@class='btn']");
     private final SelenideElement registerNewAccountButton = $x("//span[text()='Создать аккаунт']/parent::button");
 
     public CatalogPage(ApiClient apiClient) {
@@ -155,15 +146,5 @@ public class CatalogPage {
     public CatalogPage apiRegisterUser(String name, String email, String phone, String password) {
         apiClient.apiRegisterUser(name, email, phone, password);
         return this;
-    }
-
-    public PaymentPage assertOrderAndBackToPay() {
-        header.scrollTo().shouldHave(textCaseSensitive("Заказ оформлен"));
-        createdOrderText.shouldHave(text(String.valueOf(apiClient.getOrderId())));
-        createdOrderText.shouldHave(text(HelperPage.regexMaxPaidDate(apiClient.getMaxPaidDate())));
-        assertTrue(apiClient.getOrderStatus().contains("Ожидает оплаты"));
-
-        returnToPayButton.shouldBe(exist).click();
-        return new PaymentPage(apiClient);
     }
 }

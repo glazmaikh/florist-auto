@@ -92,8 +92,8 @@ public class PaymentPage {
         return new SuccessPage(apiClient);
     }
 
-    public SuccessPage backOnPrevious() {
+    public CatalogPage backOnPrevious() {
         back();
-        return new SuccessPage(apiClient);
+        return new CatalogPage(apiClient);
     }
 }
