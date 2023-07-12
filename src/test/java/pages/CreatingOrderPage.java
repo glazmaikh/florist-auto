@@ -146,9 +146,6 @@ public class CreatingOrderPage {
 
     public PaymentPage assertOrderAndBackToPay() {
         header.scrollTo().shouldHave(textCaseSensitive("Заказ оформлен"));
-        System.out.println(createdOrderText.getText() + " createdOrderText getText");
-        System.out.println(apiClient.getMaxPaidDate() + " getMaxPaidDate");
-
         createdOrderText.shouldHave(text(String.valueOf(apiClient.getOrderId())));
         createdOrderText.shouldHave(text(HelperPage.regexMaxPaidDate(apiClient.getMaxPaidDate())));
         assertTrue(apiClient.getOrderStatus().contains("Ожидает оплаты"));
