@@ -115,8 +115,6 @@ public class CreatingOrderPage {
         uiDaysList.removeAll(convertedDisabledDaysList);
 
         String randomDeliveryDay = HelperPage.getRandomStringFromList(uiDaysList);
-
-        System.out.println(HelperPage.formatDateForGetDeliveryTime(randomDeliveryDay));
         deliveryAllDays.filterBy(Condition.attribute("aria-label", randomDeliveryDay))
                 .first()
                 .click();
