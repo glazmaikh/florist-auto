@@ -8,7 +8,12 @@ import helpers.ApiClient;
 import helpers.HelperPage;
 import org.openqa.selenium.JavascriptExecutor;
 
+import java.text.SimpleDateFormat;
 import java.time.Duration;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import static com.codeborne.selenide.Condition.*;
@@ -110,9 +115,34 @@ public class CreatingOrderPage {
         uiDaysList.removeAll(convertedDisabledDaysList);
 
         String randomDeliveryDay = HelperPage.getRandomStringFromList(uiDaysList);
+
+        System.out.println(HelperPage.formatDateForGetDeliveryTime(randomDeliveryDay));
         deliveryAllDays.filterBy(Condition.attribute("aria-label", randomDeliveryDay))
                 .first()
                 .click();
+        return this;
+    }
+
+    public CreatingOrderPage getDeliveryDate() {
+        Calendar calendar = Calendar.getInstance();
+        Date currentDate = calendar.getTime();
+
+        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+        Date lastDayOfMonth = calendar.getTime();
+
+        List<String> dates = new ArrayList<>();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        while (!currentDate.after(lastDayOfMonth)) {
+            dates.add(dateFormat.format(currentDate));
+            calendar.add(Calendar.DAY_OF_MONTH, +1);
+            currentDate = calendar.getTime();
+            System.out.println(currentDate);
+        }
+
+        for (String s : dates) {
+            System.out.println(s + " in list");
+        }
         return this;
     }
 

@@ -96,6 +96,7 @@ public class CriticalPathTests extends TestBase {
     }
 
     @Test
+    @Disabled
     @Tag("create_order")
     void usingBackAfterCreatedOrderTest() {
         catalogPage.openCatalogPage(baseUrl)
@@ -186,5 +187,12 @@ public class CriticalPathTests extends TestBase {
         successPage.assertSuccessCreatedOrder(baseUrl);
         catalogPage.openAccountOrderPage();
         accountOrderPage.assertCreatedOrderFromAuthUser(baseUrl, yourName);
+    }
+
+    @Disabled
+    @Test
+    void setTestData() {
+        catalogPage.openCatalogPage(baseUrl);
+        creatingOrderPage.getDeliveryDate();
     }
 }

@@ -62,6 +62,13 @@ public class HelperPage {
         return date.format(outputFormatter);
     }
 
+    public static String formatDateForGetDeliveryTime(String formatDate) {
+        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy", new Locale("ru"));
+        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate date = LocalDate.parse(formatDate, inputFormatter);
+        return date.format(outputFormatter);
+    }
+
     public static List<String> convertDates(List<String> dates) {
         List<String> convertedDates = new ArrayList<>();
         Pattern pattern = Pattern.compile("(\\d{4})-(\\d{2})-(\\d{2})");
