@@ -96,7 +96,6 @@ public class CriticalPathTests extends TestBase {
     }
 
     @Test
-    @Disabled
     @Tag("create_order")
     void usingBackAfterCreatedOrderTest() {
         catalogPage.openCatalogPage(baseUrl)
