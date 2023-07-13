@@ -241,6 +241,7 @@ public class ApiClient {
 
         ObjectMapper objectMapper = new ObjectMapper();
         DisabledDeliveryDateResponse disabledDate = objectMapper.readValue(responseBody.asString(), DisabledDeliveryDateResponse.class);
+        System.out.println(disabledDate.getData().getDisabled_dates().values());
         return new ArrayList<>(disabledDate.getData().getDisabled_dates().values());
     }
 

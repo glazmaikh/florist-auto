@@ -188,10 +188,13 @@ public class CriticalPathTests extends TestBase {
         accountOrderPage.assertCreatedOrderFromAuthUser(baseUrl, yourName);
     }
 
-    @Disabled
     @Test
     void setTestData() {
-        catalogPage.openCatalogPage(baseUrl);
+        catalogPage.openCatalogPage(baseUrl)
+                .setDeliveryCity()
+                .setRandomBouquet(BouquetType.ALL_BOUQUETS);
+
+        bouquetPage.openBouquetPage(baseUrl);
         creatingOrderPage.getDeliveryDate();
     }
 }

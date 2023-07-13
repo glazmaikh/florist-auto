@@ -11,6 +11,7 @@ import org.openqa.selenium.JavascriptExecutor;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -122,23 +123,21 @@ public class CreatingOrderPage {
     }
 
     public CreatingOrderPage getDeliveryDate() {
-        Calendar calendar = Calendar.getInstance();
-        Date currentDate = calendar.getTime();
+        List<String> disabledDaysList = apiClient.getDisabledDeliveryDaysList();
+        LocalDate currentDate = LocalDate.now();
+        LocalDate afterDate = currentDate.plusMonths(2);
 
-        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
-        Date lastDayOfMonth = calendar.getTime();
+        List<String> dateList = new ArrayList<>();
+        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-        List<String> dates = new ArrayList<>();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
-        while (!currentDate.after(lastDayOfMonth)) {
-            dates.add(dateFormat.format(currentDate));
-            calendar.add(Calendar.DAY_OF_MONTH, +1);
-            currentDate = calendar.getTime();
-            System.out.println(currentDate);
+        while (currentDate.isBefore(afterDate)) {
+            dateList.add(dateFormat.format(currentDate));
+            currentDate = currentDate.plusDays(1);
         }
 
-        for (String s : dates) {
+        dateList.removeAll(disabledDaysList);
+
+        for (String s : dateList) {
             System.out.println(s + " in list");
         }
         return this;
