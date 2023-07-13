@@ -113,9 +113,6 @@ public class HelperPage {
     }
 
     public static String getRandomStringFromList(List<String> list) {
-        if (list == null || list.isEmpty()) {
-            return null;
-        }
         return list.get(new Random().nextInt(list.size()));
     }
 
@@ -152,5 +149,21 @@ public class HelperPage {
         String formattedDate = String.format("%02d.%02d.%04d", day, month, year);
         String formattedTime = String.format("%02d:%02d:%02d", hours, minutes, seconds);
         return formattedDate + ", " + formattedTime;
+    }
+
+    public static List<String> getDeliveryDate(List<String> disabledDaysList) {
+        LocalDate currentDate = LocalDate.now();
+        LocalDate afterDate = currentDate.plusMonths(2);
+
+        List<String> dateList = new ArrayList<>();
+        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        while (currentDate.isBefore(afterDate)) {
+            dateList.add(dateFormat.format(currentDate));
+            currentDate = currentDate.plusDays(1);
+        }
+
+        dateList.removeAll(disabledDaysList);
+        return dateList;
     }
 }

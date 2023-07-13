@@ -123,21 +123,12 @@ public class CreatingOrderPage {
     }
 
     public CreatingOrderPage getDeliveryDate() {
+        //apiClient.getDeliveryDateInterval();
+
         List<String> disabledDaysList = apiClient.getDisabledDeliveryDaysList();
-        LocalDate currentDate = LocalDate.now();
-        LocalDate afterDate = currentDate.plusMonths(2);
+        List<String> withoutDisabledDaysList = HelperPage.getDeliveryDate(disabledDaysList);
 
-        List<String> dateList = new ArrayList<>();
-        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
-        while (currentDate.isBefore(afterDate)) {
-            dateList.add(dateFormat.format(currentDate));
-            currentDate = currentDate.plusDays(1);
-        }
-
-        dateList.removeAll(disabledDaysList);
-
-        for (String s : dateList) {
+        for (String s : withoutDisabledDaysList) {
             System.out.println(s + " in list");
         }
         return this;
