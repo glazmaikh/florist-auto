@@ -113,7 +113,11 @@ public class HelperPage {
     }
 
     public static String getRandomStringFromList(List<String> list) {
-        return list.get(new Random().nextInt(list.size()));
+        Random rand = new Random();
+        int randomIndex = rand.nextInt(list.size());
+        String randomElement = list.get(randomIndex);
+        System.out.println(randomElement + " getRandomStringFromList()");
+        return randomElement;//list.get(new Random().nextInt(list.size()));
     }
 
     public static String deliveryDataRegex(String date) {
@@ -164,6 +168,7 @@ public class HelperPage {
         }
 
         dateList.removeAll(disabledDaysList);
+        System.out.println(dateList + " getDeliveryDate()");
         return dateList;
     }
 }

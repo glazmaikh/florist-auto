@@ -123,14 +123,15 @@ public class CreatingOrderPage {
     }
 
     public CreatingOrderPage getDeliveryDate() {
-        //apiClient.getDeliveryDateInterval();
-
         List<String> disabledDaysList = apiClient.getDisabledDeliveryDaysList();
         List<String> withoutDisabledDaysList = HelperPage.getDeliveryDate(disabledDaysList);
+        apiClient.getDeliveryDateInterval(HelperPage.getRandomStringFromList(withoutDisabledDaysList));
 
-        for (String s : withoutDisabledDaysList) {
-            System.out.println(s + " in list");
-        }
+        System.out.println(HelperPage.getRandomStringFromList(withoutDisabledDaysList) + " date");
+        System.out.println(apiClient.getIntervalFrom() + " time");
+//        for (String s : withoutDisabledDaysList) {
+//            System.out.println(s + " in list");
+//        }
         return this;
     }
 

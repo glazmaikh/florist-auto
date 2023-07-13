@@ -235,32 +235,41 @@ public class ApiClient {
     // Получение списка недоступных дней для доставки
     @SneakyThrows
     public List<String> getDisabledDeliveryDaysList() {
+        System.out.println(bouquet.getId() + " bouquet.getId()");
         RequestSpecification httpRequest = given();
         Response responseDisabledData = httpRequest
                 .auth().basic("florist_api", "123")
-                .param("city", 275)
+                .param("city", getCityId())
                 .param("ids", bouquet.getId())
                 .get("/api/delivery/date");
         ResponseBody responseBody = responseDisabledData.getBody();
 
         ObjectMapper objectMapper = new ObjectMapper();
         DisabledDeliveryDateResponse disabledDate = objectMapper.readValue(responseBody.asString(), DisabledDeliveryDateResponse.class);
+        System.out.println(disabledDate.getData() + " getDisabledDeliveryDaysList()");
         return new ArrayList<>(disabledDate.getData().getDisabled_dates().values());
     }
 
     // получение рандомного обьекта с возможным интервалом доставки
     @SneakyThrows
-    public void getDeliveryDateInterval() {
+    public void getDeliveryDateInterval(String withoutDisabledDay) {
         RequestSpecification httpRequest = given();
         Response responseBouquet = httpRequest
-                .param("city", 275)
-                .param("date", HelperPage.getRandomStringFromList(getDisabledDeliveryDaysList()))
+                .auth().basic("florist_api", "123")
+                .param("city", getCityId())
+                .param("date", withoutDisabledDay)
+                .param("ids", bouquet.getId())
                 .get("api/delivery/time");
         ResponseBody bodyBouquet = responseBouquet.getBody();
 
         ObjectMapper objectMapper = new ObjectMapper();
         DeliveryInfo deliveryInfo = objectMapper.readValue(bodyBouquet.asString(), DeliveryInfo.class);
-        System.out.println(deliveryInfo.getData().getDelivery_time_intervals());
+        timeInterval = getRandomInterval(deliveryInfo.getData().getDelivery_time_intervals());
+    }
+
+    private DeliveryTimeInterval getRandomInterval(Map<String, DeliveryTimeInterval> map) {
+        List<DeliveryTimeInterval> values = new ArrayList<>(map.values());
+        return values.get(new Random().nextInt(values.size()));
     }
 
     public double getIntervalFrom() {
@@ -327,11 +336,6 @@ public class ApiClient {
 
     private BouquetDataItemDto getRandomBouquet(Map<String, BouquetDataItemDto> map) {
         List<BouquetDataItemDto> values = new ArrayList<>(map.values());
-        return values.get(new Random().nextInt(values.size()));
-    }
-
-    private DeliveryTimeInterval getRandomInterval(Map<String, DeliveryTimeInterval> map) {
-        List<DeliveryTimeInterval> values = new ArrayList<>(map.values());
         return values.get(new Random().nextInt(values.size()));
     }
 }
