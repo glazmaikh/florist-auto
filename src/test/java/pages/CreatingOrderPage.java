@@ -9,6 +9,8 @@ import helpers.HelperPage;
 import org.openqa.selenium.JavascriptExecutor;
 
 import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.*;
 
 import static com.codeborne.selenide.Condition.*;
@@ -38,7 +40,11 @@ public class CreatingOrderPage {
     private final SelenideElement createdOrderText = $("._2fUGBItB");
     private final SelenideElement returnToPayButton = $x("//a[@class='btn']");
     private final SelenideElement nextMonthButton = $(".react-calendar__navigation__next-button");
+    private final SelenideElement timeDropped = $(".css-oboqqt-menu");
+    private final ElementsCollection timeIntervals = $$(".css-1g4h2f9-option");
+    private final SelenideElement timeFromInput = $x("//span[text()='Время доставки с']/parent::label");
     private final ApiClient apiClient;
+    private String deliveryDate;
 
     public CreatingOrderPage(ApiClient apiClient) {
         this.apiClient = apiClient;
@@ -120,9 +126,7 @@ public class CreatingOrderPage {
 
     public CreatingOrderPage getRandomDeliveryDate() {
         List<String> disabledDaysList = apiClient.getDisabledDeliveryDaysList();
-        String deliveryDate = HelperPage.getRandomDeliveryDayWithoutDisabled(disabledDaysList);
-
-        apiClient.getDeliveryDateInterval(deliveryDate);
+        deliveryDate = HelperPage.getRandomDeliveryDayWithoutDisabled(disabledDaysList);
 
         boolean foundDate = false;
         while (!foundDate) {
@@ -136,6 +140,24 @@ public class CreatingOrderPage {
             if (!foundDate) {
                 nextMonthButton.shouldBe(exist).click();
                 deliveryAllDays = $$x("//button[contains(@class, 'react-calendar__tile') and not(@disabled)]/abbr");
+            }
+        }
+        return this;
+    }
+
+    public CreatingOrderPage getRandomDeliveryTime() {
+        apiClient.getDeliveryDateInterval(deliveryDate);
+        LocalTime timeFrom = HelperPage.doubleToTime(apiClient.getDeliveryTimeFrom());
+        LocalTime timeTo = HelperPage.doubleToTime(apiClient.getDeliveryTimeTo());
+
+        String time = HelperPage.getTimeIntervals(timeFrom, timeTo);
+        timeFromInput.shouldBe(exist).click();
+        timeDropped.shouldBe(exist);
+
+        for (SelenideElement se : timeIntervals) {
+            if (se.getText().equals(time)) {
+                se.click();
+                break;
             }
         }
         return this;

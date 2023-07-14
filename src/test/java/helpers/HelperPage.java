@@ -4,6 +4,7 @@ import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -174,15 +175,23 @@ public class HelperPage {
         return getRandomStringFromList(dateList);
     }
 
-    public static String getParseDeliveryAllDays(ElementsCollection deliveryAllDays) {
-        List<String> deliveryAllDaysList = new ArrayList<>();
+    public static LocalTime doubleToTime(double value) {
+        int hours = (int) value;
+        int minutes = (int) ((value - hours) * 60);
+        return LocalTime.of(hours, minutes);
+    }
 
-        for (SelenideElement se : deliveryAllDays) {
-            String date = se.getAttribute("aria-label");
-            if (date != null && !date.isEmpty()) {
-                deliveryAllDaysList.add(formatDeliveryDate(date));
-            }
+    public static String getTimeIntervals(LocalTime dateFrom, LocalTime dateTo) {
+        List<String> dates = new ArrayList<>();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        dates.add(dateFrom.format(formatter));
+
+        LocalTime current = dateFrom;
+        while (current.isBefore(dateTo) || current.equals(dateTo)) {
+            dates.add(current.format(formatter));
+            current = current.plusMinutes(15);
         }
-        return getRandomStringFromList(deliveryAllDaysList);
+        dates.add(dateTo.format(formatter));
+        return getRandomStringFromList(dates);
     }
 }

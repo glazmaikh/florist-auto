@@ -41,7 +41,7 @@ public class CriticalPathTests extends TestBase {
 
     @Test
     @Tag("create_order")
-    void createNewFloristRuOrderTest() throws InterruptedException {
+    void createNewFloristRuOrderTest() {
         catalogPage.openCatalogPage(baseUrl)
                 .closeCookiePopUp()
                 .setDeliveryCity()
@@ -55,7 +55,8 @@ public class CriticalPathTests extends TestBase {
                 .addToCard(baseUrl);
 
         creatingOrderPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
-                .getRandomDeliveryDate() //.getDeliveryDateWithoutDisabled()
+                .getRandomDeliveryDate()
+                .getRandomDeliveryTime()
                 .assertOrderList()
                 .pressPayButton();
 
@@ -192,9 +193,17 @@ public class CriticalPathTests extends TestBase {
     void setTestData() {
         catalogPage.openCatalogPage(baseUrl)
                 .setDeliveryCity()
-                .setRandomBouquet(BouquetType.ALL_BOUQUETS);
+                .setRandomBouquet(BouquetType.FLORIST_RU);
 
-        bouquetPage.openBouquetPage(baseUrl);
-        creatingOrderPage.getRandomDeliveryDate();
+        bouquetPage.openBouquetPage(baseUrl)
+                .assertBouquetName()
+                .assertVariationsPrices()
+                .assertDeliveryPrice()
+                .getFirstVariation()
+                .addToCard(baseUrl);
+
+        creatingOrderPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
+                .getRandomDeliveryDate()
+                .getRandomDeliveryTime();
     }
 }
