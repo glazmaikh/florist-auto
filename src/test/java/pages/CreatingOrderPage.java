@@ -8,14 +8,8 @@ import helpers.ApiClient;
 import helpers.HelperPage;
 import org.openqa.selenium.JavascriptExecutor;
 
-import java.text.SimpleDateFormat;
 import java.time.Duration;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selectors.byName;
@@ -24,6 +18,7 @@ import static com.codeborne.selenide.Selenide.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static tests.TestBase.baseUrl;
 
 public class CreatingOrderPage {
     private final SelenideElement yourNameInput = $(byName("customerName"));
@@ -34,7 +29,7 @@ public class CreatingOrderPage {
     private final SelenideElement addressDaDataInput = $(byName("recipientAddressSource"));
     private final SelenideElement addressInput = $(byName("recipientAddress"));
     private final SelenideElement deliveryDateInput = $(byName("deliveryDateSource"));
-    private final ElementsCollection deliveryAllDays = $$x("//button[contains(@class, 'react-calendar__tile') and not(@disabled)]/abbr");
+    private ElementsCollection deliveryAllDays = $$x("//button[contains(@class, 'react-calendar__tile') and not(@disabled)]/abbr");
     private final SelenideElement payButton = $(byText("Оплатить"));
     private final SelenideElement priceSection = payButton.$(".no-wrap");
     private final SelenideElement orderList = $("._2pTgtswS  ");
@@ -42,6 +37,7 @@ public class CreatingOrderPage {
     private final SelenideElement header = $x("//h1");
     private final SelenideElement createdOrderText = $("._2fUGBItB");
     private final SelenideElement returnToPayButton = $x("//a[@class='btn']");
+    private final SelenideElement nextMonthButton = $(".react-calendar__navigation__next-button");
     private final ApiClient apiClient;
 
     public CreatingOrderPage(ApiClient apiClient) {
@@ -125,12 +121,23 @@ public class CreatingOrderPage {
     public CreatingOrderPage getRandomDeliveryDate() {
         List<String> disabledDaysList = apiClient.getDisabledDeliveryDaysList();
         String deliveryDate = HelperPage.getRandomDeliveryDayWithoutDisabled(disabledDaysList);
-        //apiClient.getDeliveryDateInterval(deliveryDate);
 
-        deliveryAllDays.filterBy(Condition.attribute("aria-label",
-                        HelperPage.formatDateDeliveryDateParse(deliveryDate)))
-                .first()
-                .click();
+        apiClient.getDeliveryDateInterval(deliveryDate);
+
+        boolean foundDate = false;
+        while (!foundDate) {
+            for (SelenideElement se : deliveryAllDays) {
+                if (Objects.requireNonNull(se.getAttribute("aria-label")).contains(HelperPage.formatDateDeliveryDateParse(deliveryDate))) {
+                    se.click();
+                    foundDate = true;
+                    break;
+                }
+            }
+            if (!foundDate) {
+                nextMonthButton.shouldBe(exist).click();
+                deliveryAllDays = $$x("//button[contains(@class, 'react-calendar__tile') and not(@disabled)]/abbr");
+            }
+        }
         return this;
     }
 

@@ -41,7 +41,7 @@ public class CriticalPathTests extends TestBase {
 
     @Test
     @Tag("create_order")
-    void createNewFloristRuOrderTest() {
+    void createNewFloristRuOrderTest() throws InterruptedException {
         catalogPage.openCatalogPage(baseUrl)
                 .closeCookiePopUp()
                 .setDeliveryCity()
