@@ -122,17 +122,15 @@ public class CreatingOrderPage {
         return this;
     }
 
-    public CreatingOrderPage getDeliveryDate() {
+    public CreatingOrderPage getRandomDeliveryDate() {
         List<String> disabledDaysList = apiClient.getDisabledDeliveryDaysList();
         String deliveryDate = HelperPage.getRandomDeliveryDayWithoutDisabled(disabledDaysList);
-        apiClient.getDeliveryDateInterval(deliveryDate);
+        //apiClient.getDeliveryDateInterval(deliveryDate);
 
-        String parsedDeliveryRandomDay = HelperPage.getParseDeliveryAllDays(deliveryAllDays);
-        System.out.println(parsedDeliveryRandomDay + " parsedDay");
-
-//        for (String s : withoutDisabledDaysList) {
-//            System.out.println(s + " in list");
-//        }
+        deliveryAllDays.filterBy(Condition.attribute("aria-label",
+                        HelperPage.formatDateDeliveryDateParse(deliveryDate)))
+                .first()
+                .click();
         return this;
     }
 

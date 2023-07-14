@@ -69,9 +69,9 @@ public class HelperPage {
         return date.format(outputFormatter);
     }
 
-    public static String formatDateForGetDeliveryTime(String formatDate) {
-        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy", new Locale("ru"));
-        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    public static String formatDateDeliveryDateParse(String formatDate) {
+        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy 'г.'", new Locale("ru"));
         LocalDate date = LocalDate.parse(formatDate, inputFormatter);
         return date.format(outputFormatter);
     }
@@ -179,7 +179,6 @@ public class HelperPage {
 
         for (SelenideElement se : deliveryAllDays) {
             String date = se.getAttribute("aria-label");
-
             if (date != null && !date.isEmpty()) {
                 deliveryAllDaysList.add(formatDeliveryDate(date));
             }

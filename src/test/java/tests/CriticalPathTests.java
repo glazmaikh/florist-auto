@@ -55,7 +55,7 @@ public class CriticalPathTests extends TestBase {
                 .addToCard(baseUrl);
 
         creatingOrderPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
-                .getDeliveryDateWithoutDisabled()
+                .getRandomDeliveryDate() //.getDeliveryDateWithoutDisabled()
                 .assertOrderList()
                 .pressPayButton();
 
@@ -83,7 +83,7 @@ public class CriticalPathTests extends TestBase {
                 .addToCard(baseUrl);
 
         creatingOrderPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
-                .getDeliveryDateWithoutDisabled()
+                .getRandomDeliveryDate()
                 .assertOrderList()
                 .pressPayButton();
 
@@ -111,7 +111,7 @@ public class CriticalPathTests extends TestBase {
                 .addToCard(baseUrl);
 
         creatingOrderPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
-                .getDeliveryDateWithoutDisabled()
+                .getRandomDeliveryDate()
                 .assertOrderList()
                 .pressPayButton();
 
@@ -174,7 +174,7 @@ public class CriticalPathTests extends TestBase {
                 .addToCard(baseUrl);
 
         creatingOrderPage.simpleFillForm(firstName, phone, address)
-                .getDeliveryDateWithoutDisabled()
+                .getRandomDeliveryDate()
                 .assertOrderList()
                 .pressPayButton();
 
@@ -195,6 +195,6 @@ public class CriticalPathTests extends TestBase {
                 .setRandomBouquet(BouquetType.ALL_BOUQUETS);
 
         bouquetPage.openBouquetPage(baseUrl);
-        creatingOrderPage.getDeliveryDate();
+        creatingOrderPage.getRandomDeliveryDate();
     }
 }
