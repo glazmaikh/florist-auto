@@ -62,6 +62,13 @@ public class HelperPage {
         return date.format(outputFormatter);
     }
 
+    public static String formatDeliveryDate(String formatDate) {
+        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy 'г.'", new Locale("ru"));
+        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate date = LocalDate.parse(formatDate, inputFormatter);
+        return date.format(outputFormatter);
+    }
+
     public static String formatDateForGetDeliveryTime(String formatDate) {
         DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy", new Locale("ru"));
         DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -113,11 +120,7 @@ public class HelperPage {
     }
 
     public static String getRandomStringFromList(List<String> list) {
-        Random rand = new Random();
-        int randomIndex = rand.nextInt(list.size());
-        String randomElement = list.get(randomIndex);
-        System.out.println(randomElement + " getRandomStringFromList()");
-        return randomElement;//list.get(new Random().nextInt(list.size()));
+        return list.get(new Random().nextInt(list.size()));
     }
 
     public static String deliveryDataRegex(String date) {
@@ -155,7 +158,7 @@ public class HelperPage {
         return formattedDate + ", " + formattedTime;
     }
 
-    public static List<String> getDeliveryDate(List<String> disabledDaysList) {
+    public static String getRandomDeliveryDayWithoutDisabled(List<String> disabledDaysList) {
         LocalDate currentDate = LocalDate.now();
         LocalDate afterDate = currentDate.plusMonths(2);
 
@@ -168,7 +171,19 @@ public class HelperPage {
         }
 
         dateList.removeAll(disabledDaysList);
-        System.out.println(dateList + " getDeliveryDate()");
-        return dateList;
+        return getRandomStringFromList(dateList);
+    }
+
+    public static String getParseDeliveryAllDays(ElementsCollection deliveryAllDays) {
+        List<String> deliveryAllDaysList = new ArrayList<>();
+
+        for (SelenideElement se : deliveryAllDays) {
+            String date = se.getAttribute("aria-label");
+
+            if (date != null && !date.isEmpty()) {
+                deliveryAllDaysList.add(formatDeliveryDate(date));
+            }
+        }
+        return getRandomStringFromList(deliveryAllDaysList);
     }
 }

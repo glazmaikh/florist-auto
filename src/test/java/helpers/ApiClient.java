@@ -6,7 +6,6 @@ import io.restassured.response.Response;
 import io.restassured.response.ResponseBody;
 import io.restassured.specification.RequestSpecification;
 import lombok.SneakyThrows;
-import models.auth.AuthDto;
 import models.bouquet.BouquetDataDto;
 import models.bouquet.BouquetDataItemDto;
 import models.bouquet.PriceItemDto;
@@ -14,9 +13,8 @@ import models.city.CityData;
 import models.city.CityResponse;
 import models.cityAlias.Data;
 import models.cityAlias.CityDataAliasDto;
-import models.deliveryDate.DeliveryDateData;
 import models.deliveryDate.DeliveryInfo;
-import models.deliveryDate.DeliveryTimeInterval;
+import models.deliveryDate.DeliveryTime;
 import models.disabledDelivery.DisabledDeliveryDateResponse;
 import models.order.OrderData;
 import models.register.User;
@@ -36,7 +34,7 @@ public class ApiClient {
     private BouquetDataItemDto bouquet;
     private OrderData orderData;
     private final Data data = getDeliveryPriceByCitySlug();
-    private DeliveryTimeInterval timeInterval;
+    private DeliveryTime deliveryTime;
 
     // Получение обьекта города Астрахань
     @SneakyThrows
@@ -235,7 +233,6 @@ public class ApiClient {
     // Получение списка недоступных дней для доставки
     @SneakyThrows
     public List<String> getDisabledDeliveryDaysList() {
-        System.out.println(bouquet.getId() + " bouquet.getId()");
         RequestSpecification httpRequest = given();
         Response responseDisabledData = httpRequest
                 .auth().basic("florist_api", "123")
@@ -246,7 +243,6 @@ public class ApiClient {
 
         ObjectMapper objectMapper = new ObjectMapper();
         DisabledDeliveryDateResponse disabledDate = objectMapper.readValue(responseBody.asString(), DisabledDeliveryDateResponse.class);
-        System.out.println(disabledDate.getData() + " getDisabledDeliveryDaysList()");
         return new ArrayList<>(disabledDate.getData().getDisabled_dates().values());
     }
 
@@ -264,33 +260,15 @@ public class ApiClient {
 
         ObjectMapper objectMapper = new ObjectMapper();
         DeliveryInfo deliveryInfo = objectMapper.readValue(bodyBouquet.asString(), DeliveryInfo.class);
-        timeInterval = getRandomInterval(deliveryInfo.getData().getDelivery_time_intervals());
+        deliveryTime = deliveryInfo.getData().getDelivery_time();
     }
 
-    private DeliveryTimeInterval getRandomInterval(Map<String, DeliveryTimeInterval> map) {
-        List<DeliveryTimeInterval> values = new ArrayList<>(map.values());
-        return values.get(new Random().nextInt(values.size()));
+    public double getDeliveryTimeFrom() {
+        return deliveryTime.getFrom();
     }
 
-    public double getIntervalFrom() {
-        return timeInterval.getFrom();
-    }
-
-    // для чего это?
-    @SneakyThrows
-    public models.auth.User getUser(String login, String password) {
-        RequestSpecification httpRequest = given();
-        Response userAuthData = httpRequest
-                .auth().basic("florist_api", "123")
-                .param("login", login)
-                .param("password", password)
-                .get("api/user/login");
-        ResponseBody userAuthDataBody = userAuthData.getBody();
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        AuthDto authDto = objectMapper.readValue(userAuthDataBody.asString(), AuthDto.class);
-        models.auth.User user = authDto.getUser();
-        return user;
+    public double getDeliveryTimeTo() {
+        return deliveryTime.getTo();
     }
 
     // метод регистрации клиента на сайте
