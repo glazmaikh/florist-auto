@@ -95,7 +95,6 @@ public class HelperPage {
                 convertedDates.add("Invalid date format");
             }
         }
-
         return convertedDates;
     }
 
@@ -181,7 +180,7 @@ public class HelperPage {
         return LocalTime.of(hours, minutes);
     }
 
-    public static String getTimeIntervals(LocalTime dateFrom, LocalTime dateTo) {
+    public static String getRandomTimeInterval(LocalTime dateFrom, LocalTime dateTo) {
         List<String> dates = new ArrayList<>();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
         dates.add(dateFrom.format(formatter));

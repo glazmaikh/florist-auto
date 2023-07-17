@@ -116,15 +116,9 @@ public class ApiClient {
 
     public void initBouquet(BouquetType bouquetType) {
         switch (bouquetType) {
-            case FLORIST_RU:
-                getRandomFloristRuBouquetByCityID();
-                break;
-            case IFLORIST:
-                getRandomIFloristBouquetByCityID();
-                break;
-            case ALL_BOUQUETS:
-                getRandomAllBouquetByCityID();
-                break;
+            case FLORIST_RU -> getRandomFloristRuBouquetByCityID();
+            case IFLORIST -> getRandomIFloristBouquetByCityID();
+            case ALL_BOUQUETS -> getRandomAllBouquetByCityID();
         }
     }
 
@@ -144,7 +138,6 @@ public class ApiClient {
     public List<PriceItemDto> getPriceList() {
         return bouquet.getPriceList();
     }
-
 
     // получение обьекта Data - цены доставки по slug города
     @SneakyThrows

@@ -4,7 +4,6 @@ import helpers.ApiClient;
 
 import helpers.BouquetType;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import pages.*;
@@ -187,23 +186,5 @@ public class CriticalPathTests extends TestBase {
         successPage.assertSuccessCreatedOrder(baseUrl);
         catalogPage.openAccountOrderPage();
         accountOrderPage.assertCreatedOrderFromAuthUser(baseUrl, yourName);
-    }
-
-    @Test
-    void setTestData() {
-        catalogPage.openCatalogPage(baseUrl)
-                .setDeliveryCity()
-                .setRandomBouquet(BouquetType.FLORIST_RU);
-
-        bouquetPage.openBouquetPage(baseUrl)
-                .assertBouquetName()
-                .assertVariationsPrices()
-                .assertDeliveryPrice()
-                .getFirstVariation()
-                .addToCard(baseUrl);
-
-        creatingOrderPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
-                .getRandomDeliveryDate()
-                .getRandomDeliveryTime();
     }
 }

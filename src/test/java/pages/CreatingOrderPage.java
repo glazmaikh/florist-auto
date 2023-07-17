@@ -9,10 +9,10 @@ import helpers.HelperPage;
 import org.openqa.selenium.JavascriptExecutor;
 
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
 
+import static com.codeborne.selenide.CollectionCondition.texts;
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selectors.byName;
 import static com.codeborne.selenide.Selectors.byText;
@@ -20,7 +20,6 @@ import static com.codeborne.selenide.Selenide.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tests.TestBase.baseUrl;
 
 public class CreatingOrderPage {
     private final SelenideElement yourNameInput = $(byName("customerName"));
@@ -109,21 +108,6 @@ public class CreatingOrderPage {
 
     // 1. сделать тесты для выбора конкретного дня
     // 2. указать время доставки
-    // 3. вызвать getRandomDay
-    public CreatingOrderPage getDeliveryDateWithoutDisabled() {
-        List<String> disabledDaysList = apiClient.getDisabledDeliveryDaysList();
-        List<String> convertedDisabledDaysList = HelperPage.convertDates(disabledDaysList);
-
-        List<String> uiDaysList = HelperPage.getListFromAriaLabelAttribute(deliveryAllDays);
-        uiDaysList.removeAll(convertedDisabledDaysList);
-
-        String randomDeliveryDay = HelperPage.getRandomStringFromList(uiDaysList);
-        deliveryAllDays.filterBy(Condition.attribute("aria-label", randomDeliveryDay))
-                .first()
-                .click();
-        return this;
-    }
-
     public CreatingOrderPage getRandomDeliveryDate() {
         List<String> disabledDaysList = apiClient.getDisabledDeliveryDaysList();
         deliveryDate = HelperPage.getRandomDeliveryDayWithoutDisabled(disabledDaysList);
@@ -132,7 +116,7 @@ public class CreatingOrderPage {
         while (!foundDate) {
             for (SelenideElement se : deliveryAllDays) {
                 if (Objects.requireNonNull(se.getAttribute("aria-label")).contains(HelperPage.formatDateDeliveryDateParse(deliveryDate))) {
-                    se.click();
+                    se.shouldBe(exist).click();
                     foundDate = true;
                     break;
                 }
@@ -150,13 +134,13 @@ public class CreatingOrderPage {
         LocalTime timeFrom = HelperPage.doubleToTime(apiClient.getDeliveryTimeFrom());
         LocalTime timeTo = HelperPage.doubleToTime(apiClient.getDeliveryTimeTo());
 
-        String time = HelperPage.getTimeIntervals(timeFrom, timeTo);
+        String time = HelperPage.getRandomTimeInterval(timeFrom, timeTo);
         timeFromInput.shouldBe(exist).click();
         timeDropped.shouldBe(exist);
 
         for (SelenideElement se : timeIntervals) {
             if (se.getText().equals(time)) {
-                se.click();
+                se.shouldBe(exist).click();
                 break;
             }
         }
