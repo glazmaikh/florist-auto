@@ -8,21 +8,20 @@ import helpers.ApiClient;
 import helpers.HelperPage;
 import org.openqa.selenium.JavascriptExecutor;
 
-import java.text.SimpleDateFormat;
 import java.time.Duration;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.time.LocalTime;
+import java.util.*;
+import org.junit.jupiter.api.Assertions;
 
+import static com.codeborne.selenide.CollectionCondition.texts;
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selectors.byName;
 import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.*;
+import static org.apache.groovy.parser.antlr4.util.StringUtils.matches;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CreatingOrderPage {
     private final SelenideElement yourNameInput = $(byName("customerName"));
@@ -33,7 +32,7 @@ public class CreatingOrderPage {
     private final SelenideElement addressDaDataInput = $(byName("recipientAddressSource"));
     private final SelenideElement addressInput = $(byName("recipientAddress"));
     private final SelenideElement deliveryDateInput = $(byName("deliveryDateSource"));
-    private final ElementsCollection deliveryAllDays = $$x("//button[contains(@class, 'react-calendar__tile') and not(@disabled)]/abbr");
+    private ElementsCollection deliveryAllDays = $$x("//button[contains(@class, 'react-calendar__tile') and not(@disabled)]/abbr");
     private final SelenideElement payButton = $(byText("Оплатить"));
     private final SelenideElement priceSection = payButton.$(".no-wrap");
     private final SelenideElement orderList = $("._2pTgtswS  ");
@@ -41,7 +40,14 @@ public class CreatingOrderPage {
     private final SelenideElement header = $x("//h1");
     private final SelenideElement createdOrderText = $("._2fUGBItB");
     private final SelenideElement returnToPayButton = $x("//a[@class='btn']");
+    private final SelenideElement nextMonthButton = $(".react-calendar__navigation__next-button");
+    private final SelenideElement timeDropped = $(".css-oboqqt-menu");
+    private final ElementsCollection timeIntervals = $$x("//div[@class='_2zwatJ-h' and count(span) = 1]");
+    private final ElementsCollection timeEarlyIntervals = $$x("//div[@class='_2zwatJ-h' and count(span) = 2]");
+    private final SelenideElement timeFromInput = $x("//span[text()='Время доставки с']/parent::label");
+    private final SelenideElement timeToInput = $x("//span[text()='До']/parent::label");
     private final ApiClient apiClient;
+    private String deliveryDate;
 
     public CreatingOrderPage(ApiClient apiClient) {
         this.apiClient = apiClient;
@@ -106,41 +112,49 @@ public class CreatingOrderPage {
 
     // 1. сделать тесты для выбора конкретного дня
     // 2. указать время доставки
-    // 3. вызвать getRandomDay
-    public CreatingOrderPage getDeliveryDateWithoutDisabled() {
+    public CreatingOrderPage getRandomDeliveryDate() {
         List<String> disabledDaysList = apiClient.getDisabledDeliveryDaysList();
-        List<String> convertedDisabledDaysList = HelperPage.convertDates(disabledDaysList);
+        deliveryDate = HelperPage.getRandomDeliveryDayWithoutDisabled(disabledDaysList);
 
-        List<String> uiDaysList = HelperPage.getListFromAriaLabelAttribute(deliveryAllDays);
-        uiDaysList.removeAll(convertedDisabledDaysList);
-
-        String randomDeliveryDay = HelperPage.getRandomStringFromList(uiDaysList);
-        deliveryAllDays.filterBy(Condition.attribute("aria-label", randomDeliveryDay))
-                .first()
-                .click();
+        boolean foundDate = false;
+        while (!foundDate) {
+            for (SelenideElement se : deliveryAllDays) {
+                if (Objects.requireNonNull(se.getAttribute("aria-label")).contains(HelperPage.formatDateDeliveryDateParse(deliveryDate))) {
+                    se.shouldBe(exist).click();
+                    foundDate = true;
+                    break;
+                }
+            }
+            if (!foundDate) {
+                nextMonthButton.shouldBe(exist).click();
+                deliveryAllDays = $$x("//button[contains(@class, 'react-calendar__tile') and not(@disabled)]/abbr");
+            }
+        }
         return this;
     }
 
-    public CreatingOrderPage getDeliveryDate() {
-        Calendar calendar = Calendar.getInstance();
-        Date currentDate = calendar.getTime();
+    public CreatingOrderPage getRandomDeliveryTime() {
+        apiClient.getDeliveryDateInterval(deliveryDate);
+        LocalTime timeFrom = HelperPage.doubleToTime(apiClient.getDeliveryTimeFrom());
+        LocalTime timeTo = HelperPage.doubleToTime(apiClient.getDeliveryTimeTo());
+        String time = HelperPage.getRandomTimeInterval(timeFrom, timeTo);
+        String timeBeforeInterval = timeTo.plusMinutes(15).toString();
+        String timeAfterInterval = timeFrom.minusMinutes(15).toString();
 
-        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
-        Date lastDayOfMonth = calendar.getTime();
+        timeFromInput.shouldBe(exist).click();
+        timeDropped.shouldBe(exist);
 
-        List<String> dates = new ArrayList<>();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        assertTrue(timeIntervals.stream().anyMatch(e -> e.getText().equals(time)), "time intervals contains correct delivery time");
+        assertTrue(timeIntervals.stream().noneMatch(e -> e.getText().equals(timeBeforeInterval)), "time intervals not contains before time delivery");
+        assertTrue(timeIntervals.stream().noneMatch(e -> e.getText().equals(timeAfterInterval)), "time intervals not contains after time delivery");
 
-        while (!currentDate.after(lastDayOfMonth)) {
-            dates.add(dateFormat.format(currentDate));
-            calendar.add(Calendar.DAY_OF_MONTH, +1);
-            currentDate = calendar.getTime();
-            System.out.println(currentDate);
+        for (SelenideElement se : timeIntervals) {
+            if (se.getText().equals(time)) {
+                se.shouldBe(exist).click();
+                break;
+            }
         }
 
-        for (String s : dates) {
-            System.out.println(s + " in list");
-        }
         return this;
     }
 

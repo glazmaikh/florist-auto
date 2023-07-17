@@ -4,7 +4,6 @@ import helpers.ApiClient;
 
 import helpers.BouquetType;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import pages.*;
@@ -55,7 +54,8 @@ public class CriticalPathTests extends TestBase {
                 .addToCard(baseUrl);
 
         creatingOrderPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
-                .getDeliveryDateWithoutDisabled()
+                .getRandomDeliveryDate()
+                .getRandomDeliveryTime()
                 .assertOrderList()
                 .pressPayButton();
 
@@ -83,7 +83,7 @@ public class CriticalPathTests extends TestBase {
                 .addToCard(baseUrl);
 
         creatingOrderPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
-                .getDeliveryDateWithoutDisabled()
+                .getRandomDeliveryDate()
                 .assertOrderList()
                 .pressPayButton();
 
@@ -111,7 +111,7 @@ public class CriticalPathTests extends TestBase {
                 .addToCard(baseUrl);
 
         creatingOrderPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
-                .getDeliveryDateWithoutDisabled()
+                .getRandomDeliveryDate()
                 .assertOrderList()
                 .pressPayButton();
 
@@ -174,7 +174,7 @@ public class CriticalPathTests extends TestBase {
                 .addToCard(baseUrl);
 
         creatingOrderPage.simpleFillForm(firstName, phone, address)
-                .getDeliveryDateWithoutDisabled()
+                .getRandomDeliveryDate()
                 .assertOrderList()
                 .pressPayButton();
 
@@ -186,12 +186,5 @@ public class CriticalPathTests extends TestBase {
         successPage.assertSuccessCreatedOrder(baseUrl);
         catalogPage.openAccountOrderPage();
         accountOrderPage.assertCreatedOrderFromAuthUser(baseUrl, yourName);
-    }
-
-    @Disabled
-    @Test
-    void setTestData() {
-        catalogPage.openCatalogPage(baseUrl);
-        creatingOrderPage.getDeliveryDate();
     }
 }

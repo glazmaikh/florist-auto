@@ -6,7 +6,6 @@ import io.restassured.response.Response;
 import io.restassured.response.ResponseBody;
 import io.restassured.specification.RequestSpecification;
 import lombok.SneakyThrows;
-import models.auth.AuthDto;
 import models.bouquet.BouquetDataDto;
 import models.bouquet.BouquetDataItemDto;
 import models.bouquet.PriceItemDto;
@@ -14,6 +13,8 @@ import models.city.CityData;
 import models.city.CityResponse;
 import models.cityAlias.Data;
 import models.cityAlias.CityDataAliasDto;
+import models.deliveryDate.DeliveryInfo;
+import models.deliveryDate.DeliveryTime;
 import models.disabledDelivery.DisabledDeliveryDateResponse;
 import models.order.OrderData;
 import models.register.User;
@@ -33,6 +34,7 @@ public class ApiClient {
     private BouquetDataItemDto bouquet;
     private OrderData orderData;
     private final Data data = getDeliveryPriceByCitySlug();
+    private DeliveryTime deliveryTime;
 
     // Получение обьекта города Астрахань
     @SneakyThrows
@@ -114,15 +116,9 @@ public class ApiClient {
 
     public void initBouquet(BouquetType bouquetType) {
         switch (bouquetType) {
-            case FLORIST_RU:
-                getRandomFloristRuBouquetByCityID();
-                break;
-            case IFLORIST:
-                getRandomIFloristBouquetByCityID();
-                break;
-            case ALL_BOUQUETS:
-                getRandomAllBouquetByCityID();
-                break;
+            case FLORIST_RU -> getRandomFloristRuBouquetByCityID();
+            case IFLORIST -> getRandomIFloristBouquetByCityID();
+            case ALL_BOUQUETS -> getRandomAllBouquetByCityID();
         }
     }
 
@@ -142,7 +138,6 @@ public class ApiClient {
     public List<PriceItemDto> getPriceList() {
         return bouquet.getPriceList();
     }
-
 
     // получение обьекта Data - цены доставки по slug города
     @SneakyThrows
@@ -244,21 +239,29 @@ public class ApiClient {
         return new ArrayList<>(disabledDate.getData().getDisabled_dates().values());
     }
 
-    // для чего это?
+    // получение рандомного обьекта с возможным интервалом доставки
     @SneakyThrows
-    public models.auth.User getUser(String login, String password) {
+    public void getDeliveryDateInterval(String withoutDisabledDay) {
         RequestSpecification httpRequest = given();
-        Response userAuthData = httpRequest
+        Response responseBouquet = httpRequest
                 .auth().basic("florist_api", "123")
-                .param("login", login)
-                .param("password", password)
-                .get("api/user/login");
-        ResponseBody userAuthDataBody = userAuthData.getBody();
+                .param("city", getCityId())
+                .param("date", withoutDisabledDay)
+                .param("ids", bouquet.getId())
+                .get("api/delivery/time");
+        ResponseBody bodyBouquet = responseBouquet.getBody();
 
         ObjectMapper objectMapper = new ObjectMapper();
-        AuthDto authDto = objectMapper.readValue(userAuthDataBody.asString(), AuthDto.class);
-        models.auth.User user = authDto.getUser();
-        return user;
+        DeliveryInfo deliveryInfo = objectMapper.readValue(bodyBouquet.asString(), DeliveryInfo.class);
+        deliveryTime = deliveryInfo.getData().getDelivery_time();
+    }
+
+    public double getDeliveryTimeFrom() {
+        return deliveryTime.getFrom();
+    }
+
+    public double getDeliveryTimeTo() {
+        return deliveryTime.getTo();
     }
 
     // метод регистрации клиента на сайте

@@ -4,6 +4,7 @@ import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -62,9 +63,16 @@ public class HelperPage {
         return date.format(outputFormatter);
     }
 
-    public static String formatDateForGetDeliveryTime(String formatDate) {
-        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy", new Locale("ru"));
+    public static String formatDeliveryDate(String formatDate) {
+        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy 'г.'", new Locale("ru"));
         DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate date = LocalDate.parse(formatDate, inputFormatter);
+        return date.format(outputFormatter);
+    }
+
+    public static String formatDateDeliveryDateParse(String formatDate) {
+        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy 'г.'", new Locale("ru"));
         LocalDate date = LocalDate.parse(formatDate, inputFormatter);
         return date.format(outputFormatter);
     }
@@ -87,7 +95,6 @@ public class HelperPage {
                 convertedDates.add("Invalid date format");
             }
         }
-
         return convertedDates;
     }
 
@@ -113,9 +120,6 @@ public class HelperPage {
     }
 
     public static String getRandomStringFromList(List<String> list) {
-        if (list == null || list.isEmpty()) {
-            return null;
-        }
         return list.get(new Random().nextInt(list.size()));
     }
 
@@ -152,5 +156,41 @@ public class HelperPage {
         String formattedDate = String.format("%02d.%02d.%04d", day, month, year);
         String formattedTime = String.format("%02d:%02d:%02d", hours, minutes, seconds);
         return formattedDate + ", " + formattedTime;
+    }
+
+    public static String getRandomDeliveryDayWithoutDisabled(List<String> disabledDaysList) {
+        LocalDate currentDate = LocalDate.now();
+        LocalDate afterDate = currentDate.plusMonths(2);
+
+        List<String> dateList = new ArrayList<>();
+        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        while (currentDate.isBefore(afterDate)) {
+            dateList.add(dateFormat.format(currentDate));
+            currentDate = currentDate.plusDays(1);
+        }
+
+        dateList.removeAll(disabledDaysList);
+        return getRandomStringFromList(dateList);
+    }
+
+    public static LocalTime doubleToTime(double value) {
+        int hours = (int) value;
+        int minutes = (int) ((value - hours) * 60);
+        return LocalTime.of(hours, minutes);
+    }
+
+    public static String getRandomTimeInterval(LocalTime dateFrom, LocalTime dateTo) {
+        List<String> dates = new ArrayList<>();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        dates.add(dateFrom.format(formatter));
+
+        LocalTime current = dateFrom;
+        while (current.isBefore(dateTo) || current.equals(dateTo)) {
+            dates.add(current.format(formatter));
+            current = current.plusMinutes(15);
+        }
+        dates.add(dateTo.format(formatter));
+        return getRandomStringFromList(dates);
     }
 }

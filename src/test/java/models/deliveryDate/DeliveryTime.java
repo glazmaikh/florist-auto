@@ -1,10 +1,10 @@
-package models.toDelete.city;
+package models.deliveryDate;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public @Data class Region {
-    public String id;
-    public String name;
+public @Data class DeliveryTime {
+    private double from;
+    private double to;
 }
