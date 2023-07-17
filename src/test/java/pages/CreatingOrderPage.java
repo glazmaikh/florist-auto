@@ -11,15 +11,17 @@ import org.openqa.selenium.JavascriptExecutor;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.util.*;
+import org.junit.jupiter.api.Assertions;
 
 import static com.codeborne.selenide.CollectionCondition.texts;
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selectors.byName;
 import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.*;
+import static org.apache.groovy.parser.antlr4.util.StringUtils.matches;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CreatingOrderPage {
     private final SelenideElement yourNameInput = $(byName("customerName"));
@@ -40,8 +42,10 @@ public class CreatingOrderPage {
     private final SelenideElement returnToPayButton = $x("//a[@class='btn']");
     private final SelenideElement nextMonthButton = $(".react-calendar__navigation__next-button");
     private final SelenideElement timeDropped = $(".css-oboqqt-menu");
-    private final ElementsCollection timeIntervals = $$(".css-1g4h2f9-option");
+    private final ElementsCollection timeIntervals = $$x("//div[@class='_2zwatJ-h' and count(span) = 1]");
+    private final ElementsCollection timeEarlyIntervals = $$x("//div[@class='_2zwatJ-h' and count(span) = 2]");
     private final SelenideElement timeFromInput = $x("//span[text()='Время доставки с']/parent::label");
+    private final SelenideElement timeToInput = $x("//span[text()='До']/parent::label");
     private final ApiClient apiClient;
     private String deliveryDate;
 
@@ -133,10 +137,16 @@ public class CreatingOrderPage {
         apiClient.getDeliveryDateInterval(deliveryDate);
         LocalTime timeFrom = HelperPage.doubleToTime(apiClient.getDeliveryTimeFrom());
         LocalTime timeTo = HelperPage.doubleToTime(apiClient.getDeliveryTimeTo());
-
         String time = HelperPage.getRandomTimeInterval(timeFrom, timeTo);
+        String timeBeforeInterval = timeTo.plusMinutes(15).toString();
+        String timeAfterInterval = timeFrom.minusMinutes(15).toString();
+
         timeFromInput.shouldBe(exist).click();
         timeDropped.shouldBe(exist);
+
+        assertTrue(timeIntervals.stream().anyMatch(e -> e.getText().equals(time)), "time intervals contains correct delivery time");
+        assertTrue(timeIntervals.stream().noneMatch(e -> e.getText().equals(timeBeforeInterval)), "time intervals not contains before time delivery");
+        assertTrue(timeIntervals.stream().noneMatch(e -> e.getText().equals(timeAfterInterval)), "time intervals not contains after time delivery");
 
         for (SelenideElement se : timeIntervals) {
             if (se.getText().equals(time)) {
@@ -144,6 +154,7 @@ public class CreatingOrderPage {
                 break;
             }
         }
+
         return this;
     }
 
