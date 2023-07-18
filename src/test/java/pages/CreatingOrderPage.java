@@ -11,14 +11,11 @@ import org.openqa.selenium.JavascriptExecutor;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.util.*;
-import org.junit.jupiter.api.Assertions;
 
-import static com.codeborne.selenide.CollectionCondition.texts;
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selectors.byName;
 import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.*;
-import static org.apache.groovy.parser.antlr4.util.StringUtils.matches;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.*;
