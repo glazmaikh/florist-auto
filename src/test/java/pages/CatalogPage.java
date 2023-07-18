@@ -1,5 +1,7 @@
 package pages;
 
+import com.codeborne.selenide.CollectionCondition;
+import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import helpers.ApiClient;
@@ -7,11 +9,13 @@ import helpers.BouquetType;
 
 import java.time.Duration;
 
+import static com.codeborne.selenide.CollectionCondition.size;
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selectors.byName;
 import static com.codeborne.selenide.Selenide.*;
 import static com.codeborne.selenide.WebDriverConditions.url;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.TestBase.baseUrl;
 
 public class CatalogPage {
@@ -35,12 +39,13 @@ public class CatalogPage {
     private final SelenideElement privacyPolicyInput = $x("//div[@class='boxes_item']//label");
     private final SelenideElement privacyAlert = $x("//span[text()='Вы должны согласиться с условиями']");
     private final SelenideElement emptyFieldAlert = $x("//span[text()='Поле обязательно для заполнения']");
-    private final SelenideElement iframeReCaptcha = $("iframe[title='reCAPTCHA']");
     private final SelenideElement submitButton = $("button[type='submit']");
     private final SelenideElement deliveryCity = $(".CUvbyl33");
     private final SelenideElement accountOrdersButton = $("button[aria-label='Перейти в личный кабинет']");
     private final SelenideElement registerNewAccountButton = $x("//span[text()='Создать аккаунт']/parent::button");
     private final SelenideElement userNotFoundSpan = $x("//span[text()='User not found']");
+    private final SelenideElement incorrectPasswordSpan = $x("//span[text()='Invalid password']");
+    private final ElementsCollection incorrectPassword = $$x("//span[text()='Invalid password']");
 
     public CatalogPage(ApiClient apiClient) {
         this.apiClient = apiClient;
@@ -152,6 +157,15 @@ public class CatalogPage {
     public CatalogPage assertUnAuth() {
         webdriver().shouldHave(url(baseUrl));
         userNotFoundSpan.shouldBe(visible);
+        return this;
+    }
+
+    public CatalogPage assertAuthIncorrectPass() {
+        webdriver().shouldHave(url(baseUrl));
+        incorrectPassword.shouldHave(size(2));
+        for (SelenideElement se : incorrectPassword) {
+            assertEquals("Invalid password", se.getText());
+        }
         return this;
     }
 }

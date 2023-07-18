@@ -44,4 +44,15 @@ public class AuthTests extends TestBase {
                 .fillAuthForm(yourEmail, password);
         catalogPage.assertUnAuth();
     }
+
+    @Test
+    @Tag("auth")
+    void authNewUserWithIncorrectPasswordTest() {
+        catalogPage.apiRegisterUser(yourName, yourEmail, yourPhone, password)
+                .openCatalogPage(baseUrl)
+                .closeCookiePopUp()
+                .openAuthModal()
+                .fillAuthForm(yourEmail, testData.getPassword());
+        catalogPage.assertAuthIncorrectPass();
+    }
 }
