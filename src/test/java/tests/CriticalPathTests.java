@@ -141,17 +141,7 @@ public class CriticalPathTests extends TestBase {
         accountOrderPage.assertAuth(baseUrl, yourName);
     }
 
-    @Test
-    @Tag("auth")
-    void authTest() {
-        catalogPage.apiRegisterUser(yourName, yourEmail, yourPhone, password)
-                .openCatalogPage(baseUrl)
-                .closeCookiePopUp()
-                .openAuthModal()
-                .fillAuthForm(yourEmail, password);
 
-        accountOrderPage.assertAuth(baseUrl, yourName);
-    }
 
     @Test
     @Tag("create_order")

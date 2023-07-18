@@ -40,6 +40,7 @@ public class CatalogPage {
     private final SelenideElement deliveryCity = $(".CUvbyl33");
     private final SelenideElement accountOrdersButton = $("button[aria-label='Перейти в личный кабинет']");
     private final SelenideElement registerNewAccountButton = $x("//span[text()='Создать аккаунт']/parent::button");
+    private final SelenideElement userNotFoundSpan = $x("//span[text()='User not found']");
 
     public CatalogPage(ApiClient apiClient) {
         this.apiClient = apiClient;
@@ -145,6 +146,12 @@ public class CatalogPage {
 
     public CatalogPage apiRegisterUser(String name, String email, String phone, String password) {
         apiClient.apiRegisterUser(name, email, phone, password);
+        return this;
+    }
+
+    public CatalogPage assertUnAuth() {
+        webdriver().shouldHave(url(baseUrl));
+        userNotFoundSpan.shouldBe(visible);
         return this;
     }
 }
