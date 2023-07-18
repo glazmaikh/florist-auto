@@ -84,6 +84,7 @@ public class CriticalPathTests extends TestBase {
 
         creatingOrderPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
                 .getRandomDeliveryDate()
+                .getRandomDeliveryTime()
                 .assertOrderList()
                 .pressPayButton();
 
@@ -112,6 +113,7 @@ public class CriticalPathTests extends TestBase {
 
         creatingOrderPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
                 .getRandomDeliveryDate()
+                .getRandomDeliveryTime()
                 .assertOrderList()
                 .pressPayButton();
 
@@ -175,6 +177,7 @@ public class CriticalPathTests extends TestBase {
 
         creatingOrderPage.simpleFillForm(firstName, phone, address)
                 .getRandomDeliveryDate()
+                .getRandomDeliveryTime()
                 .assertOrderList()
                 .pressPayButton();
 
