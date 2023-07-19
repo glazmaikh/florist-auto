@@ -48,4 +48,15 @@ public class RegisterTest extends TestBase {
                 .fillRegisterForm(yourName, phone, yourEmail, password)
                 .assertInvalidPasswords();
     }
+
+    @ParameterizedTest
+    @ValueSource(strings = "")
+    @Tag("register")
+    void registerEmptyFieldsTest(String empty) {
+        catalogPage.openCatalogPage(baseUrl)
+                .closeCookiePopUp()
+                .openRegisterModal()
+                .fillRegisterForm(empty, empty, empty, empty)
+                .assertEmptyRegisterFields();
+    }
 }
