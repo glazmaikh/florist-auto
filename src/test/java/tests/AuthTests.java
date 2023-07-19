@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import pages.*;
 
 public class AuthTests extends TestBase {
@@ -54,5 +55,16 @@ public class AuthTests extends TestBase {
                 .openAuthModal()
                 .fillAuthForm(yourEmail, testData.getPassword());
         catalogPage.assertAuthIncorrectPass();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = "")
+    @Tag("auth")
+    void authEmptyFieldsTest(String empty) {
+        catalogPage.openCatalogPage(baseUrl)
+                .closeCookiePopUp()
+                .openAuthModal()
+                .fillUnAuthForm(empty, empty);
+        catalogPage.assertEmptyAuthFields();
     }
 }

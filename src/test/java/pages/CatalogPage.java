@@ -46,7 +46,7 @@ public class CatalogPage {
     private final SelenideElement userNotFoundSpan = $x("//span[text()='User not found']");
     private final ElementsCollection incorrectPassword = $$x("//span[text()='Invalid password']");
     private final ElementsCollection minimumPasswordError = $$x("//span[text()='Минимум 6 символов']");
-    private final ElementsCollection emptyRegisterFields = $$x("//span[text()='Поле обязательно для заполнения']");
+    private final ElementsCollection emptyFieldsErrors = $$x("//span[text()='Поле обязательно для заполнения']");
 
     public CatalogPage(ApiClient apiClient) {
         this.apiClient = apiClient;
@@ -146,8 +146,15 @@ public class CatalogPage {
         passwordInput.sendKeys(password);
         emptyFieldAlert.shouldNotBe(exist);
 
-        submitButton.shouldNotBe(disabled).click();
+        submitButton.shouldBe(exist).click();
         return new AccountOrderPage(apiClient);
+    }
+
+    public CatalogPage fillUnAuthForm(String email, String password) {
+        loginInput.sendKeys(email);
+        passwordInput.sendKeys(password);
+        loginInput.click();
+        return this;
     }
 
     public CatalogPage apiRegisterUser(String name, String email, String phone, String password) {
@@ -181,8 +188,17 @@ public class CatalogPage {
 
     public CatalogPage assertEmptyRegisterFields() {
         webdriver().shouldHave(url(baseUrl));
-        emptyRegisterFields.shouldHave(size(5));
-        for (SelenideElement se : emptyRegisterFields) {
+        emptyFieldsErrors.shouldHave(size(5));
+        for (SelenideElement se : emptyFieldsErrors) {
+            assertEquals("Поле обязательно для заполнения", se.getText());
+        }
+        return this;
+    }
+
+    public CatalogPage assertEmptyAuthFields() {
+        webdriver().shouldHave(url(baseUrl));
+        emptyFieldsErrors.shouldHave(size(2));
+        for (SelenideElement se : emptyFieldsErrors) {
             assertEquals("Поле обязательно для заполнения", se.getText());
         }
         return this;
