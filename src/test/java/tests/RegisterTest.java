@@ -80,6 +80,12 @@ public class RegisterTest extends TestBase {
                 .assertAddedIncorrectRegisterEmail(email);
     }
 
-    //негативный тест имейла
-    //негативный тест галка политка перс данных
+    @Test
+    @Tag("register")
+    void validateErrorWhenTryRegisterWithoutAcceptDataPolicyTest() {
+        catalogPage.openCatalogPage(baseUrl)
+                .closeCookiePopUp()
+                .openRegisterModal()
+                .assertNotRegisterWithoutAcceptPolicy(yourName, phone, yourEmail, password);
+    }
 }

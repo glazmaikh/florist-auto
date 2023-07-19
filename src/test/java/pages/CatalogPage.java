@@ -10,10 +10,10 @@ import java.time.Duration;
 import static com.codeborne.selenide.CollectionCondition.size;
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selectors.byName;
+import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.*;
 import static com.codeborne.selenide.WebDriverConditions.url;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.TestBase.baseUrl;
 
 public class CatalogPage {
@@ -35,7 +35,7 @@ public class CatalogPage {
     private final SelenideElement repeatPasswordInput = $(byName("repeatPassword"));
     private final SelenideElement loginInput = $(byName("login"));
     private final SelenideElement privacyPolicyInput = $x("//div[@class='boxes_item']//label");
-    private final SelenideElement privacyAlert = $x("//span[text()='Вы должны согласиться с условиями']");
+    private final SelenideElement privacyAlert = $(byText("Вы должны согласиться с условиями"));
     private final SelenideElement emptyFieldAlert = $x("//span[text()='Поле обязательно для заполнения']");
     private final SelenideElement submitButton = $("button[type='submit']");
     private final SelenideElement deliveryCity = $(".CUvbyl33");
@@ -219,6 +219,20 @@ public class CatalogPage {
         emailInput.shouldBe(exist).sendKeys(email);
         nameInput.click();
         assertEquals("Введите корректный email адрес", alertIncorrectEmailInput.getText());
+        return this;
+    }
+
+    public CatalogPage assertNotRegisterWithoutAcceptPolicy(String name, String phone, String email, String password) {
+        nameInput.shouldBe(exist).sendKeys(name);
+        phoneInput.sendKeys(phone);
+        emailInput.sendKeys(email);
+        phoneInput.sendKeys(email);
+        passwordInput.sendKeys(password);
+        repeatPasswordInput.sendKeys(password);
+
+        registerNewAccountButton.scrollTo().shouldBe(exist).click();
+        privacyAlert.shouldBe(exist);
+        webdriver().shouldHave(url(baseUrl));
         return this;
     }
 }
