@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import pages.*;
 
-public class CriticalPathTests extends TestBase {
+public class CreateOrderTest extends TestBase {
     private final TestData testData = new TestData();
     private CatalogPage catalogPage;
     private BouquetPage bouquetPage;
@@ -128,20 +128,6 @@ public class CriticalPathTests extends TestBase {
 
         successPage.assertSuccessCreatedOrder(baseUrl);
     }
-
-    @Test
-    @Tag("register")
-    void registerTest() {
-        catalogPage.openCatalogPage(baseUrl)
-                .closeCookiePopUp()
-                .openRegisterModal()
-                .fillRegisterForm(yourName, phone, yourEmail, password)
-                .fillAuthForm(yourEmail, password);
-
-        accountOrderPage.assertAuth(baseUrl, yourName);
-    }
-
-
 
     @Test
     @Tag("create_order")

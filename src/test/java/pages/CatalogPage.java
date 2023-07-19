@@ -1,7 +1,5 @@
 package pages;
 
-import com.codeborne.selenide.CollectionCondition;
-import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import helpers.ApiClient;
@@ -12,10 +10,10 @@ import java.time.Duration;
 import static com.codeborne.selenide.CollectionCondition.size;
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selectors.byName;
+import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.*;
 import static com.codeborne.selenide.WebDriverConditions.url;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.TestBase.baseUrl;
 
 public class CatalogPage {
@@ -37,15 +35,18 @@ public class CatalogPage {
     private final SelenideElement repeatPasswordInput = $(byName("repeatPassword"));
     private final SelenideElement loginInput = $(byName("login"));
     private final SelenideElement privacyPolicyInput = $x("//div[@class='boxes_item']//label");
-    private final SelenideElement privacyAlert = $x("//span[text()='Вы должны согласиться с условиями']");
+    private final SelenideElement privacyAlert = $(byText("Вы должны согласиться с условиями"));
     private final SelenideElement emptyFieldAlert = $x("//span[text()='Поле обязательно для заполнения']");
     private final SelenideElement submitButton = $("button[type='submit']");
     private final SelenideElement deliveryCity = $(".CUvbyl33");
     private final SelenideElement accountOrdersButton = $("button[aria-label='Перейти в личный кабинет']");
     private final SelenideElement registerNewAccountButton = $x("//span[text()='Создать аккаунт']/parent::button");
     private final SelenideElement userNotFoundSpan = $x("//span[text()='User not found']");
-    private final SelenideElement incorrectPasswordSpan = $x("//span[text()='Invalid password']");
     private final ElementsCollection incorrectPassword = $$x("//span[text()='Invalid password']");
+    private final ElementsCollection minimumPasswordError = $$x("//span[text()='Минимум 6 символов']");
+    private final ElementsCollection emptyFieldsErrors = $$x("//span[text()='Поле обязательно для заполнения']");
+    private final SelenideElement alertIncorrectPhoneInput = $x("//span[text()='Введите корректный номер телефона']");
+    private final SelenideElement alertIncorrectEmailInput = $x("//span[text()='Введите корректный email адрес']");
 
     public CatalogPage(ApiClient apiClient) {
         this.apiClient = apiClient;
@@ -145,8 +146,15 @@ public class CatalogPage {
         passwordInput.sendKeys(password);
         emptyFieldAlert.shouldNotBe(exist);
 
-        submitButton.shouldNotBe(disabled).click();
+        submitButton.shouldBe(exist).click();
         return new AccountOrderPage(apiClient);
+    }
+
+    public CatalogPage fillUnAuthForm(String email, String password) {
+        loginInput.sendKeys(email);
+        passwordInput.sendKeys(password);
+        loginInput.click();
+        return this;
     }
 
     public CatalogPage apiRegisterUser(String name, String email, String phone, String password) {
@@ -166,6 +174,65 @@ public class CatalogPage {
         for (SelenideElement se : incorrectPassword) {
             assertEquals("Invalid password", se.getText());
         }
+        return this;
+    }
+
+    public CatalogPage assertInvalidPasswords() {
+        webdriver().shouldHave(url(baseUrl));
+        minimumPasswordError.shouldHave(size(2));
+        for (SelenideElement se : minimumPasswordError) {
+            assertEquals("Минимум 6 символов", se.getText());
+        }
+        return this;
+    }
+
+    public CatalogPage assertEmptyRegisterFields() {
+        webdriver().shouldHave(url(baseUrl));
+        emptyFieldsErrors.shouldHave(size(5));
+        for (SelenideElement se : emptyFieldsErrors) {
+            assertEquals("Поле обязательно для заполнения", se.getText());
+        }
+        return this;
+    }
+
+    public CatalogPage assertEmptyAuthFields() {
+        webdriver().shouldHave(url(baseUrl));
+        emptyFieldsErrors.shouldHave(size(2));
+        for (SelenideElement se : emptyFieldsErrors) {
+            assertEquals("Поле обязательно для заполнения", se.getText());
+        }
+        return this;
+    }
+
+    public CatalogPage assertAddedIncorrectRegisterPhone(String phone) {
+        phoneInput.shouldBe(exist).click();
+        nameInput.click();
+        phoneInput.click();
+        assertEquals("Введите корректный номер телефона", alertIncorrectPhoneInput.getText());
+
+        phoneInput.sendKeys(phone);
+        assertEquals("Введите корректный номер телефона", alertIncorrectPhoneInput.getText());
+        return this;
+    }
+
+    public CatalogPage assertAddedIncorrectRegisterEmail(String email) {
+        emailInput.shouldBe(exist).sendKeys(email);
+        nameInput.click();
+        assertEquals("Введите корректный email адрес", alertIncorrectEmailInput.getText());
+        return this;
+    }
+
+    public CatalogPage assertNotRegisterWithoutAcceptPolicy(String name, String phone, String email, String password) {
+        nameInput.shouldBe(exist).sendKeys(name);
+        phoneInput.sendKeys(phone);
+        emailInput.sendKeys(email);
+        phoneInput.sendKeys(email);
+        passwordInput.sendKeys(password);
+        repeatPasswordInput.sendKeys(password);
+
+        registerNewAccountButton.scrollTo().shouldBe(exist).click();
+        privacyAlert.shouldBe(exist);
+        webdriver().shouldHave(url(baseUrl));
         return this;
     }
 }
