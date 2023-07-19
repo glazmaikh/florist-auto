@@ -1,7 +1,5 @@
 package pages;
 
-import com.codeborne.selenide.CollectionCondition;
-import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import helpers.ApiClient;
@@ -47,6 +45,7 @@ public class CatalogPage {
     private final ElementsCollection incorrectPassword = $$x("//span[text()='Invalid password']");
     private final ElementsCollection minimumPasswordError = $$x("//span[text()='Минимум 6 символов']");
     private final ElementsCollection emptyFieldsErrors = $$x("//span[text()='Поле обязательно для заполнения']");
+    private final SelenideElement alertIncorrectPhoneInput = $x("//span[text()='Введите корректный номер телефона']");
 
     public CatalogPage(ApiClient apiClient) {
         this.apiClient = apiClient;
@@ -201,6 +200,17 @@ public class CatalogPage {
         for (SelenideElement se : emptyFieldsErrors) {
             assertEquals("Поле обязательно для заполнения", se.getText());
         }
+        return this;
+    }
+
+    public CatalogPage assertAddedIncorrectRegisterPhone(String phone) {
+        phoneInput.shouldBe(exist).click();
+        nameInput.click();
+        phoneInput.click();
+        assertEquals("Введите корректный номер телефона", alertIncorrectPhoneInput.getText());
+
+        phoneInput.sendKeys(phone);
+        assertEquals("Введите корректный номер телефона", alertIncorrectPhoneInput.getText());
         return this;
     }
 }

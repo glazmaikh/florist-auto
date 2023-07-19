@@ -58,7 +58,7 @@ public class AuthTests extends TestBase {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = "")
+    @ValueSource(strings = {""})
     @Tag("auth")
     void authEmptyFieldsTest(String empty) {
         catalogPage.openCatalogPage(baseUrl)

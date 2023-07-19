@@ -28,7 +28,7 @@ public class RegisterTest extends TestBase {
 
     @Test
     @Tag("register")
-    void registerTest() {
+    void successRegisterTest() {
         catalogPage.openCatalogPage(baseUrl)
                 .closeCookiePopUp()
                 .openRegisterModal()
@@ -41,7 +41,7 @@ public class RegisterTest extends TestBase {
     @ParameterizedTest
     @ValueSource(strings = {"12345", "!", "АбвгD"})
     @Tag("register")
-    void validateMin6SymbolsPasswordFields(String password) {
+    void validateMin6SymbolsPasswordFieldsRegisterTest(String password) {
         catalogPage.openCatalogPage(baseUrl)
                 .closeCookiePopUp()
                 .openRegisterModal()
@@ -52,11 +52,24 @@ public class RegisterTest extends TestBase {
     @ParameterizedTest
     @ValueSource(strings = "")
     @Tag("register")
-    void registerEmptyFieldsTest(String empty) {
+    void emptyFieldsRegisterTest(String empty) {
         catalogPage.openCatalogPage(baseUrl)
                 .closeCookiePopUp()
                 .openRegisterModal()
                 .fillRegisterForm(empty, empty, empty, empty)
                 .assertEmptyRegisterFields();
     }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"", "!" , "абвгд", "123456789"})
+    @Tag("register")
+    void validatePhoneFieldRegisterTest(String phone) {
+        catalogPage.openCatalogPage(baseUrl)
+                .closeCookiePopUp()
+                .openRegisterModal()
+                .assertAddedIncorrectRegisterPhone(phone);
+    }
+
+    //негативный тест имейла
+    //негативный тест галка политка перс данных
 }
