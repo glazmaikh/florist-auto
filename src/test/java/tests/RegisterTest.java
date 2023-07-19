@@ -70,6 +70,16 @@ public class RegisterTest extends TestBase {
                 .assertAddedIncorrectRegisterPhone(phone);
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {"a", "aa@aa", "aa@aa.a", "aa@1.aa"})
+    @Tag("register")
+    void validateEmailFieldRegisterTest(String email) {
+        catalogPage.openCatalogPage(baseUrl)
+                .closeCookiePopUp()
+                .openRegisterModal()
+                .assertAddedIncorrectRegisterEmail(email);
+    }
+
     //негативный тест имейла
     //негативный тест галка политка перс данных
 }

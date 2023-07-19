@@ -46,6 +46,7 @@ public class CatalogPage {
     private final ElementsCollection minimumPasswordError = $$x("//span[text()='Минимум 6 символов']");
     private final ElementsCollection emptyFieldsErrors = $$x("//span[text()='Поле обязательно для заполнения']");
     private final SelenideElement alertIncorrectPhoneInput = $x("//span[text()='Введите корректный номер телефона']");
+    private final SelenideElement alertIncorrectEmailInput = $x("//span[text()='Введите корректный email адрес']");
 
     public CatalogPage(ApiClient apiClient) {
         this.apiClient = apiClient;
@@ -211,6 +212,13 @@ public class CatalogPage {
 
         phoneInput.sendKeys(phone);
         assertEquals("Введите корректный номер телефона", alertIncorrectPhoneInput.getText());
+        return this;
+    }
+
+    public CatalogPage assertAddedIncorrectRegisterEmail(String email) {
+        emailInput.shouldBe(exist).sendKeys(email);
+        nameInput.click();
+        assertEquals("Введите корректный email адрес", alertIncorrectEmailInput.getText());
         return this;
     }
 }
