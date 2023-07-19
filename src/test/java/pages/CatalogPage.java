@@ -46,6 +46,7 @@ public class CatalogPage {
     private final SelenideElement userNotFoundSpan = $x("//span[text()='User not found']");
     private final SelenideElement incorrectPasswordSpan = $x("//span[text()='Invalid password']");
     private final ElementsCollection incorrectPassword = $$x("//span[text()='Invalid password']");
+    private final ElementsCollection minimumPasswordError = $$x("//span[text()='Минимум 6 символов']");
 
     public CatalogPage(ApiClient apiClient) {
         this.apiClient = apiClient;
@@ -165,6 +166,25 @@ public class CatalogPage {
         incorrectPassword.shouldHave(size(2));
         for (SelenideElement se : incorrectPassword) {
             assertEquals("Invalid password", se.getText());
+        }
+        return this;
+    }
+
+    public CatalogPage fillRegisterPasswords(String password) {
+        passwordInput.sendKeys(password);
+        repeatPasswordInput.sendKeys(password);
+        privacyPolicyInput.click();
+        privacyAlert.shouldNotBe(exist);
+
+        registerNewAccountButton.shouldBe(exist).click();
+        return this;
+    }
+
+    public CatalogPage assertInvalidPasswords() {
+        webdriver().shouldHave(url(baseUrl));
+        minimumPasswordError.shouldHave(size(2));
+        for (SelenideElement se : minimumPasswordError) {
+            assertEquals("Минимум 6 символов", se.getText());
         }
         return this;
     }
