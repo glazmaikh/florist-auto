@@ -57,7 +57,7 @@ public class AuthTests extends TestBase {
         catalogPage.assertAuthIncorrectPass();
     }
 
-    @ParameterizedTest
+    @ParameterizedTest(name = "Тест на проверку всплывающей ошибки 'Поле обязательно для заполнения' когда поля авторизации пустые")
     @ValueSource(strings = {""})
     @Tag("auth")
     void authEmptyFieldsTest(String empty) {

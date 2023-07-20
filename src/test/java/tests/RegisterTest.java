@@ -13,13 +13,14 @@ public class RegisterTest extends TestBase {
     private final TestData testData = new TestData();
     private CatalogPage catalogPage;
     private AccountOrderPage accountOrderPage;
-    private String yourName, yourEmail, phone, password;
+    private String yourName, yourEmail, phone, yourPhone, password;
 
     @BeforeEach
     void setData() {
         yourName = testData.getYourFullName();
         yourEmail = testData.getYourEmail();
         phone = testData.getPhone();
+        yourPhone = testData.getYourPhone();
         password = testData.getPassword();
         ApiClient apiClient = new ApiClient();
         catalogPage = new CatalogPage(apiClient);
@@ -38,7 +39,7 @@ public class RegisterTest extends TestBase {
         accountOrderPage.assertAuth(baseUrl, yourName);
     }
 
-    @ParameterizedTest
+    @ParameterizedTest(name = "Негативный тест на проверку password min length с параметром {0}")
     @ValueSource(strings = {"12345", "!", "АбвгD"})
     @Tag("register")
     void validateMin6SymbolsPasswordFieldsRegisterTest(String password) {
@@ -49,7 +50,7 @@ public class RegisterTest extends TestBase {
                 .assertInvalidPasswords();
     }
 
-    @ParameterizedTest
+    @ParameterizedTest(name = "Тест на проверку всплывающей ошибки 'Поле обязательно для заполнения' когда поля регистрации пустые")
     @ValueSource(strings = "")
     @Tag("register")
     void emptyFieldsRegisterTest(String empty) {
@@ -60,7 +61,7 @@ public class RegisterTest extends TestBase {
                 .assertEmptyRegisterFields();
     }
 
-    @ParameterizedTest
+    @ParameterizedTest(name = "Негативный тест на проверку валидации поля 'телефон' при регистрации")
     @ValueSource(strings = {"", "!" , "абвгд", "123456789"})
     @Tag("register")
     void validatePhoneFieldRegisterTest(String phone) {
@@ -70,7 +71,7 @@ public class RegisterTest extends TestBase {
                 .assertAddedIncorrectRegisterPhone(phone);
     }
 
-    @ParameterizedTest
+    @ParameterizedTest(name = "Негативный тест на проверку валидации поля 'имейл' при регистрации")
     @ValueSource(strings = {"a", "aa@aa", "aa@aa.a", "aa@1.aa"})
     @Tag("register")
     void validateEmailFieldRegisterTest(String email) {
@@ -87,5 +88,16 @@ public class RegisterTest extends TestBase {
                 .closeCookiePopUp()
                 .openRegisterModal()
                 .assertNotRegisterWithoutAcceptPolicy(yourName, phone, yourEmail, password);
+    }
+
+    @Test
+    @Tag("register")
+    void tryRegistrationWhenRegisteredCredsTest() {
+        catalogPage.apiRegisterUser(yourName, yourEmail, yourPhone, password)
+                .openCatalogPage(baseUrl)
+                .closeCookiePopUp()
+                .openRegisterModal()
+                .fillRegisterForm(yourName, phone, yourEmail, password)
+                .assertAlreadyExistsEmailWhenRegister();
     }
 }

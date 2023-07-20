@@ -47,6 +47,7 @@ public class CatalogPage {
     private final ElementsCollection emptyFieldsErrors = $$x("//span[text()='Поле обязательно для заполнения']");
     private final SelenideElement alertIncorrectPhoneInput = $x("//span[text()='Введите корректный номер телефона']");
     private final SelenideElement alertIncorrectEmailInput = $x("//span[text()='Введите корректный email адрес']");
+    private final SelenideElement userAlreadyExistsError = $(byText("User with this email already exists"));
 
     public CatalogPage(ApiClient apiClient) {
         this.apiClient = apiClient;
@@ -233,6 +234,11 @@ public class CatalogPage {
         registerNewAccountButton.scrollTo().shouldBe(exist).click();
         privacyAlert.shouldBe(exist);
         webdriver().shouldHave(url(baseUrl));
+        return this;
+    }
+
+    public CatalogPage assertAlreadyExistsEmailWhenRegister() {
+        userAlreadyExistsError.shouldBe(exist);
         return this;
     }
 }
