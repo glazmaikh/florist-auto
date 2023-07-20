@@ -13,13 +13,14 @@ public class RegisterTest extends TestBase {
     private final TestData testData = new TestData();
     private CatalogPage catalogPage;
     private AccountOrderPage accountOrderPage;
-    private String yourName, yourEmail, phone, password;
+    private String yourName, yourEmail, phone, yourPhone, password;
 
     @BeforeEach
     void setData() {
         yourName = testData.getYourFullName();
         yourEmail = testData.getYourEmail();
         phone = testData.getPhone();
+        yourPhone = testData.getYourPhone();
         password = testData.getPassword();
         ApiClient apiClient = new ApiClient();
         catalogPage = new CatalogPage(apiClient);
@@ -87,5 +88,16 @@ public class RegisterTest extends TestBase {
                 .closeCookiePopUp()
                 .openRegisterModal()
                 .assertNotRegisterWithoutAcceptPolicy(yourName, phone, yourEmail, password);
+    }
+
+    @Test
+    @Tag("register")
+    void tryRegistrationWhenRegisteredCredsTest() {
+        catalogPage.apiRegisterUser(yourName, yourEmail, yourPhone, password)
+                .openCatalogPage(baseUrl)
+                .closeCookiePopUp()
+                .openRegisterModal()
+                .fillRegisterForm(yourName, phone, yourEmail, password)
+                .assertAlreadyExistsEmailWhenRegister();
     }
 }
