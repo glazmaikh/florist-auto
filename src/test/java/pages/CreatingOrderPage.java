@@ -11,6 +11,7 @@ import org.openqa.selenium.JavascriptExecutor;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selectors.byName;
@@ -82,18 +83,24 @@ public class CreatingOrderPage {
     }
 
     public CreatingOrderPage assertOrderList() {
-        orderList.shouldBe(text(apiClient.getBouquetName()));
-        HelperPage.assertPrice(apiClient.getBouquetPrice(), orderListPrices.get(0));
+        assertTrue(HelperPage.isOrderListContainsAllFromBouquets(orderList, apiClient.getBouquetNameList()),"bouquets names not equals");
+
+        List<String> bouquetsPrices = apiClient.getBouquetPriceRubList().stream()
+                .map(String::valueOf)
+                .map(HelperPage::priceRegexRub)
+                .toList();
+        assertTrue(HelperPage.isOrderListContainsAllFromBouquets(orderList, bouquetsPrices), "bouquets prices not equals");
 
         int deliveryPrice = HelperPage.doubleToIntRound(apiClient.getDeliveryPrice());
+        int totalPrice = HelperPage.sumIntegerList(apiClient.getBouquetPriceRubList());
         if (deliveryPrice > 100) {
-            HelperPage.assertPrice(deliveryPrice, orderListPrices.get(1));
-            assertThat(HelperPage.priceRegex(orderListPrices.get(2)),
-                    equalTo(String.valueOf(HelperPage.totalPrice(apiClient.getBouquetPrice(), deliveryPrice))));
+            assertTrue(orderList.getText().contains(String.valueOf(deliveryPrice)), "delivery prices not equals");
+
+            totalPrice += deliveryPrice;
+            assertTrue(orderList.getText().contains(HelperPage.priceRegexRub(String.valueOf(totalPrice))), "total price not equals");
         } else {
             orderList.shouldBe(text("бесплатно"));
-            assertThat(HelperPage.priceRegex(orderListPrices.get(1)),
-                    equalTo(String.valueOf(apiClient.getBouquetPrice())));
+            assertTrue(orderList.getText().contains(HelperPage.priceRegexRub(String.valueOf(totalPrice))), "total price not equals");
         }
         return this;
     }

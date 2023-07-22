@@ -69,6 +69,45 @@ public class CreateOrderTest extends TestBase {
 
     @Test
     @Tag("create_order")
+    void createNewOrderWith2BouquetsTest() {
+        catalogPage.openCatalogPage(baseUrl)
+                .closeCookiePopUp()
+                .setDeliveryCity()
+                .setRandomBouquet(BouquetType.FLORIST_RU);
+
+        bouquetPage.openBouquetPage(baseUrl)
+                .assertBouquetName()
+                .assertVariationsPrices()
+                .assertDeliveryPrice()
+                .getFirstVariation()
+                .addToCard(baseUrl);
+
+        catalogPage.openCatalogPage(baseUrl)
+                .setRandomBouquet(BouquetType.FLORIST_RU);
+
+        bouquetPage.openBouquetPage(baseUrl)
+                .assertBouquetName()
+                .assertVariationsPrices()
+                .assertDeliveryPrice()
+                .getFirstVariation()
+                .addToCard(baseUrl);
+
+        creatingOrderPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
+                .getRandomDeliveryDate()
+                .getRandomDeliveryTime()
+                .assertOrderList()
+                .pressPayButton();
+
+        paymentPage.assertOrderList()
+                .fillCard(cardNumber, expireNumber, cvcNumber)
+                .pay()
+                .confirm();
+
+        successPage.assertSuccessCreatedOrder(baseUrl);
+    }
+
+    @Test
+    @Tag("create_order")
     void createNewIFloristOrderTest() {
         catalogPage.openCatalogPage(baseUrl)
                 .closeCookiePopUp()
