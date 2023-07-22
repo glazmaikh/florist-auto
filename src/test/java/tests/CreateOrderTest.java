@@ -69,7 +69,7 @@ public class CreateOrderTest extends TestBase {
 
     @Test
     @Tag("create_order")
-    void orderWith2BouquetsTest() {
+    void createNewOrderWith2BouquetsTest() {
         catalogPage.openCatalogPage(baseUrl)
                 .closeCookiePopUp()
                 .setDeliveryCity()
