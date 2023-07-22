@@ -1,6 +1,5 @@
 package helpers;
 
-import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 
 import java.time.LocalDate;
@@ -11,7 +10,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.codeborne.selenide.Selenide.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HelperPage {
 
@@ -19,16 +17,12 @@ public class HelperPage {
         return (int) Math.round(value);
     }
 
-    public static int totalPrice(int bouquetPrice, int deliveryPrice) {
-        return bouquetPrice + deliveryPrice;
-    }
-
-    public static void assertPrice(int bouquetPrice, SelenideElement element) {
-        assertEquals(String.valueOf(bouquetPrice), priceRegex(element));
-    }
-
     public static String priceRegex(SelenideElement element) {
         return element.getText().replaceAll("[\\s₽]", "");
+    }
+
+    public static String priceRegexRub(String price) {
+        return price.replaceAll("(\\d)(?=(\\d{3})+$)", "$1 ") + " ₽";
     }
 
     public static String getOrderNumber() {
@@ -63,60 +57,11 @@ public class HelperPage {
         return date.format(outputFormatter);
     }
 
-    public static String formatDeliveryDate(String formatDate) {
-        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy 'г.'", new Locale("ru"));
-        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate date = LocalDate.parse(formatDate, inputFormatter);
-        return date.format(outputFormatter);
-    }
-
     public static String formatDateDeliveryDateParse(String formatDate) {
         DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy 'г.'", new Locale("ru"));
         LocalDate date = LocalDate.parse(formatDate, inputFormatter);
         return date.format(outputFormatter);
-    }
-
-    public static List<String> convertDates(List<String> dates) {
-        List<String> convertedDates = new ArrayList<>();
-        Pattern pattern = Pattern.compile("(\\d{4})-(\\d{2})-(\\d{2})");
-
-        for (String date : dates) {
-            Matcher matcher = pattern.matcher(date);
-
-            if (matcher.matches()) {
-                int day = Integer.parseInt(matcher.group(3));
-                int month = Integer.parseInt(matcher.group(2));
-                int year = Integer.parseInt(matcher.group(1));
-
-                String formattedDate = String.format("%d %s %d г.", day, getMonthName(month), year);
-                convertedDates.add(formattedDate);
-            } else {
-                convertedDates.add("Invalid date format");
-            }
-        }
-        return convertedDates;
-    }
-
-    private static String getMonthName(int month) {
-        String[] monthNames = {
-                "января", "февраля", "марта", "апреля",
-                "мая", "июня", "июля", "августа",
-                "сентября", "октября", "ноября", "декабря"
-        };
-        return monthNames[month - 1];
-    }
-
-    public static List<String> getListFromAriaLabelAttribute(ElementsCollection collection) {
-        List<String> textList = new ArrayList<>();
-
-        for (SelenideElement element : collection) {
-            String ariaLabel = element.getAttribute("aria-label");
-            if (ariaLabel != null && !ariaLabel.isEmpty()) {
-                textList.add(ariaLabel);
-            }
-        }
-        return textList;
     }
 
     public static String getRandomStringFromList(List<String> list) {
@@ -192,5 +137,15 @@ public class HelperPage {
         }
         dates.add(dateTo.format(formatter));
         return getRandomStringFromList(dates);
+    }
+
+    public static boolean isOrderListContainsAllFromBouquets(SelenideElement orderList, List<String> names) {
+        return names.stream().allMatch(name -> orderList.getText().contains(name));
+    }
+
+    public static int sumIntegerList(List<Integer> list) {
+        return list.stream()
+                .mapToInt(Integer::intValue)
+                .sum();
     }
 }

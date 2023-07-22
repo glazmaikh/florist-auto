@@ -35,6 +35,7 @@ public class ApiClient {
     private OrderData orderData;
     private final Data data = getDeliveryPriceByCitySlug();
     private DeliveryTime deliveryTime;
+    private final List<BouquetDataItemDto> bouquetList = new ArrayList<>();
 
     // Получение обьекта города Астрахань
     @SneakyThrows
@@ -80,6 +81,7 @@ public class ApiClient {
         ObjectMapper objectMapper = new ObjectMapper();
         BouquetDataDto bouquetData = objectMapper.readValue(bodyBouquet.asString(), BouquetDataDto.class);
         bouquet = getRandomBouquetFloristRu(bouquetData.getData());
+        bouquetList.add(bouquet);
     }
 
     @SneakyThrows
@@ -96,6 +98,7 @@ public class ApiClient {
         ObjectMapper objectMapper = new ObjectMapper();
         BouquetDataDto bouquetData = objectMapper.readValue(bodyBouquet.asString(), BouquetDataDto.class);
         bouquet = getBouquetIFloristList(bouquetData.getData());
+        bouquetList.add(bouquet);
     }
 
     @SneakyThrows
@@ -112,6 +115,7 @@ public class ApiClient {
         ObjectMapper objectMapper = new ObjectMapper();
         BouquetDataDto bouquetData = objectMapper.readValue(bodyBouquet.asString(), BouquetDataDto.class);
         bouquet = getRandomBouquet(bouquetData.getData());
+        bouquetList.add(bouquet);
     }
 
     public void initBouquet(BouquetType bouquetType) {
@@ -137,6 +141,16 @@ public class ApiClient {
 
     public List<PriceItemDto> getPriceList() {
         return bouquet.getPriceList();
+    }
+
+    public List<String> getBouquetNameList() {
+        return bouquetList.stream()
+                .map(BouquetDataItemDto::getName).toList();
+    }
+
+    public List<Integer> getBouquetPriceRubList() {
+        return bouquetList.stream()
+                .map(e -> e.getMin_price().getRub()).toList();
     }
 
     // получение обьекта Data - цены доставки по slug города

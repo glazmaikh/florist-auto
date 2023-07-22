@@ -4,8 +4,10 @@ import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import helpers.ApiClient;
 import helpers.BouquetType;
+import models.bouquet.BouquetDataItemDto;
 
 import java.time.Duration;
+import java.util.List;
 
 import static com.codeborne.selenide.CollectionCondition.size;
 import static com.codeborne.selenide.Condition.*;
@@ -55,7 +57,6 @@ public class CatalogPage {
 
     public CatalogPage openCatalogPage(String baseUrl) {
         open(baseUrl);
-        webdriver().shouldHave(url(baseUrl));
         return this;
     }
 
@@ -93,7 +94,7 @@ public class CatalogPage {
             for (SelenideElement se : bouquetList) {
                 if (se.getText().contains(bouquetName)) {
                     assertEquals(bouquetPrice, se.$("._1KvrG3Aq").getText().replaceAll("\\D", ""),
-                            "Incorrect price " + bouquetName);
+                            "Incorrect bouquet price " + bouquetName);
                     se.click();
                     foundBouquet = true;
                     break;

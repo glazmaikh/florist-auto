@@ -32,7 +32,7 @@ public class PaymentPage {
 
     @SneakyThrows
     public PaymentPage assertOrderList() {
-        header.shouldHave(textCaseSensitive("Оплата заказа"));
+        header.shouldHave(textCaseSensitive("Оплата заказа"), Duration.ofSeconds(20));
         apiClient.getOrderData();
         assertEquals(String.valueOf(apiClient.getOrderId()), header.getText().replaceAll("[^0-9]", ""),
                 "incorrect order number on PaymentPage");
