@@ -69,4 +69,15 @@ public class BouquetPage {
         webdriver().shouldHave(url(baseUrl + apiClient.getCitySlug() + "/checkout"), Duration.ofSeconds(10));
         return new CreatingOrderPage(apiClient);
     }
+
+    public BouquetPage setRandomExtras() {
+//        int deliveryPrice = HelperPage.doubleToIntRound(apiClient.getDeliveryPrice());
+//        int totalPrice = HelperPage.sumIntegerList(apiClient.getBouquetPriceRubList());
+//        System.out.println(deliveryPrice);
+//        System.out.println(totalPrice);
+//        System.out.println(HelperPage.doubleToIntRound(apiClient.getExtrasPriceRub()));
+        //apiClient.getExtrasName();
+        apiClient.getPriceExtrasFirstVariationRub();
+        return this;
+    }
 }

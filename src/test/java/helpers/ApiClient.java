@@ -16,6 +16,9 @@ import models.cityAlias.CityDataAliasDto;
 import models.deliveryDate.DeliveryInfo;
 import models.deliveryDate.DeliveryTime;
 import models.disabledDelivery.DisabledDeliveryDateResponse;
+import models.extras.ExtrasDataDto;
+import models.extras.ExtrasDataItemDto;
+import models.extras.ExtrasPrice;
 import models.order.OrderData;
 import models.register.User;
 import models.register.UserWrapper;
@@ -32,6 +35,7 @@ import static org.hamcrest.Matchers.equalTo;
 public class ApiClient {
     private final CityData city = getCity();
     private BouquetDataItemDto bouquet;
+    private ExtrasDataItemDto extras = getRandomExtras();
     private OrderData orderData;
     private final Data data = getDeliveryPriceByCitySlug();
     private DeliveryTime deliveryTime;
@@ -151,6 +155,36 @@ public class ApiClient {
     public List<Integer> getBouquetPriceRubList() {
         return bouquetList.stream()
                 .map(e -> e.getMin_price().getRub()).toList();
+    }
+
+    @SneakyThrows
+    private ExtrasDataItemDto getRandomExtras() {
+        RequestSpecification httpRequest = given();
+        Response responseBouquet = httpRequest
+                .auth().basic("florist_api", "123")
+                .param("city", getCityId())
+                .param("showPrices", 1)
+                .get("api/extras");
+        ResponseBody bodyBouquet = responseBouquet.getBody();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        ExtrasDataDto extrasData = objectMapper.readValue(bodyBouquet.asString(), ExtrasDataDto.class);
+        return extras = getRandomExtrasFromMap(extrasData.getData());
+    }
+
+    public Double getExtrasPriceRub() {
+        return extras.getMin_price().get("RUB");
+    }
+
+    public void getExtrasName() {
+        System.out.println(extras.getName());
+    }
+
+    public double getPriceExtrasFirstVariationRub() {
+        ExtrasPrice extrasPrice = getFirstExtrasVariation(extras.getPrices());
+        return extrasPrice.getPrice().get("RUB");
+//        System.out.println(extras.getPrices().get(0));
+//        System.out.println(extras.getPrices().get("RUB"));
     }
 
     // получение обьекта Data - цены доставки по slug города
@@ -309,6 +343,16 @@ public class ApiClient {
     private BouquetDataItemDto getRandomBouquetFloristRu(Map<String, BouquetDataItemDto> bouquetMap) {
         List<BouquetDataItemDto> values = new ArrayList<>(bouquetMap.values());
         return values.get(new Random().nextInt(values.size()));
+    }
+
+    private ExtrasDataItemDto getRandomExtrasFromMap(Map<String, ExtrasDataItemDto> extrasMap) {
+        List<ExtrasDataItemDto> values = new ArrayList<>(extrasMap.values());
+        return values.get(new Random().nextInt(values.size()));
+    }
+
+    private ExtrasPrice getFirstExtrasVariation(Map<String, ExtrasPrice> map) {
+        List<ExtrasPrice> values = new ArrayList<>(map.values());
+        return values.get(0);
     }
 
     private BouquetDataItemDto getBouquetIFloristList(Map<String, BouquetDataItemDto> bouquetMap) {

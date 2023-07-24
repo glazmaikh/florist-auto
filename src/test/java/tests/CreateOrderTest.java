@@ -205,4 +205,20 @@ public class CreateOrderTest extends TestBase {
         catalogPage.openAccountOrderPage();
         accountOrderPage.assertCreatedOrderFromAuthUser(baseUrl, yourName);
     }
+
+    @Test
+    void test() {
+        catalogPage.openCatalogPage(baseUrl)
+                .closeCookiePopUp()
+                .setDeliveryCity()
+                .setRandomBouquet(BouquetType.FLORIST_RU);
+
+        bouquetPage.openBouquetPage(baseUrl)
+                .assertBouquetName()
+                .assertVariationsPrices()
+                .setRandomExtras()
+                .assertDeliveryPrice()
+                .getFirstVariation()
+                .addToCard(baseUrl);
+    }
 }
