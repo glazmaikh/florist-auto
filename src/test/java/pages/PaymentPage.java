@@ -87,7 +87,7 @@ public class PaymentPage {
     public SuccessPage confirm() {
         iframeAssist.shouldBe(exist, Duration.ofSeconds(15));
         switchTo().frame(iframeAssist);
-        confirmSubmitButton.shouldBe(exist, Duration.ofSeconds(15)).click();
+        confirmSubmitButton.shouldBe(visible, Duration.ofSeconds(15git)).click();
         thanksFor.shouldBe(visible, Duration.ofSeconds(15));
         return new SuccessPage(apiClient);
     }
