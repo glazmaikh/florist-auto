@@ -7,6 +7,7 @@ import helpers.HelperPage;
 import lombok.SneakyThrows;
 
 import java.time.Duration;
+import java.util.List;
 
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selectors.byName;
@@ -21,7 +22,7 @@ public class PaymentPage {
     private final SelenideElement submitButton = $x("//button[@type='submit']");
     private final SelenideElement confirmSubmitButton = $(byName("SET"));
     private final SelenideElement iframeAssist = $x("//div[@id='modal-overlay']//iframe");
-    private final ElementsCollection orderList = $$x("//div[@class='AEYhRIG-']//span");
+    private final SelenideElement orderList = $(".AEYhRIG-");
     private final SelenideElement header = $x("//h1");
     private final SelenideElement thanksFor = $x("//h1[text() ='Спасибо за заказ']");
     private final ApiClient apiClient;
@@ -31,43 +32,59 @@ public class PaymentPage {
     }
 
     @SneakyThrows
-    public PaymentPage assertOrderList() {
+    public PaymentPage assertPaymentStatus() {
         header.shouldHave(textCaseSensitive("Оплата заказа"), Duration.ofSeconds(20));
         apiClient.getOrderData();
         assertEquals(String.valueOf(apiClient.getOrderId()), header.getText().replaceAll("[^0-9]", ""),
                 "incorrect order number on PaymentPage");
 
-        String bouquetName = apiClient.getOrderBouquetName();
-        String price = HelperPage.formatPriceRub(String.valueOf(apiClient.getOrderPrice()));
-        String variation = apiClient.getOrderVariation();
-        String count = apiClient.getOrderCount() + " шт.";
-        String deliveryDate = apiClient.getOrderDeliveryDate();
-        String deliveryPrice = HelperPage.formatPriceRub(String.valueOf(apiClient.getOrderDeliveryPrice()));
-        String totalPrice = HelperPage.formatPriceRub(String.valueOf(apiClient.getOrderTotalPrice()));
+        assertTrue(apiClient.getOrderStatus().contains("Ожидает оплаты"));
+        return this;
+    }
 
-        if (apiClient.getOrderDeliveryPrice() == 0) {
-            assertTrue(orderList.stream().anyMatch(e -> e.text().equals("Бесплатно")), "incorrect delivery price");
+    public PaymentPage assertBouquetName() {
+        assertTrue(HelperPage.isOrderListContainsAllFromBouquets(orderList, apiClient.getBouquetNameList()),
+                "bouquets names not equals");
+        return this;
+    }
+
+    public PaymentPage assertDeliveryPrice() {
+        int deliveryPrice = HelperPage.doubleToIntRound(apiClient.getDeliveryPrice());
+        if (deliveryPrice > 100) {
+            orderList.shouldHave(text(HelperPage.priceRegexRub(String.valueOf(deliveryPrice))));
         } else {
-            assertTrue(orderList.stream().anyMatch(e -> HelperPage.formatPriceRub(e.text()).equals(HelperPage.formatPriceRub(deliveryPrice))),
-                    "incorrect delivery price");
+            orderList.shouldHave(text("бесплатно"));
         }
+        return this;
+    }
 
-        assertAll(
-                "Проверка состава заказа на странице оплаты",
-                () -> assertTrue(apiClient.getOrderStatus().contains("Ожидает оплаты")),
-                () -> assertTrue(orderList.stream().anyMatch(e -> e.text().equals(bouquetName)),
-                        "incorrect bouquet name"),
-                () -> assertTrue(orderList.stream().anyMatch(e -> e.text().equals(variation)),
-                        "incorrect bouquet variation"),
-                () -> assertTrue(orderList.stream().anyMatch(e -> e.text().equals(count)),
-                        "incorrect bouquet count"),
-                () -> assertTrue(orderList.stream().anyMatch(e -> HelperPage.formatPriceRub(e.text()).equals(HelperPage.formatPriceRub(price))),
-                        "incorrect bouquet price"),
-                () -> assertTrue(orderList.stream().anyMatch(e -> e.text().equals(deliveryDate)),
-                        "incorrect delivery city and date"),
-                () -> assertTrue(orderList.stream().anyMatch(e -> HelperPage.formatPriceRub(e.text()).equals(HelperPage.formatPriceRub(totalPrice))),
-                        "incorrect total price")
-        );
+    public PaymentPage assertBouquetPrice() {
+        List<String> bouquetsPrices = apiClient.getBouquetPriceRubList().stream()
+                .map(String::valueOf)
+                .map(HelperPage::priceRegexRub)
+                .toList();
+        assertTrue(HelperPage.isOrderListContainsAllFromBouquets(orderList, bouquetsPrices),
+                "bouquets prices not equals");
+        return this;
+    }
+
+    public PaymentPage assertExtrasPrice() {
+        List<String> extrasPrices = apiClient.getExtrasPriceRubList().stream()
+                .map(String::valueOf)
+                .map(HelperPage::priceRegexRub)
+                .toList();
+        assertTrue(HelperPage.isOrderListContainsAllFromBouquets(orderList, extrasPrices),
+                "extrases prices not equals");
+        return this;
+    }
+
+    public PaymentPage assertTotalPrice() {
+        int deliveryPrice = HelperPage.doubleToIntRound(apiClient.getDeliveryPrice());
+        int totalPrice = HelperPage.sumIntegerList(apiClient.getBouquetPriceRubList());
+        totalPrice += HelperPage.sumIntegerList(apiClient.getExtrasPriceRubList());
+        totalPrice += deliveryPrice;
+        assertTrue(orderList.getText().contains(HelperPage.priceRegexRub(String.valueOf(totalPrice))),
+                "total price not equals");
         return this;
     }
 

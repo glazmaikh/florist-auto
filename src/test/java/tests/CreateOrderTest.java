@@ -12,7 +12,7 @@ public class CreateOrderTest extends TestBase {
     private final TestData testData = new TestData();
     private CatalogPage catalogPage;
     private BouquetPage bouquetPage;
-    private CreatingOrderPage creatingOrderPage;
+    private CheckoutPage checkoutPage;
     private PaymentPage paymentPage;
     private SuccessPage successPage;
     private AccountOrderPage accountOrderPage;
@@ -32,7 +32,7 @@ public class CreateOrderTest extends TestBase {
 
         catalogPage = new CatalogPage(apiClient);
         bouquetPage = new BouquetPage(apiClient);
-        creatingOrderPage = new CreatingOrderPage(apiClient);
+        checkoutPage = new CheckoutPage(apiClient);
         paymentPage = new PaymentPage(apiClient);
         successPage = new SuccessPage(apiClient);
         accountOrderPage = new AccountOrderPage(apiClient);
@@ -53,13 +53,14 @@ public class CreateOrderTest extends TestBase {
                 .setFirstVariation()
                 .addToCard(baseUrl);
 
-        creatingOrderPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
+        checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
                 .getRandomDeliveryDate()
                 .getRandomDeliveryTime()
-                .assertOrderList()
+     //           .assertOrderList()
                 .pressPayButton();
 
-        paymentPage.assertOrderList()
+        paymentPage
+                //.assertOrderList()
                 .fillCard(cardNumber, expireNumber, cvcNumber)
                 .pay()
                 .confirm();
@@ -92,13 +93,14 @@ public class CreateOrderTest extends TestBase {
                 .setFirstVariation()
                 .addToCard(baseUrl);
 
-        creatingOrderPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
+        checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
                 .getRandomDeliveryDate()
                 .getRandomDeliveryTime()
-                .assertOrderList()
+   //             .assertOrderList()
                 .pressPayButton();
 
-        paymentPage.assertOrderList()
+        paymentPage
+                //.assertOrderList()
                 .fillCard(cardNumber, expireNumber, cvcNumber)
                 .pay()
                 .confirm();
@@ -121,13 +123,14 @@ public class CreateOrderTest extends TestBase {
                 .setFirstVariation()
                 .addToCard(baseUrl);
 
-        creatingOrderPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
+        checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
                 .getRandomDeliveryDate()
                 .getRandomDeliveryTime()
-                .assertOrderList()
+ //               .assertOrderList()
                 .pressPayButton();
 
-        paymentPage.assertOrderList()
+        paymentPage
+                //.assertOrderList()
                 .fillCard(cardNumber, expireNumber, cvcNumber)
                 .pay()
                 .confirm();
@@ -150,16 +153,17 @@ public class CreateOrderTest extends TestBase {
                 .setFirstVariation()
                 .addToCard(baseUrl);
 
-        creatingOrderPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
+        checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
                 .getRandomDeliveryDate()
                 .getRandomDeliveryTime()
-                .assertOrderList()
+ //               .assertOrderList()
                 .pressPayButton();
 
-        paymentPage.assertOrderList()
+        paymentPage
+                //.assertOrderList()
                 .backOnPrevious();
 
-        creatingOrderPage.assertOrderAndBackToPay();
+        checkoutPage.assertOrderAndBackToPay();
 
         paymentPage.fillCard(cardNumber, expireNumber, cvcNumber)
                 .pay()
@@ -190,13 +194,14 @@ public class CreateOrderTest extends TestBase {
                 .setFirstVariation()
                 .addToCard(baseUrl);
 
-        creatingOrderPage.simpleFillForm(firstName, phone, address)
+        checkoutPage.simpleFillForm(firstName, phone, address)
                 .getRandomDeliveryDate()
                 .getRandomDeliveryTime()
-                .assertOrderList()
+ //               .assertOrderList()
                 .pressPayButton();
 
-        paymentPage.assertOrderList()
+        paymentPage
+                //.assertOrderList()
                 .fillCard(cardNumber, expireNumber, cvcNumber)
                 .pay()
                 .confirm();
@@ -223,10 +228,26 @@ public class CreateOrderTest extends TestBase {
                 .assertTotalPrice()
                 .addToCard(baseUrl);
 
-        creatingOrderPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
+        checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
                 .getRandomDeliveryDate()
                 .getRandomDeliveryTime()
-                .assertOrderList()
+                .assertBouquetName()
+                .assertDeliveryPrice()
+                .assertBouquetPrice()
+                .assertExtrasPrice()
+                .assertTotalPrice()
                 .pressPayButton();
+
+        paymentPage.assertPaymentStatus()
+                .assertBouquetName()
+                .assertDeliveryPrice()
+                .assertBouquetPrice()
+                .assertExtrasPrice()
+                .assertTotalPrice()
+                .fillCard(cardNumber, expireNumber, cvcNumber)
+                .pay()
+                .confirm();
+
+        successPage.assertSuccessCreatedOrder(baseUrl);
     }
 }

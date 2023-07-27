@@ -231,30 +231,6 @@ public class ApiClient {
         return orderData.getData().getId();
     }
 
-    public String getOrderBouquetName() {
-        return orderData.getData().getCart().get("0").getName();
-    }
-
-    public int getOrderPrice() {
-        return orderData.getData().getCart().get("0").getPrice().getRUB();
-    }
-
-    public String getOrderVariation() {
-        return orderData.getData().getCart().get("0").getVariation();
-    }
-
-    public int getOrderCount() {
-        return orderData.getData().getCart().get("0").getCount();
-    }
-
-    public String getOrderDeliveryDate() {
-        return orderData.getData().getCart().get("1").getName();
-    }
-
-    public int getOrderDeliveryPrice() {
-        return orderData.getData().getCart().get("1").getPrice().getRUB();
-    }
-
     public int getOrderTotalPrice() {
         return orderData.getData().getTotal().getRUB();
     }

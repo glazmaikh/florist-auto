@@ -52,9 +52,7 @@ public class BouquetPage {
     }
 
     public BouquetPage assertDeliveryPrice() {
-        // сделать тест на бесплатную/платную доставку
         int deliveryPrice = HelperPage.doubleToIntRound(apiClient.getDeliveryPrice());
-        System.out.println();
         if (deliveryPrice > 100) {
             bouquetSection.shouldHave(text(HelperPage.priceRegexRub(String.valueOf(deliveryPrice))));
         } else {
@@ -68,10 +66,10 @@ public class BouquetPage {
         return this;
     }
 
-    public CreatingOrderPage addToCard(String baseUrl) {
+    public CheckoutPage addToCard(String baseUrl) {
         addToCardButton.shouldBe(Condition.exist, Duration.ofSeconds(5)).click();
         webdriver().shouldHave(url(baseUrl + apiClient.getCitySlug() + "/checkout"), Duration.ofSeconds(10));
-        return new CreatingOrderPage(apiClient);
+        return new CheckoutPage(apiClient);
     }
 
     public BouquetPage setRandomExtras() {
