@@ -35,6 +35,7 @@ import static org.hamcrest.Matchers.equalTo;
 public class ApiClient {
     private final CityData city = getCity();
     private BouquetDataItemDto bouquet;
+    private final List<ExtrasPrice> extrasList = new ArrayList<>();
     private final ExtrasDataItemDto extras = getRandomExtras();
     private final ExtrasPrice extrasPrice = getFirstExtrasVariation(extras.getPrices());
     private OrderData orderData;
@@ -183,6 +184,11 @@ public class ApiClient {
 
     public String getExtrasVariationName() {
         return extrasPrice.getName();
+    }
+
+    public List<Integer> getExtrasPriceRubList() {
+        return extrasList.stream()
+                .map(e -> HelperPage.doubleToIntRound(e.getPrice().get("RUB"))).toList();
     }
 
     // получение обьекта Data - цены доставки по slug города
@@ -356,7 +362,9 @@ public class ApiClient {
                 extrasPrice = price;
                 break;
             }
-        } return extrasPrice;
+        }
+        extrasList.add(extrasPrice);
+        return extrasPrice;
     }
 
     private BouquetDataItemDto getBouquetIFloristList(Map<String, BouquetDataItemDto> bouquetMap) {

@@ -76,7 +76,7 @@ public class CreateOrderTest extends TestBase {
                 .setRandomBouquet(BouquetType.FLORIST_RU);
 
         bouquetPage.openBouquetPage(baseUrl)
-//                .assertBouquetName()
+                .assertBouquetName()
                 .assertVariationsPrices()
                 .assertDeliveryPrice()
                 .setFirstVariation()
@@ -222,5 +222,11 @@ public class CreateOrderTest extends TestBase {
                 .assertDeliveryPrice()
                 .assertTotalPrice()
                 .addToCard(baseUrl);
+
+        creatingOrderPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
+                .getRandomDeliveryDate()
+                .getRandomDeliveryTime()
+                .assertOrderList()
+                .pressPayButton();
     }
 }

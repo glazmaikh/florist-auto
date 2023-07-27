@@ -11,14 +11,11 @@ import org.openqa.selenium.JavascriptExecutor;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selectors.byName;
 import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.*;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class CreatingOrderPage {
@@ -91,11 +88,17 @@ public class CreatingOrderPage {
                 .toList();
         assertTrue(HelperPage.isOrderListContainsAllFromBouquets(orderList, bouquetsPrices), "bouquets prices not equals");
 
+        List<String> extrasPrices = apiClient.getExtrasPriceRubList().stream()
+                .map(String::valueOf)
+                .map(HelperPage::priceRegexRub)
+                .toList();
+        assertTrue(HelperPage.isOrderListContainsAllFromBouquets(orderList, extrasPrices), "extrases prices not equals");
+
         int deliveryPrice = HelperPage.doubleToIntRound(apiClient.getDeliveryPrice());
         int totalPrice = HelperPage.sumIntegerList(apiClient.getBouquetPriceRubList());
+        totalPrice += HelperPage.sumIntegerList(apiClient.getExtrasPriceRubList());
         if (deliveryPrice > 100) {
             assertTrue(orderList.getText().contains(String.valueOf(deliveryPrice)), "delivery prices not equals");
-
             totalPrice += deliveryPrice;
             assertTrue(orderList.getText().contains(HelperPage.priceRegexRub(String.valueOf(totalPrice))), "total price not equals");
         } else {
