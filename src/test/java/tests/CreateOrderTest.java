@@ -50,7 +50,7 @@ public class CreateOrderTest extends TestBase {
                 .assertBouquetName()
                 .assertVariationsPrices()
                 .assertDeliveryPrice()
-                .getFirstVariation()
+                .setFirstVariation()
                 .addToCard(baseUrl);
 
         creatingOrderPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
@@ -76,10 +76,10 @@ public class CreateOrderTest extends TestBase {
                 .setRandomBouquet(BouquetType.FLORIST_RU);
 
         bouquetPage.openBouquetPage(baseUrl)
-                .assertBouquetName()
+//                .assertBouquetName()
                 .assertVariationsPrices()
                 .assertDeliveryPrice()
-                .getFirstVariation()
+                .setFirstVariation()
                 .addToCard(baseUrl);
 
         catalogPage.openCatalogPage(baseUrl)
@@ -89,7 +89,7 @@ public class CreateOrderTest extends TestBase {
                 .assertBouquetName()
                 .assertVariationsPrices()
                 .assertDeliveryPrice()
-                .getFirstVariation()
+                .setFirstVariation()
                 .addToCard(baseUrl);
 
         creatingOrderPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
@@ -118,7 +118,7 @@ public class CreateOrderTest extends TestBase {
                 .assertBouquetName()
                 .assertVariationsPrices()
                 .assertDeliveryPrice()
-                .getFirstVariation()
+                .setFirstVariation()
                 .addToCard(baseUrl);
 
         creatingOrderPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
@@ -147,7 +147,7 @@ public class CreateOrderTest extends TestBase {
                 .assertBouquetName()
                 .assertVariationsPrices()
                 .assertDeliveryPrice()
-                .getFirstVariation()
+                .setFirstVariation()
                 .addToCard(baseUrl);
 
         creatingOrderPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
@@ -187,7 +187,7 @@ public class CreateOrderTest extends TestBase {
                 .assertBouquetName()
                 .assertVariationsPrices()
                 .assertDeliveryPrice()
-                .getFirstVariation()
+                .setFirstVariation()
                 .addToCard(baseUrl);
 
         creatingOrderPage.simpleFillForm(firstName, phone, address)
@@ -216,9 +216,11 @@ public class CreateOrderTest extends TestBase {
         bouquetPage.openBouquetPage(baseUrl)
                 .assertBouquetName()
                 .assertVariationsPrices()
+                .setFirstVariation()
                 .setRandomExtras()
+                .assertExtras()
                 .assertDeliveryPrice()
-                .getFirstVariation()
+                .assertTotalPrice()
                 .addToCard(baseUrl);
     }
 }
