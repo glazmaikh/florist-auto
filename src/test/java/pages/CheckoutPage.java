@@ -16,6 +16,7 @@ import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selectors.byName;
 import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.*;
+import static com.codeborne.selenide.WebDriverConditions.url;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class CheckoutPage {
@@ -118,16 +119,15 @@ public class CheckoutPage {
     public CheckoutPage assertTotalPrice() {
         int deliveryPrice = HelperPage.doubleToIntRound(apiClient.getDeliveryPrice());
         int totalPrice = HelperPage.sumIntegerList(apiClient.getBouquetPriceRubList());
-        totalPrice += HelperPage.sumIntegerList(apiClient.getExtrasPriceRubList());
         totalPrice += deliveryPrice;
+        totalPrice += BouquetPage.getExtrasPrice();
         assertTrue(orderList.getText().contains(HelperPage.priceRegexRub(String.valueOf(totalPrice))),
                 "total price not equals");
         return this;
     }
 
-    public PaymentPage pressPayButton() {
+    public PaymentPage goToPaymentPage() {
         priceSection.shouldBe(Condition.visible, Duration.ofSeconds(5)).click();
-
         Selenide.Wait().until(webDriver -> {
             return ((JavascriptExecutor) webDriver).executeScript("return document.readyState").equals("complete");
         });

@@ -13,6 +13,7 @@ import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selectors.byName;
 import static com.codeborne.selenide.Selenide.*;
 
+import static com.codeborne.selenide.WebDriverConditions.url;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class PaymentPage {
@@ -32,8 +33,9 @@ public class PaymentPage {
     }
 
     @SneakyThrows
-    public PaymentPage assertPaymentStatus() {
+    public PaymentPage assertPaymentStatus(String baseUrl) {
         header.shouldHave(textCaseSensitive("Оплата заказа"), Duration.ofSeconds(20));
+        webdriver().shouldHave(url(baseUrl + apiClient.getCitySlug() + "/order/payment/" + HelperPage.getOrderNumber() + "/" + HelperPage.getOrderAccessKey()));
         apiClient.getOrderData();
         assertEquals(String.valueOf(apiClient.getOrderId()), header.getText().replaceAll("[^0-9]", ""),
                 "incorrect order number on PaymentPage");
@@ -79,12 +81,9 @@ public class PaymentPage {
     }
 
     public PaymentPage assertTotalPrice() {
-        int deliveryPrice = HelperPage.doubleToIntRound(apiClient.getDeliveryPrice());
-        int totalPrice = HelperPage.sumIntegerList(apiClient.getBouquetPriceRubList());
-        totalPrice += HelperPage.sumIntegerList(apiClient.getExtrasPriceRubList());
-        totalPrice += deliveryPrice;
-        assertTrue(orderList.getText().contains(HelperPage.priceRegexRub(String.valueOf(totalPrice))),
-                "total price not equals");
+        apiClient.getOrderData();
+        String totalDataPrice = HelperPage.priceRegexRub(String.valueOf(apiClient.getOrderTotalPrice()));
+        orderList.shouldHave(text(totalDataPrice));
         return this;
     }
 

@@ -24,9 +24,14 @@ public class BouquetPage {
     private final ElementsCollection variation = $$x("//div[@class='hmJhIXSe']/div/div");
     private final ElementsCollection extrases = $$("._38l21lFz");
     private final ApiClient apiClient;
+    private static int extrasPrice = 0;
 
     public BouquetPage(ApiClient apiClient) {
         this.apiClient = apiClient;
+    }
+
+    public static int getExtrasPrice() {
+        return extrasPrice;
     }
 
     public BouquetPage openBouquetPage(String baseUrl) {
@@ -38,8 +43,8 @@ public class BouquetPage {
         bouquetSection.shouldHave(text(apiClient.getBouquetName()));
         return this;
     }
-
 //    // не сработает для акции, вариации не по порядку
+
     public BouquetPage assertVariationsPrices() {
         List<PriceItemDto> priceList = apiClient.getPriceList();
         assertEquals(variation.size(), priceList.size(), "where is your variations?");
@@ -74,7 +79,7 @@ public class BouquetPage {
 
     public BouquetPage setRandomExtras() {
         String extrasName = apiClient.getExtrasName();
-        int extrasPrice = HelperPage.doubleToIntRound(apiClient.getPriceExtrasFirstVariationRub());
+        extrasPrice = HelperPage.doubleToIntRound(apiClient.getPriceExtrasFirstVariationRub());
         for (SelenideElement se : extrases) {
             if (se.getText().contains(extrasName)) {
                 assertTrue(HelperPage.priceRegex(se).contains(String.valueOf(extrasPrice)));
@@ -99,8 +104,7 @@ public class BouquetPage {
     }
 
     public BouquetPage assertTotalPrice() {
-        int bouquetFirstVariationPrice = apiClient.getBouquetPriceRubList().get(0);
-        int extrasPrice = HelperPage.doubleToIntRound(apiClient.getPriceExtrasFirstVariationRub());
+        int bouquetFirstVariationPrice = apiClient.getBouquetPriceRubList().get(apiClient.getBouquetPriceRubList().size() - 1);
         int deliveryPrice = HelperPage.doubleToIntRound(apiClient.getDeliveryPrice());
         int totalPrice = bouquetFirstVariationPrice + extrasPrice + deliveryPrice;
 
