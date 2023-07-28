@@ -293,4 +293,24 @@ public class CreateOrderTest extends TestBase {
         successPage.assertSuccessOrderStatus(baseUrl)
                 .assertSuccessCreatedOrder();
     }
+
+    @Test
+    @Tag("create_order")
+    void removeFromCardTest() {
+        catalogPage.openCatalogPage(baseUrl)
+                .closeCookiePopUp()
+                .setDeliveryCity()
+                .setRandomBouquet(BouquetType.FLORIST_RU);
+
+        bouquetPage.openBouquetPage(baseUrl)
+                .assertBouquetName()
+                .assertVariationsPrices()
+                .setFirstVariation()
+                .assertDeliveryPrice()
+                .assertTotalPrice()
+                .addToCard(baseUrl);
+
+        checkoutPage.removeFromCard();
+
+    }
 }

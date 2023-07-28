@@ -13,8 +13,7 @@ import java.time.LocalTime;
 import java.util.*;
 
 import static com.codeborne.selenide.Condition.*;
-import static com.codeborne.selenide.Selectors.byName;
-import static com.codeborne.selenide.Selectors.byText;
+import static com.codeborne.selenide.Selectors.*;
 import static com.codeborne.selenide.Selenide.*;
 import static com.codeborne.selenide.WebDriverConditions.url;
 import static org.junit.jupiter.api.Assertions.*;
@@ -32,7 +31,7 @@ public class CheckoutPage {
     private final SelenideElement payButton = $(byText("Оплатить"));
     private final SelenideElement priceSection = payButton.$(".no-wrap");
     private final SelenideElement orderList = $("._2pTgtswS  ");
-    private final ElementsCollection orderListPrices = orderList.$$(".no-wrap");
+    private final ElementsCollection orderListPrices = orderList.$$x("//svg");
     private final SelenideElement header = $x("//h1");
     private final SelenideElement createdOrderText = $("._2fUGBItB");
     private final SelenideElement returnToPayButton = $x("//a[@class='btn']");
@@ -42,6 +41,7 @@ public class CheckoutPage {
     private final ElementsCollection timeEarlyIntervals = $$x("//div[@class='_2zwatJ-h' and count(span) = 2]");
     private final SelenideElement timeFromInput = $x("//span[text()='Время доставки с']/parent::label");
     private final SelenideElement timeToInput = $x("//span[text()='До']/parent::label");
+    private final SelenideElement removeFromCard = $(byCssSelector("div.YVf8EOae > svg"));
     private final ApiClient apiClient;
     private String deliveryDate;
 
@@ -188,5 +188,11 @@ public class CheckoutPage {
 
         returnToPayButton.shouldBe(exist).click();
         return new PaymentPage(apiClient);
+    }
+
+    public CheckoutPage removeFromCard() {
+        removeFromCard.shouldBe(exist).click();
+        header.shouldHave(text("В вашей корзине пока пусто"));
+        return this;
     }
 }
