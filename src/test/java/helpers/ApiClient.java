@@ -16,6 +16,9 @@ import models.cityAlias.CityDataAliasDto;
 import models.deliveryDate.DeliveryInfo;
 import models.deliveryDate.DeliveryTime;
 import models.disabledDelivery.DisabledDeliveryDateResponse;
+import models.extras.ExtrasDataDto;
+import models.extras.ExtrasDataItemDto;
+import models.extras.ExtrasPrice;
 import models.order.OrderData;
 import models.register.User;
 import models.register.UserWrapper;
@@ -32,6 +35,9 @@ import static org.hamcrest.Matchers.equalTo;
 public class ApiClient {
     private final CityData city = getCity();
     private BouquetDataItemDto bouquet;
+    private final List<ExtrasPrice> extrasList = new ArrayList<>();
+    private final ExtrasDataItemDto extras = getRandomExtras();
+    private final ExtrasPrice extrasPrice = getFirstExtrasVariation(extras.getPrices());
     private OrderData orderData;
     private final Data data = getDeliveryPriceByCitySlug();
     private DeliveryTime deliveryTime;
@@ -153,6 +159,38 @@ public class ApiClient {
                 .map(e -> e.getMin_price().getRub()).toList();
     }
 
+    @SneakyThrows
+    private ExtrasDataItemDto getRandomExtras() {
+        RequestSpecification httpRequest = given();
+        Response responseBouquet = httpRequest
+                .auth().basic("florist_api", "123")
+                .param("city", getCityId())
+                .param("showPrices", 1)
+                .get("api/extras");
+        ResponseBody bodyBouquet = responseBouquet.getBody();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        ExtrasDataDto extrasData = objectMapper.readValue(bodyBouquet.asString(), ExtrasDataDto.class);
+        return getRandomExtrasFromMap(extrasData.getData());
+    }
+
+    public String getExtrasName() {
+        return extras.getName();
+    }
+
+    public double getPriceExtrasFirstVariationRub() {
+        return extrasPrice.getPrice().get("RUB");
+    }
+
+    public String getExtrasVariationName() {
+        return extrasPrice.getName();
+    }
+
+    public List<Integer> getExtrasPriceRubList() {
+        return extrasList.stream()
+                .map(e -> HelperPage.doubleToIntRound(e.getPrice().get("RUB"))).toList();
+    }
+
     // получение обьекта Data - цены доставки по slug города
     @SneakyThrows
     public Data getDeliveryPriceByCitySlug() {
@@ -191,30 +229,6 @@ public class ApiClient {
     // методы для взаимодействия с обьектом OrderData о заказе из ERP
     public int getOrderId() {
         return orderData.getData().getId();
-    }
-
-    public String getOrderBouquetName() {
-        return orderData.getData().getCart().get("0").getName();
-    }
-
-    public int getOrderPrice() {
-        return orderData.getData().getCart().get("0").getPrice().getRUB();
-    }
-
-    public String getOrderVariation() {
-        return orderData.getData().getCart().get("0").getVariation();
-    }
-
-    public int getOrderCount() {
-        return orderData.getData().getCart().get("0").getCount();
-    }
-
-    public String getOrderDeliveryDate() {
-        return orderData.getData().getCart().get("1").getName();
-    }
-
-    public int getOrderDeliveryPrice() {
-        return orderData.getData().getCart().get("1").getPrice().getRUB();
     }
 
     public int getOrderTotalPrice() {
@@ -309,6 +323,24 @@ public class ApiClient {
     private BouquetDataItemDto getRandomBouquetFloristRu(Map<String, BouquetDataItemDto> bouquetMap) {
         List<BouquetDataItemDto> values = new ArrayList<>(bouquetMap.values());
         return values.get(new Random().nextInt(values.size()));
+    }
+
+    private ExtrasDataItemDto getRandomExtrasFromMap(Map<String, ExtrasDataItemDto> extrasMap) {
+        List<ExtrasDataItemDto> values = new ArrayList<>(extrasMap.values());
+        return values.get(new Random().nextInt(values.size()));
+    }
+
+    private ExtrasPrice getFirstExtrasVariation(Map<String, ExtrasPrice> map) {
+        ExtrasPrice extrasPrice = null;
+
+        for (ExtrasPrice price : map.values()) {
+            if ("Стандартный".equals(price.getName())) {
+                extrasPrice = price;
+                break;
+            }
+        }
+        extrasList.add(extrasPrice);
+        return extrasPrice;
     }
 
     private BouquetDataItemDto getBouquetIFloristList(Map<String, BouquetDataItemDto> bouquetMap) {

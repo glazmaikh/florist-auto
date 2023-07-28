@@ -45,10 +45,6 @@ public class HelperPage {
         return matcher.group(1);
     }
 
-    public static String formatPriceRub(String formatPrice) {
-        return formatPrice.replaceAll("[\\s,.\u20BD\"\n]", "") + "\u20BD";
-    }
-
     public static String formatCreatedDate(String formatDate) {
         DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         DateTimeFormatter outputFormatter = DateTimeFormatter
@@ -66,11 +62,6 @@ public class HelperPage {
 
     public static String getRandomStringFromList(List<String> list) {
         return list.get(new Random().nextInt(list.size()));
-    }
-
-    public static String deliveryDataRegex(String date) {
-        String[] parts = date.split(" ");
-        return parts[parts.length - 1];
     }
 
     public static String regexMaxPaidDate(String date) {

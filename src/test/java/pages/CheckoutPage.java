@@ -11,17 +11,14 @@ import org.openqa.selenium.JavascriptExecutor;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.codeborne.selenide.Condition.*;
-import static com.codeborne.selenide.Selectors.byName;
-import static com.codeborne.selenide.Selectors.byText;
+import static com.codeborne.selenide.Selectors.*;
 import static com.codeborne.selenide.Selenide.*;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
+import static com.codeborne.selenide.WebDriverConditions.url;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class CreatingOrderPage {
+public class CheckoutPage {
     private final SelenideElement yourNameInput = $(byName("customerName"));
     private final SelenideElement yourEmailInput = $(byName("customerEmail"));
     private final SelenideElement yourPhoneInput = $(byName("customerPhone"));
@@ -34,7 +31,7 @@ public class CreatingOrderPage {
     private final SelenideElement payButton = $(byText("Оплатить"));
     private final SelenideElement priceSection = payButton.$(".no-wrap");
     private final SelenideElement orderList = $("._2pTgtswS  ");
-    private final ElementsCollection orderListPrices = orderList.$$(".no-wrap");
+    private final ElementsCollection orderListPrices = orderList.$$x("//svg");
     private final SelenideElement header = $x("//h1");
     private final SelenideElement createdOrderText = $("._2fUGBItB");
     private final SelenideElement returnToPayButton = $x("//a[@class='btn']");
@@ -44,14 +41,15 @@ public class CreatingOrderPage {
     private final ElementsCollection timeEarlyIntervals = $$x("//div[@class='_2zwatJ-h' and count(span) = 2]");
     private final SelenideElement timeFromInput = $x("//span[text()='Время доставки с']/parent::label");
     private final SelenideElement timeToInput = $x("//span[text()='До']/parent::label");
+    private final SelenideElement removeFromCard = $(byCssSelector("div.YVf8EOae > svg"));
     private final ApiClient apiClient;
     private String deliveryDate;
 
-    public CreatingOrderPage(ApiClient apiClient) {
+    public CheckoutPage(ApiClient apiClient) {
         this.apiClient = apiClient;
     }
 
-    public CreatingOrderPage simpleFillForm(String name, String phone, String address) {
+    public CheckoutPage simpleFillForm(String name, String phone, String address) {
         nameInput.shouldBe(exist, Duration.ofSeconds(10)).val(name);
         phoneInput.val(phone);
 
@@ -65,7 +63,7 @@ public class CreatingOrderPage {
         return this;
     }
 
-    public CreatingOrderPage simpleFillForm(String yourName, String yourEmail, String yourPhone, String name, String phone, String address) {
+    public CheckoutPage simpleFillForm(String yourName, String yourEmail, String yourPhone, String name, String phone, String address) {
         yourNameInput.shouldBe(exist, Duration.ofSeconds(10)).val(yourName);
         yourEmailInput.val(yourEmail);
         yourPhoneInput.val(yourPhone);
@@ -82,41 +80,61 @@ public class CreatingOrderPage {
         return this;
     }
 
-    public CreatingOrderPage assertOrderList() {
-        assertTrue(HelperPage.isOrderListContainsAllFromBouquets(orderList, apiClient.getBouquetNameList()),"bouquets names not equals");
+    public CheckoutPage assertBouquetName() {
+        assertTrue(HelperPage.isOrderListContainsAllFromBouquets(orderList, apiClient.getBouquetNameList()),
+                "bouquets names not equals");
+        return this;
+    }
 
-        List<String> bouquetsPrices = apiClient.getBouquetPriceRubList().stream()
-                .map(String::valueOf)
-                .map(HelperPage::priceRegexRub)
-                .toList();
-        assertTrue(HelperPage.isOrderListContainsAllFromBouquets(orderList, bouquetsPrices), "bouquets prices not equals");
-
+    public CheckoutPage assertDeliveryPrice() {
         int deliveryPrice = HelperPage.doubleToIntRound(apiClient.getDeliveryPrice());
-        int totalPrice = HelperPage.sumIntegerList(apiClient.getBouquetPriceRubList());
         if (deliveryPrice > 100) {
-            assertTrue(orderList.getText().contains(String.valueOf(deliveryPrice)), "delivery prices not equals");
-
-            totalPrice += deliveryPrice;
-            assertTrue(orderList.getText().contains(HelperPage.priceRegexRub(String.valueOf(totalPrice))), "total price not equals");
+            orderList.shouldHave(text(HelperPage.priceRegexRub(String.valueOf(deliveryPrice))));
         } else {
             orderList.shouldBe(text("бесплатно"));
-            assertTrue(orderList.getText().contains(HelperPage.priceRegexRub(String.valueOf(totalPrice))), "total price not equals");
         }
         return this;
     }
 
-    public PaymentPage pressPayButton() {
-        priceSection.shouldBe(Condition.visible, Duration.ofSeconds(5)).click();
+    public CheckoutPage assertBouquetPrice() {
+        List<String> bouquetsPrices = apiClient.getBouquetPriceRubList().stream()
+                .map(String::valueOf)
+                .map(HelperPage::priceRegexRub)
+                .toList();
+        assertTrue(HelperPage.isOrderListContainsAllFromBouquets(orderList, bouquetsPrices),
+                "bouquets prices not equals");
+        return this;
+    }
 
+    public CheckoutPage assertExtrasPrice() {
+        List<String> extrasPrices = apiClient.getExtrasPriceRubList().stream()
+                .map(String::valueOf)
+                .map(HelperPage::priceRegexRub)
+                .toList();
+        assertTrue(HelperPage.isOrderListContainsAllFromBouquets(orderList, extrasPrices),
+                "extrases prices not equals");
+        return this;
+    }
+
+    public CheckoutPage assertTotalPrice() {
+        int deliveryPrice = HelperPage.doubleToIntRound(apiClient.getDeliveryPrice());
+        int totalPrice = HelperPage.sumIntegerList(apiClient.getBouquetPriceRubList());
+        totalPrice += deliveryPrice;
+        totalPrice += BouquetPage.getExtrasPrice();
+        assertTrue(orderList.getText().contains(HelperPage.priceRegexRub(String.valueOf(totalPrice))),
+                "total price not equals");
+        return this;
+    }
+
+    public PaymentPage goToPaymentPage() {
+        priceSection.shouldBe(Condition.visible, Duration.ofSeconds(5)).click();
         Selenide.Wait().until(webDriver -> {
             return ((JavascriptExecutor) webDriver).executeScript("return document.readyState").equals("complete");
         });
         return new PaymentPage(apiClient);
     }
 
-    // 1. сделать тесты для выбора конкретного дня
-    // 2. указать время доставки
-    public CreatingOrderPage getRandomDeliveryDate() {
+    public CheckoutPage getRandomDeliveryDate() {
         List<String> disabledDaysList = apiClient.getDisabledDeliveryDaysList();
         deliveryDate = HelperPage.getRandomDeliveryDayWithoutDisabled(disabledDaysList);
 
@@ -137,7 +155,7 @@ public class CreatingOrderPage {
         return this;
     }
 
-    public CreatingOrderPage getRandomDeliveryTime() {
+    public CheckoutPage getRandomDeliveryTime() {
         apiClient.getDeliveryDateInterval(deliveryDate);
         LocalTime timeFrom = HelperPage.doubleToTime(apiClient.getDeliveryTimeFrom());
         LocalTime timeTo = HelperPage.doubleToTime(apiClient.getDeliveryTimeTo());
@@ -170,5 +188,11 @@ public class CreatingOrderPage {
 
         returnToPayButton.shouldBe(exist).click();
         return new PaymentPage(apiClient);
+    }
+
+    public CheckoutPage removeFromCard() {
+        removeFromCard.shouldBe(exist).click();
+        header.shouldHave(text("В вашей корзине пока пусто"));
+        return this;
     }
 }

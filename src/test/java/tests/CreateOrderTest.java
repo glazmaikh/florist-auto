@@ -12,7 +12,7 @@ public class CreateOrderTest extends TestBase {
     private final TestData testData = new TestData();
     private CatalogPage catalogPage;
     private BouquetPage bouquetPage;
-    private CreatingOrderPage creatingOrderPage;
+    private CheckoutPage checkoutPage;
     private PaymentPage paymentPage;
     private SuccessPage successPage;
     private AccountOrderPage accountOrderPage;
@@ -32,7 +32,7 @@ public class CreateOrderTest extends TestBase {
 
         catalogPage = new CatalogPage(apiClient);
         bouquetPage = new BouquetPage(apiClient);
-        creatingOrderPage = new CreatingOrderPage(apiClient);
+        checkoutPage = new CheckoutPage(apiClient);
         paymentPage = new PaymentPage(apiClient);
         successPage = new SuccessPage(apiClient);
         accountOrderPage = new AccountOrderPage(apiClient);
@@ -49,22 +49,31 @@ public class CreateOrderTest extends TestBase {
         bouquetPage.openBouquetPage(baseUrl)
                 .assertBouquetName()
                 .assertVariationsPrices()
+                .setFirstVariation()
                 .assertDeliveryPrice()
-                .getFirstVariation()
+                .assertTotalPrice()
                 .addToCard(baseUrl);
 
-        creatingOrderPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
+        checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
                 .getRandomDeliveryDate()
                 .getRandomDeliveryTime()
-                .assertOrderList()
-                .pressPayButton();
+                .assertBouquetName()
+                .assertDeliveryPrice()
+                .assertBouquetPrice()
+                .assertTotalPrice()
+                .goToPaymentPage();
 
-        paymentPage.assertOrderList()
+        paymentPage.assertPaymentStatus(baseUrl)
+                .assertBouquetName()
+                .assertDeliveryPrice()
+                .assertBouquetPrice()
+                .assertTotalPrice()
                 .fillCard(cardNumber, expireNumber, cvcNumber)
                 .pay()
                 .confirm();
 
-        successPage.assertSuccessCreatedOrder(baseUrl);
+        successPage.assertSuccessOrderStatus(baseUrl)
+                .assertSuccessCreatedOrder();
     }
 
     @Test
@@ -78,8 +87,9 @@ public class CreateOrderTest extends TestBase {
         bouquetPage.openBouquetPage(baseUrl)
                 .assertBouquetName()
                 .assertVariationsPrices()
+                .setFirstVariation()
                 .assertDeliveryPrice()
-                .getFirstVariation()
+                .assertTotalPrice()
                 .addToCard(baseUrl);
 
         catalogPage.openCatalogPage(baseUrl)
@@ -88,22 +98,31 @@ public class CreateOrderTest extends TestBase {
         bouquetPage.openBouquetPage(baseUrl)
                 .assertBouquetName()
                 .assertVariationsPrices()
+                .setFirstVariation()
                 .assertDeliveryPrice()
-                .getFirstVariation()
+                .assertTotalPrice()
                 .addToCard(baseUrl);
 
-        creatingOrderPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
+        checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
                 .getRandomDeliveryDate()
                 .getRandomDeliveryTime()
-                .assertOrderList()
-                .pressPayButton();
+                .assertBouquetName()
+                .assertDeliveryPrice()
+                .assertBouquetPrice()
+                .assertTotalPrice()
+                .goToPaymentPage();
 
-        paymentPage.assertOrderList()
+        paymentPage.assertPaymentStatus(baseUrl)
+                .assertBouquetName()
+                .assertDeliveryPrice()
+                .assertBouquetPrice()
+                .assertTotalPrice()
                 .fillCard(cardNumber, expireNumber, cvcNumber)
                 .pay()
                 .confirm();
 
-        successPage.assertSuccessCreatedOrder(baseUrl);
+        successPage.assertSuccessOrderStatus(baseUrl)
+                .assertSuccessCreatedOrder();
     }
 
     @Test
@@ -112,27 +131,36 @@ public class CreateOrderTest extends TestBase {
         catalogPage.openCatalogPage(baseUrl)
                 .closeCookiePopUp()
                 .setDeliveryCity()
-                .setRandomBouquet(BouquetType.FLORIST_RU);
+                .setRandomBouquet(BouquetType.IFLORIST);
 
         bouquetPage.openBouquetPage(baseUrl)
                 .assertBouquetName()
                 .assertVariationsPrices()
+                .setFirstVariation()
                 .assertDeliveryPrice()
-                .getFirstVariation()
+                .assertTotalPrice()
                 .addToCard(baseUrl);
 
-        creatingOrderPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
+        checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
                 .getRandomDeliveryDate()
                 .getRandomDeliveryTime()
-                .assertOrderList()
-                .pressPayButton();
+                .assertBouquetName()
+                .assertDeliveryPrice()
+                .assertBouquetPrice()
+                .assertTotalPrice()
+                .goToPaymentPage();
 
-        paymentPage.assertOrderList()
+        paymentPage.assertPaymentStatus(baseUrl)
+                .assertBouquetName()
+                .assertDeliveryPrice()
+                .assertBouquetPrice()
+                .assertTotalPrice()
                 .fillCard(cardNumber, expireNumber, cvcNumber)
                 .pay()
                 .confirm();
 
-        successPage.assertSuccessCreatedOrder(baseUrl);
+        successPage.assertSuccessOrderStatus(baseUrl)
+                .assertSuccessCreatedOrder();
     }
 
     @Test
@@ -146,31 +174,40 @@ public class CreateOrderTest extends TestBase {
         bouquetPage.openBouquetPage(baseUrl)
                 .assertBouquetName()
                 .assertVariationsPrices()
+                .setFirstVariation()
                 .assertDeliveryPrice()
-                .getFirstVariation()
+                .assertTotalPrice()
                 .addToCard(baseUrl);
 
-        creatingOrderPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
+        checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
                 .getRandomDeliveryDate()
                 .getRandomDeliveryTime()
-                .assertOrderList()
-                .pressPayButton();
+                .assertBouquetName()
+                .assertDeliveryPrice()
+                .assertBouquetPrice()
+                .assertTotalPrice()
+                .goToPaymentPage();
 
-        paymentPage.assertOrderList()
+        paymentPage.assertPaymentStatus(baseUrl)
+                .assertBouquetName()
+                .assertDeliveryPrice()
+                .assertBouquetPrice()
+                .assertTotalPrice()
                 .backOnPrevious();
 
-        creatingOrderPage.assertOrderAndBackToPay();
+        checkoutPage.assertOrderAndBackToPay();
 
         paymentPage.fillCard(cardNumber, expireNumber, cvcNumber)
                 .pay()
                 .confirm();
 
-        successPage.assertSuccessCreatedOrder(baseUrl);
+        successPage.assertSuccessOrderStatus(baseUrl)
+                .assertSuccessCreatedOrder();
     }
 
     @Test
     @Tag("create_order")
-    void creatingNewOrderAnAuthUserTest() {
+    void createNewOrderAnAuthUserTest() {
         catalogPage.apiRegisterUser(yourName, yourEmail, yourPhone, password)
                 .openCatalogPage(baseUrl)
                 .closeCookiePopUp()
@@ -181,28 +218,99 @@ public class CreateOrderTest extends TestBase {
 
         catalogPage.openCatalogPage(baseUrl)
                 .setDeliveryCity()
-                .setRandomBouquet(BouquetType.ALL_BOUQUETS);
+                .setRandomBouquet(BouquetType.FLORIST_RU);
 
         bouquetPage.openBouquetPage(baseUrl)
                 .assertBouquetName()
                 .assertVariationsPrices()
+                .setFirstVariation()
                 .assertDeliveryPrice()
-                .getFirstVariation()
                 .addToCard(baseUrl);
 
-        creatingOrderPage.simpleFillForm(firstName, phone, address)
+        checkoutPage.simpleFillForm(firstName, phone, address)
                 .getRandomDeliveryDate()
                 .getRandomDeliveryTime()
-                .assertOrderList()
-                .pressPayButton();
+                .assertBouquetName()
+                .assertDeliveryPrice()
+                .assertBouquetPrice()
+                .assertTotalPrice()
+                .goToPaymentPage();
 
-        paymentPage.assertOrderList()
+        paymentPage.assertPaymentStatus(baseUrl)
+                .assertBouquetName()
+                .assertDeliveryPrice()
+                .assertBouquetPrice()
+                .assertTotalPrice()
                 .fillCard(cardNumber, expireNumber, cvcNumber)
                 .pay()
                 .confirm();
 
-        successPage.assertSuccessCreatedOrder(baseUrl);
+        successPage.assertSuccessOrderStatus(baseUrl)
+                .assertSuccessCreatedOrder();
+
         catalogPage.openAccountOrderPage();
         accountOrderPage.assertCreatedOrderFromAuthUser(baseUrl, yourName);
+    }
+
+    @Test
+    @Tag("create_order")
+    void createNewOrderWithExtrasTest() {
+        catalogPage.openCatalogPage(baseUrl)
+                .closeCookiePopUp()
+                .setDeliveryCity()
+                .setRandomBouquet(BouquetType.FLORIST_RU);
+
+        bouquetPage.openBouquetPage(baseUrl)
+                .assertBouquetName()
+                .assertVariationsPrices()
+                .setFirstVariation()
+                .setRandomExtras()
+                .assertExtras()
+                .assertDeliveryPrice()
+                .assertTotalPrice()
+                .addToCard(baseUrl);
+
+        checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
+                .getRandomDeliveryDate()
+                .getRandomDeliveryTime()
+                .assertBouquetName()
+                .assertDeliveryPrice()
+                .assertBouquetPrice()
+                .assertExtrasPrice()
+                .assertTotalPrice()
+                .goToPaymentPage();
+
+        paymentPage.assertPaymentStatus(baseUrl)
+                .assertBouquetName()
+                .assertDeliveryPrice()
+                .assertBouquetPrice()
+                .assertExtrasPrice()
+                .assertTotalPrice()
+                .fillCard(cardNumber, expireNumber, cvcNumber)
+                .pay()
+                .confirm();
+
+        successPage.assertSuccessOrderStatus(baseUrl)
+                .assertSuccessCreatedOrder();
+    }
+
+    @Test
+    @Tag("create_order")
+    void removeFromCardTest() {
+        catalogPage.openCatalogPage(baseUrl)
+                .closeCookiePopUp()
+                .setDeliveryCity()
+                .setRandomBouquet(BouquetType.FLORIST_RU);
+
+        bouquetPage.openBouquetPage(baseUrl)
+                .assertBouquetName()
+                .assertVariationsPrices()
+                .setFirstVariation()
+                .assertDeliveryPrice()
+                .assertTotalPrice()
+                .addToCard(baseUrl);
+
+        checkoutPage.removeFromCard();
+
     }
 }
