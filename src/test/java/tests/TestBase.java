@@ -28,12 +28,12 @@ public class TestBase {
         cvcNumber = config.getCvcNumber();
         promo = config.getPromo();
 
-        //System.setProperty("webdriver.chrome.driver", "C://webdrivers/chromedriver114.exe");
-        Configuration.baseUrl = System.getProperty("base_url", "https://www.stage.florist.local/");
-        Configuration.browser = System.getProperty("browser", "chrome");
+        System.setProperty("webdriver.chrome.driver", "C://webdrivers/chromedriver114.exe");
+        //Configuration.baseUrl = System.getProperty("base_url", "https://www.stage.florist.local/");
+        //Configuration.browser = System.getProperty("browser", "chrome");
         RestAssured.baseURI = baseUrl;
-        //Configuration.holdBrowserOpen = true;
-        Configuration.remote = "http://10.201.0.139:4444/wd/hub";
+        Configuration.holdBrowserOpen = true;
+        //Configuration.remote = "http://10.201.0.139:4444/wd/hub";
 
 //        SelenideLogger.addListener("allure", new AllureSelenide());
 //        DesiredCapabilities capabilities = new DesiredCapabilities();

@@ -42,6 +42,7 @@ public class ApiClient {
     private final Data data = getDeliveryPriceByCitySlug();
     private DeliveryTime deliveryTime;
     private final List<BouquetDataItemDto> bouquetList = new ArrayList<>();
+    private List<BouquetDataItemDto> allBouquetsFromRequest = new ArrayList<>();
 
     // Получение обьекта города Астрахань
     @SneakyThrows
@@ -80,12 +81,13 @@ public class ApiClient {
                 .auth().basic("florist_api", "123")
                 .param("city", getCityId())
                 .param("showPrices", 1)
-                .param("includeIflorist", 0)
+                .param("includeIflorist", 1)
                 .get("api/bouquet");
         ResponseBody bodyBouquet = responseBouquet.getBody();
 
         ObjectMapper objectMapper = new ObjectMapper();
         BouquetDataDto bouquetData = objectMapper.readValue(bodyBouquet.asString(), BouquetDataDto.class);
+        allBouquetsFromRequest = new ArrayList<>(bouquetData.getData().values());
         bouquet = getRandomBouquetFloristRu(bouquetData.getData());
         bouquetList.add(bouquet);
     }
@@ -103,6 +105,7 @@ public class ApiClient {
 
         ObjectMapper objectMapper = new ObjectMapper();
         BouquetDataDto bouquetData = objectMapper.readValue(bodyBouquet.asString(), BouquetDataDto.class);
+        allBouquetsFromRequest = new ArrayList<>(bouquetData.getData().values());
         bouquet = getBouquetIFloristList(bouquetData.getData());
         bouquetList.add(bouquet);
     }
@@ -120,6 +123,7 @@ public class ApiClient {
 
         ObjectMapper objectMapper = new ObjectMapper();
         BouquetDataDto bouquetData = objectMapper.readValue(bodyBouquet.asString(), BouquetDataDto.class);
+        allBouquetsFromRequest = new ArrayList<>(bouquetData.getData().values());
         bouquet = getRandomBouquet(bouquetData.getData());
         bouquetList.add(bouquet);
     }
@@ -130,6 +134,11 @@ public class ApiClient {
             case IFLORIST -> getRandomIFloristBouquetByCityID();
             case ALL_BOUQUETS -> getRandomAllBouquetByCityID();
         }
+    }
+
+    public int getBouquetListReminder() {
+        System.out.println(allBouquetsFromRequest.size() % 60 + " reminder");
+        return allBouquetsFromRequest.size() % 60;
     }
 
     // методы для взаимодействия с обьектом Букет
@@ -321,8 +330,11 @@ public class ApiClient {
     // методы получения рандомного обьекта Букета
     // иногда error index must be positive
     private BouquetDataItemDto getRandomBouquetFloristRu(Map<String, BouquetDataItemDto> bouquetMap) {
-        List<BouquetDataItemDto> values = new ArrayList<>(bouquetMap.values());
-        return values.get(new Random().nextInt(values.size()));
+        Map<String, BouquetDataItemDto> filteredMap = bouquetMap.entrySet()
+                .stream()
+                .filter(e -> e.getKey().startsWith("6"))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        return getRandomBouquet(filteredMap);
     }
 
     private ExtrasDataItemDto getRandomExtrasFromMap(Map<String, ExtrasDataItemDto> extrasMap) {
@@ -353,6 +365,9 @@ public class ApiClient {
 
     private BouquetDataItemDto getRandomBouquet(Map<String, BouquetDataItemDto> map) {
         List<BouquetDataItemDto> values = new ArrayList<>(map.values());
-        return values.get(new Random().nextInt(values.size()));
+        BouquetDataItemDto dataItemDto = values.get(new Random().nextInt(values.size()));
+        System.out.println(dataItemDto.getId() + " id");
+        System.out.println(dataItemDto.getName() + "name");
+        return dataItemDto;
     }
 }

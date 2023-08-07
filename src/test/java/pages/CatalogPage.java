@@ -1,5 +1,6 @@
 package pages;
 
+import com.codeborne.selenide.CollectionCondition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import helpers.ApiClient;
@@ -9,7 +10,7 @@ import models.bouquet.BouquetDataItemDto;
 import java.time.Duration;
 import java.util.List;
 
-import static com.codeborne.selenide.CollectionCondition.size;
+import static com.codeborne.selenide.CollectionCondition.*;
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selectors.byName;
 import static com.codeborne.selenide.Selectors.byText;
@@ -27,7 +28,7 @@ public class CatalogPage {
     private final SelenideElement cityLoader = $(".css-1gl4k7y");
     private final ElementsCollection droppedCityList = $$("._8PeWF0tD");
     private final SelenideElement bouquetLoader = $(".w0pOM9kK");
-    private final ElementsCollection bouquetList = $$("._3fIsQ45s");
+    private ElementsCollection bouquetList = $$("._3fIsQ45s");
     private final SelenideElement authRegisterButton = $("button[aria-label='Войти на сайт']");
     private final SelenideElement createAccountTab = $x("//ul/span[text()='Создать аккаунт']");
     private final SelenideElement nameInput = $(byName("name"));
@@ -91,6 +92,7 @@ public class CatalogPage {
 
         boolean foundBouquet = false;
         while (!foundBouquet) {
+            bouquetList.shouldHave(sizeGreaterThanOrEqual(apiClient.getBouquetListReminder()));
             for (SelenideElement se : bouquetList) {
                 if (se.getText().contains(bouquetName)) {
                     assertEquals(bouquetPrice, se.$("._1KvrG3Aq").getText().replaceAll("\\D", ""),
