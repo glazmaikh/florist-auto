@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
 
+import static com.codeborne.selenide.Condition.exist;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 
@@ -150,9 +151,15 @@ public class ApiClient {
         return bouquet.getName();
     }
 
-    public int getBouquetPrice() {
-        return bouquet.getMin_price().getRub();
+    public int getBouquetPrice(CurrencyType currencyType) {
+        return switch (currencyType) {
+            case EUR -> bouquet.getMin_price().getEur();
+            case KZT -> bouquet.getMin_price().getKzt();
+            case USD -> bouquet.getMin_price().getUsd();
+            case RUB -> bouquet.getMin_price().getRub();
+        };
     }
+
 
     public List<PriceItemDto> getPriceList() {
         return bouquet.getPriceList();

@@ -5,6 +5,7 @@ import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import helpers.ApiClient;
 import helpers.BouquetType;
+import helpers.CurrencyType;
 import models.bouquet.BouquetDataItemDto;
 
 import java.time.Duration;
@@ -51,6 +52,11 @@ public class CatalogPage {
     private final SelenideElement alertIncorrectPhoneInput = $x("//span[text()='Введите корректный номер телефона']");
     private final SelenideElement alertIncorrectEmailInput = $x("//span[text()='Введите корректный email адрес']");
     private final SelenideElement userAlreadyExistsError = $(byText("User with this email already exists"));
+    private final SelenideElement currencyDropper = $(byText("₽ Руб."));
+    private final SelenideElement setKztPrice = $(byText("₸ Казахстанский тенге"));
+    private final SelenideElement setRubPrice = $(byText("₽ Российский рубль"));
+    private final SelenideElement setEurPrice = $(byText("€ Евро"));
+    private final SelenideElement setUsdPrice = $(byText("$ Доллар США"));
 
     public CatalogPage(ApiClient apiClient) {
         this.apiClient = apiClient;
@@ -83,11 +89,11 @@ public class CatalogPage {
         return this;
     }
 
-    public BouquetPage setRandomBouquet(BouquetType bouquetType) {
+    public BouquetPage setRandomBouquet(BouquetType bouquetType, CurrencyType currencyType) {
         apiClient.initBouquet(bouquetType);
         bouquetLoader.shouldNotBe(visible, Duration.ofSeconds(30));
         String bouquetName = apiClient.getBouquetName();
-        String bouquetPrice = String.valueOf(apiClient.getBouquetPrice());
+        String bouquetPrice = String.valueOf(apiClient.getBouquetPrice(currencyType));
         int page = 1;
 
         boolean foundBouquet = false;
@@ -242,6 +248,17 @@ public class CatalogPage {
 
     public CatalogPage assertAlreadyExistsEmailWhenRegister() {
         userAlreadyExistsError.shouldBe(exist);
+        return this;
+    }
+
+    public CatalogPage setCurrency(CurrencyType currencyType) {
+        currencyDropper.shouldBe(exist).click();
+        switch (currencyType) {
+            case EUR -> setEurPrice.shouldBe(exist).click();
+            case KZT -> setKztPrice.shouldBe(exist).click();
+            case USD -> setUsdPrice.shouldBe(exist).click();
+            default -> setRubPrice.shouldBe(exist).click();
+        }
         return this;
     }
 }

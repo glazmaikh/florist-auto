@@ -3,6 +3,7 @@ package tests;
 import helpers.ApiClient;
 
 import helpers.BouquetType;
+import helpers.CurrencyType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -38,311 +39,321 @@ public class CreateOrderTest extends TestBase {
         accountOrderPage = new AccountOrderPage(apiClient);
     }
 
+//    @Test
+//    @Tag("create_order")
+//    void createNewFloristRuOrderTest() {
+//        catalogPage.openCatalogPage(baseUrl)
+//                .closeCookiePopUp()
+//                .setDeliveryCity()
+//                .setRandomBouquet(BouquetType.FLORIST_RU);
+//
+//        bouquetPage.openBouquetPage(baseUrl)
+//                .assertBouquetName()
+//                .assertVariationsPrices()
+//                .setFirstVariation()
+//                .assertDeliveryPrice()
+//                .assertTotalPrice()
+//                .addToCard(baseUrl);
+//
+//        checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
+//                .getRandomDeliveryDate()
+//                .getRandomDeliveryTime()
+//                .assertBouquetName()
+//                .assertDeliveryPrice()
+//                .assertBouquetPrice()
+//                .assertTotalPrice()
+//                .goToPaymentPage();
+//
+//        paymentPage.assertPaymentStatus(baseUrl)
+//                .assertBouquetName()
+//                .assertDeliveryPrice()
+//                .assertBouquetPrice()
+//                .assertTotalPrice()
+//                .fillCard(cardNumber, expireNumber, cvcNumber)
+//                .pay()
+//                .confirm();
+//
+//        successPage.assertSuccessOrderStatus(baseUrl)
+//                .assertSuccessCreatedOrder();
+//    }
+//
+//    @Test
+//    @Tag("create_order")
+//    void createNewOrderWith2BouquetsTest() {
+//        catalogPage.openCatalogPage(baseUrl)
+//                .closeCookiePopUp()
+//                .setDeliveryCity()
+//                .setRandomBouquet(BouquetType.FLORIST_RU);
+//
+//        bouquetPage.openBouquetPage(baseUrl)
+//                .assertBouquetName()
+//                .assertVariationsPrices()
+//                .setFirstVariation()
+//                .assertDeliveryPrice()
+//                .assertTotalPrice()
+//                .addToCard(baseUrl);
+//
+//        catalogPage.openCatalogPage(baseUrl)
+//                .setRandomBouquet(BouquetType.FLORIST_RU);
+//
+//        bouquetPage.openBouquetPage(baseUrl)
+//                .assertBouquetName()
+//                .assertVariationsPrices()
+//                .setFirstVariation()
+//                .assertDeliveryPrice()
+//                .assertTotalPrice()
+//                .addToCard(baseUrl);
+//
+//        checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
+//                .getRandomDeliveryDate()
+//                .getRandomDeliveryTime()
+//                .assertBouquetName()
+//                .assertDeliveryPrice()
+//                .assertBouquetPrice()
+//                .assertTotalPrice()
+//                .goToPaymentPage();
+//
+//        paymentPage.assertPaymentStatus(baseUrl)
+//                .assertBouquetName()
+//                .assertDeliveryPrice()
+//                .assertBouquetPrice()
+//                .assertTotalPrice()
+//                .fillCard(cardNumber, expireNumber, cvcNumber)
+//                .pay()
+//                .confirm();
+//
+//        successPage.assertSuccessOrderStatus(baseUrl)
+//                .assertSuccessCreatedOrder();
+//    }
+//
+//    @Test
+//    @Tag("create_order")
+//    void createNewIFloristOrderTest() {
+//        catalogPage.openCatalogPage(baseUrl)
+//                .closeCookiePopUp()
+//                .setDeliveryCity()
+//                .setRandomBouquet(BouquetType.IFLORIST);
+//
+//        bouquetPage.openBouquetPage(baseUrl)
+//                .assertBouquetName()
+//                .assertVariationsPrices()
+//                .setFirstVariation()
+//                .assertDeliveryPrice()
+//                .assertTotalPrice()
+//                .addToCard(baseUrl);
+//
+//        checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
+//                .getRandomDeliveryDate()
+//                .getRandomDeliveryTime()
+//                .assertBouquetName()
+//                .assertDeliveryPrice()
+//                .assertBouquetPrice()
+//                .assertTotalPrice()
+//                .goToPaymentPage();
+//
+//        paymentPage.assertPaymentStatus(baseUrl)
+//                .assertBouquetName()
+//                .assertDeliveryPrice()
+//                .assertBouquetPrice()
+//                .assertTotalPrice()
+//                .fillCard(cardNumber, expireNumber, cvcNumber)
+//                .pay()
+//                .confirm();
+//
+//        successPage.assertSuccessOrderStatus(baseUrl)
+//                .assertSuccessCreatedOrder();
+//    }
+//
+//    @Test
+//    @Tag("create_order")
+//    void usingBackAfterCreatedOrderTest() {
+//        catalogPage.openCatalogPage(baseUrl)
+//                .closeCookiePopUp()
+//                .setDeliveryCity()
+//                .setRandomBouquet(BouquetType.ALL_BOUQUETS);
+//
+//        bouquetPage.openBouquetPage(baseUrl)
+//                .assertBouquetName()
+//                .assertVariationsPrices()
+//                .setFirstVariation()
+//                .assertDeliveryPrice()
+//                .assertTotalPrice()
+//                .addToCard(baseUrl);
+//
+//        checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
+//                .getRandomDeliveryDate()
+//                .getRandomDeliveryTime()
+//                .assertBouquetName()
+//                .assertDeliveryPrice()
+//                .assertBouquetPrice()
+//                .assertTotalPrice()
+//                .goToPaymentPage();
+//
+//        paymentPage.assertPaymentStatus(baseUrl)
+//                .assertBouquetName()
+//                .assertDeliveryPrice()
+//                .assertBouquetPrice()
+//                .assertTotalPrice()
+//                .backOnPrevious();
+//
+//        checkoutPage.assertOrderAndBackToPay();
+//
+//        paymentPage.fillCard(cardNumber, expireNumber, cvcNumber)
+//                .pay()
+//                .confirm();
+//
+//        successPage.assertSuccessOrderStatus(baseUrl)
+//                .assertSuccessCreatedOrder();
+//    }
+//
+//    @Test
+//    @Tag("create_order")
+//    void createNewOrderAnAuthUserTest() {
+//        catalogPage.apiRegisterUser(yourName, yourEmail, yourPhone, password)
+//                .openCatalogPage(baseUrl)
+//                .closeCookiePopUp()
+//                .openAuthModal()
+//                .fillAuthForm(yourEmail, password);
+//
+//        accountOrderPage.assertAuth(baseUrl, yourName);
+//
+//        catalogPage.openCatalogPage(baseUrl)
+//                .setDeliveryCity()
+//                .setRandomBouquet(BouquetType.FLORIST_RU);
+//
+//        bouquetPage.openBouquetPage(baseUrl)
+//                .assertBouquetName()
+//                .assertVariationsPrices()
+//                .setFirstVariation()
+//                .assertDeliveryPrice()
+//                .addToCard(baseUrl);
+//
+//        checkoutPage.simpleFillForm(firstName, phone, address)
+//                .getRandomDeliveryDate()
+//                .getRandomDeliveryTime()
+//                .assertBouquetName()
+//                .assertDeliveryPrice()
+//                .assertBouquetPrice()
+//                .assertTotalPrice()
+//                .goToPaymentPage();
+//
+//        paymentPage.assertPaymentStatus(baseUrl)
+//                .assertBouquetName()
+//                .assertDeliveryPrice()
+//                .assertBouquetPrice()
+//                .assertTotalPrice()
+//                .fillCard(cardNumber, expireNumber, cvcNumber)
+//                .pay()
+//                .confirm();
+//
+//        successPage.assertSuccessOrderStatus(baseUrl)
+//                .assertSuccessCreatedOrder();
+//
+//        catalogPage.openAccountOrderPage();
+//        accountOrderPage.assertCreatedOrderFromAuthUser(baseUrl, yourName);
+//    }
+//
+//    @Test
+//    @Tag("create_order")
+//    void createNewOrderWithExtrasTest() {
+//        catalogPage.openCatalogPage(baseUrl)
+//                .closeCookiePopUp()
+//                .setDeliveryCity()
+//                .setRandomBouquet(BouquetType.FLORIST_RU);
+//
+//        bouquetPage.openBouquetPage(baseUrl)
+//                .assertBouquetName()
+//                .assertVariationsPrices()
+//                .setFirstVariation()
+//                .setRandomExtras()
+//                .assertExtras()
+//                .assertDeliveryPrice()
+//                .assertTotalPrice()
+//                .addToCard(baseUrl);
+//
+//        checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
+//                .getRandomDeliveryDate()
+//                .getRandomDeliveryTime()
+//                .assertBouquetName()
+//                .assertDeliveryPrice()
+//                .assertBouquetPrice()
+//                .assertExtrasPrice()
+//                .assertTotalPrice()
+//                .goToPaymentPage();
+//
+//        paymentPage.assertPaymentStatus(baseUrl)
+//                .assertBouquetName()
+//                .assertDeliveryPrice()
+//                .assertBouquetPrice()
+//                .assertExtrasPrice()
+//                .assertTotalPrice()
+//                .fillCard(cardNumber, expireNumber, cvcNumber)
+//                .pay()
+//                .confirm();
+//
+//        successPage.assertSuccessOrderStatus(baseUrl)
+//                .assertSuccessCreatedOrder();
+//    }
+//
+//    @Test
+//    @Tag("create_order")
+//    void removeFromCardTest() {
+//        catalogPage.openCatalogPage(baseUrl)
+//                .closeCookiePopUp()
+//                .setDeliveryCity()
+//                .setRandomBouquet(BouquetType.FLORIST_RU);
+//
+//        bouquetPage.openBouquetPage(baseUrl)
+//                .assertBouquetName()
+//                .assertVariationsPrices()
+//                .setFirstVariation()
+//                .assertDeliveryPrice()
+//                .assertTotalPrice()
+//                .addToCard(baseUrl);
+//
+//        checkoutPage.removeFromCard();
+//    }
+//
+//    @Test
+//    @Tag("create_order")
+//    void usingPromoСodeTest() {
+//        catalogPage.openCatalogPage(baseUrl)
+//                .closeCookiePopUp()
+//                .setDeliveryCity()
+//                .setRandomBouquet(BouquetType.FLORIST_RU);
+//
+//        bouquetPage.openBouquetPage(baseUrl)
+//                .assertBouquetName()
+//                .assertVariationsPrices()
+//                .setFirstVariation()
+//                .assertDeliveryPrice()
+//                .assertTotalPrice()
+//                .addToCard(baseUrl);
+//
+//        checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
+//                .getRandomDeliveryDate()
+//                .getRandomDeliveryTime()
+//                .assertBouquetName()
+//                .assertDeliveryPrice()
+//                .assertBouquetPrice()
+//                .assertTotalPrice()
+//                .goToPaymentPage();
+//
+//        paymentPage.assertPaymentStatus(baseUrl)
+//                .assertBouquetName()
+//                .assertDeliveryPrice()
+//                .assertBouquetPrice()
+//                .assertTotalPrice()
+//                .setPromoCode(promo);
+//    }
+
     @Test
     @Tag("create_order")
-    void createNewFloristRuOrderTest() {
+    void createTengeOrderTest() {
         catalogPage.openCatalogPage(baseUrl)
                 .closeCookiePopUp()
                 .setDeliveryCity()
-                .setRandomBouquet(BouquetType.FLORIST_RU);
-
-        bouquetPage.openBouquetPage(baseUrl)
-                .assertBouquetName()
-                .assertVariationsPrices()
-                .setFirstVariation()
-                .assertDeliveryPrice()
-                .assertTotalPrice()
-                .addToCard(baseUrl);
-
-        checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
-                .getRandomDeliveryDate()
-                .getRandomDeliveryTime()
-                .assertBouquetName()
-                .assertDeliveryPrice()
-                .assertBouquetPrice()
-                .assertTotalPrice()
-                .goToPaymentPage();
-
-        paymentPage.assertPaymentStatus(baseUrl)
-                .assertBouquetName()
-                .assertDeliveryPrice()
-                .assertBouquetPrice()
-                .assertTotalPrice()
-                .fillCard(cardNumber, expireNumber, cvcNumber)
-                .pay()
-                .confirm();
-
-        successPage.assertSuccessOrderStatus(baseUrl)
-                .assertSuccessCreatedOrder();
-    }
-
-    @Test
-    @Tag("create_order")
-    void createNewOrderWith2BouquetsTest() {
-        catalogPage.openCatalogPage(baseUrl)
-                .closeCookiePopUp()
-                .setDeliveryCity()
-                .setRandomBouquet(BouquetType.FLORIST_RU);
-
-        bouquetPage.openBouquetPage(baseUrl)
-                .assertBouquetName()
-                .assertVariationsPrices()
-                .setFirstVariation()
-                .assertDeliveryPrice()
-                .assertTotalPrice()
-                .addToCard(baseUrl);
-
-        catalogPage.openCatalogPage(baseUrl)
-                .setRandomBouquet(BouquetType.FLORIST_RU);
-
-        bouquetPage.openBouquetPage(baseUrl)
-                .assertBouquetName()
-                .assertVariationsPrices()
-                .setFirstVariation()
-                .assertDeliveryPrice()
-                .assertTotalPrice()
-                .addToCard(baseUrl);
-
-        checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
-                .getRandomDeliveryDate()
-                .getRandomDeliveryTime()
-                .assertBouquetName()
-                .assertDeliveryPrice()
-                .assertBouquetPrice()
-                .assertTotalPrice()
-                .goToPaymentPage();
-
-        paymentPage.assertPaymentStatus(baseUrl)
-                .assertBouquetName()
-                .assertDeliveryPrice()
-                .assertBouquetPrice()
-                .assertTotalPrice()
-                .fillCard(cardNumber, expireNumber, cvcNumber)
-                .pay()
-                .confirm();
-
-        successPage.assertSuccessOrderStatus(baseUrl)
-                .assertSuccessCreatedOrder();
-    }
-
-    @Test
-    @Tag("create_order")
-    void createNewIFloristOrderTest() {
-        catalogPage.openCatalogPage(baseUrl)
-                .closeCookiePopUp()
-                .setDeliveryCity()
-                .setRandomBouquet(BouquetType.IFLORIST);
-
-        bouquetPage.openBouquetPage(baseUrl)
-                .assertBouquetName()
-                .assertVariationsPrices()
-                .setFirstVariation()
-                .assertDeliveryPrice()
-                .assertTotalPrice()
-                .addToCard(baseUrl);
-
-        checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
-                .getRandomDeliveryDate()
-                .getRandomDeliveryTime()
-                .assertBouquetName()
-                .assertDeliveryPrice()
-                .assertBouquetPrice()
-                .assertTotalPrice()
-                .goToPaymentPage();
-
-        paymentPage.assertPaymentStatus(baseUrl)
-                .assertBouquetName()
-                .assertDeliveryPrice()
-                .assertBouquetPrice()
-                .assertTotalPrice()
-                .fillCard(cardNumber, expireNumber, cvcNumber)
-                .pay()
-                .confirm();
-
-        successPage.assertSuccessOrderStatus(baseUrl)
-                .assertSuccessCreatedOrder();
-    }
-
-    @Test
-    @Tag("create_order")
-    void usingBackAfterCreatedOrderTest() {
-        catalogPage.openCatalogPage(baseUrl)
-                .closeCookiePopUp()
-                .setDeliveryCity()
-                .setRandomBouquet(BouquetType.ALL_BOUQUETS);
-
-        bouquetPage.openBouquetPage(baseUrl)
-                .assertBouquetName()
-                .assertVariationsPrices()
-                .setFirstVariation()
-                .assertDeliveryPrice()
-                .assertTotalPrice()
-                .addToCard(baseUrl);
-
-        checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
-                .getRandomDeliveryDate()
-                .getRandomDeliveryTime()
-                .assertBouquetName()
-                .assertDeliveryPrice()
-                .assertBouquetPrice()
-                .assertTotalPrice()
-                .goToPaymentPage();
-
-        paymentPage.assertPaymentStatus(baseUrl)
-                .assertBouquetName()
-                .assertDeliveryPrice()
-                .assertBouquetPrice()
-                .assertTotalPrice()
-                .backOnPrevious();
-
-        checkoutPage.assertOrderAndBackToPay();
-
-        paymentPage.fillCard(cardNumber, expireNumber, cvcNumber)
-                .pay()
-                .confirm();
-
-        successPage.assertSuccessOrderStatus(baseUrl)
-                .assertSuccessCreatedOrder();
-    }
-
-    @Test
-    @Tag("create_order")
-    void createNewOrderAnAuthUserTest() {
-        catalogPage.apiRegisterUser(yourName, yourEmail, yourPhone, password)
-                .openCatalogPage(baseUrl)
-                .closeCookiePopUp()
-                .openAuthModal()
-                .fillAuthForm(yourEmail, password);
-
-        accountOrderPage.assertAuth(baseUrl, yourName);
-
-        catalogPage.openCatalogPage(baseUrl)
-                .setDeliveryCity()
-                .setRandomBouquet(BouquetType.FLORIST_RU);
-
-        bouquetPage.openBouquetPage(baseUrl)
-                .assertBouquetName()
-                .assertVariationsPrices()
-                .setFirstVariation()
-                .assertDeliveryPrice()
-                .addToCard(baseUrl);
-
-        checkoutPage.simpleFillForm(firstName, phone, address)
-                .getRandomDeliveryDate()
-                .getRandomDeliveryTime()
-                .assertBouquetName()
-                .assertDeliveryPrice()
-                .assertBouquetPrice()
-                .assertTotalPrice()
-                .goToPaymentPage();
-
-        paymentPage.assertPaymentStatus(baseUrl)
-                .assertBouquetName()
-                .assertDeliveryPrice()
-                .assertBouquetPrice()
-                .assertTotalPrice()
-                .fillCard(cardNumber, expireNumber, cvcNumber)
-                .pay()
-                .confirm();
-
-        successPage.assertSuccessOrderStatus(baseUrl)
-                .assertSuccessCreatedOrder();
-
-        catalogPage.openAccountOrderPage();
-        accountOrderPage.assertCreatedOrderFromAuthUser(baseUrl, yourName);
-    }
-
-    @Test
-    @Tag("create_order")
-    void createNewOrderWithExtrasTest() {
-        catalogPage.openCatalogPage(baseUrl)
-                .closeCookiePopUp()
-                .setDeliveryCity()
-                .setRandomBouquet(BouquetType.FLORIST_RU);
-
-        bouquetPage.openBouquetPage(baseUrl)
-                .assertBouquetName()
-                .assertVariationsPrices()
-                .setFirstVariation()
-                .setRandomExtras()
-                .assertExtras()
-                .assertDeliveryPrice()
-                .assertTotalPrice()
-                .addToCard(baseUrl);
-
-        checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
-                .getRandomDeliveryDate()
-                .getRandomDeliveryTime()
-                .assertBouquetName()
-                .assertDeliveryPrice()
-                .assertBouquetPrice()
-                .assertExtrasPrice()
-                .assertTotalPrice()
-                .goToPaymentPage();
-
-        paymentPage.assertPaymentStatus(baseUrl)
-                .assertBouquetName()
-                .assertDeliveryPrice()
-                .assertBouquetPrice()
-                .assertExtrasPrice()
-                .assertTotalPrice()
-                .fillCard(cardNumber, expireNumber, cvcNumber)
-                .pay()
-                .confirm();
-
-        successPage.assertSuccessOrderStatus(baseUrl)
-                .assertSuccessCreatedOrder();
-    }
-
-    @Test
-    @Tag("create_order")
-    void removeFromCardTest() {
-        catalogPage.openCatalogPage(baseUrl)
-                .closeCookiePopUp()
-                .setDeliveryCity()
-                .setRandomBouquet(BouquetType.FLORIST_RU);
-
-        bouquetPage.openBouquetPage(baseUrl)
-                .assertBouquetName()
-                .assertVariationsPrices()
-                .setFirstVariation()
-                .assertDeliveryPrice()
-                .assertTotalPrice()
-                .addToCard(baseUrl);
-
-        checkoutPage.removeFromCard();
-    }
-
-    @Test
-    @Tag("create_order")
-    void usingPromoСodeTest() {
-        catalogPage.openCatalogPage(baseUrl)
-                .closeCookiePopUp()
-                .setDeliveryCity()
-                .setRandomBouquet(BouquetType.FLORIST_RU);
-
-        bouquetPage.openBouquetPage(baseUrl)
-                .assertBouquetName()
-                .assertVariationsPrices()
-                .setFirstVariation()
-                .assertDeliveryPrice()
-                .assertTotalPrice()
-                .addToCard(baseUrl);
-
-        checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
-                .getRandomDeliveryDate()
-                .getRandomDeliveryTime()
-                .assertBouquetName()
-                .assertDeliveryPrice()
-                .assertBouquetPrice()
-                .assertTotalPrice()
-                .goToPaymentPage();
-
-        paymentPage.assertPaymentStatus(baseUrl)
-                .assertBouquetName()
-                .assertDeliveryPrice()
-                .assertBouquetPrice()
-                .assertTotalPrice()
-                .setPromoCode(promo);
+                .setCurrency(CurrencyType.EUR)
+                .setRandomBouquet(BouquetType.FLORIST_RU, CurrencyType.KZT);
     }
 }
