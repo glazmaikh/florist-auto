@@ -26,6 +26,11 @@ public class PaymentPage {
     private final SelenideElement orderList = $(".AEYhRIG-");
     private final SelenideElement header = $x("//h1");
     private final SelenideElement thanksFor = $x("//h1[text() ='Спасибо за заказ']");
+    private final SelenideElement checkOnPromoCodeInput = $x("//div[@class='_2ke-1fXm']//span");
+    private final SelenideElement promoCodeInput = $x("//span[text()='Введите промокод']//preceding-sibling::input");
+    private final SelenideElement promoCodeAppliedPopup = $x("//span[text()='Промокод применен']");
+    private final SelenideElement promoCodeAppliedArea = $("._3aKs9p4n");
+    private final SelenideElement promoCodeAppliedButton = $x("//span[text()='Применить']");
     private final ApiClient apiClient;
 
     public PaymentPage(ApiClient apiClient) {
@@ -111,5 +116,22 @@ public class PaymentPage {
     public CatalogPage backOnPrevious() {
         back();
         return new CatalogPage(apiClient);
+    }
+
+    public PaymentPage setPromoCode(String promo) {
+        checkOnPromoCodeInput.shouldBe(exist).click();
+        promoCodeInput.shouldBe(exist).sendKeys(promo);
+        promoCodeAppliedButton.shouldBe(exist).click();
+        promoCodeAppliedPopup.shouldBe(visible);
+        promoCodeAppliedArea.shouldBe(visible);
+
+        int sum = apiClient.getBouquetPriceRubList().stream()
+                .map(price -> (int) (price * 0.1))
+                .mapToInt(Integer::intValue)
+                .sum();
+
+        orderList.shouldHave(text("Скидка по промокоду"));
+        orderList.shouldHave(text(HelperPage.priceRegexRub(String.valueOf(sum))));
+        return this;
     }
 }

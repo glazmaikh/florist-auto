@@ -36,7 +36,7 @@ public class CheckoutPage {
     private final SelenideElement createdOrderText = $("._2fUGBItB");
     private final SelenideElement returnToPayButton = $x("//a[@class='btn']");
     private final SelenideElement nextMonthButton = $(".react-calendar__navigation__next-button");
-    private final SelenideElement timeDropped = $(".css-oboqqt-menu");
+    private final SelenideElement timeDropped = $(".css-11unzgr");
     private final ElementsCollection timeIntervals = $$x("//div[@class='_2zwatJ-h' and count(span) = 1]");
     private final ElementsCollection timeEarlyIntervals = $$x("//div[@class='_2zwatJ-h' and count(span) = 2]");
     private final SelenideElement timeFromInput = $x("//span[text()='Время доставки с']/parent::label");

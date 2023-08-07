@@ -17,4 +17,7 @@ public interface BaseConfig extends Config {
 
     @Key("cvc_number")
     String getCvcNumber();
+
+    @Key("promo")
+    String getPromo();
 }

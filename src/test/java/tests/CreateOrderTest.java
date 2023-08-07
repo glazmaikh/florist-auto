@@ -311,6 +311,38 @@ public class CreateOrderTest extends TestBase {
                 .addToCard(baseUrl);
 
         checkoutPage.removeFromCard();
+    }
 
+    @Test
+    @Tag("create_order")
+    void usingPromoСodeTest() {
+        catalogPage.openCatalogPage(baseUrl)
+                .closeCookiePopUp()
+                .setDeliveryCity()
+                .setRandomBouquet(BouquetType.FLORIST_RU);
+
+        bouquetPage.openBouquetPage(baseUrl)
+                .assertBouquetName()
+                .assertVariationsPrices()
+                .setFirstVariation()
+                .assertDeliveryPrice()
+                .assertTotalPrice()
+                .addToCard(baseUrl);
+
+        checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
+                .getRandomDeliveryDate()
+                .getRandomDeliveryTime()
+                .assertBouquetName()
+                .assertDeliveryPrice()
+                .assertBouquetPrice()
+                .assertTotalPrice()
+                .goToPaymentPage();
+
+        paymentPage.assertPaymentStatus(baseUrl)
+                .assertBouquetName()
+                .assertDeliveryPrice()
+                .assertBouquetPrice()
+                .assertTotalPrice()
+                .setPromoCode(promo);
     }
 }

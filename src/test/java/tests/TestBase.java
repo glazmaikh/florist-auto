@@ -18,6 +18,7 @@ public class TestBase {
     static String cardNumber;
     static String expireNumber;
     static String cvcNumber;
+    static String promo;
     @BeforeAll
     static void setUp() {
         BaseConfig config = ConfigFactory.create(BaseConfig.class, System.getProperties());
@@ -25,6 +26,7 @@ public class TestBase {
         cardNumber = config.getCardNumber();
         expireNumber = config.getExpireNumber();
         cvcNumber = config.getCvcNumber();
+        promo = config.getPromo();
 
         //System.setProperty("webdriver.chrome.driver", "C://webdrivers/chromedriver114.exe");
         Configuration.baseUrl = System.getProperty("base_url", "https://www.stage.florist.local/");
