@@ -23,13 +23,13 @@ import models.order.OrderData;
 import models.register.User;
 import models.register.UserWrapper;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-import static com.codeborne.selenide.Condition.exist;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 
@@ -137,29 +137,28 @@ public class ApiClient {
         }
     }
 
-    public int getBouquetListReminder() {
-        System.out.println(allBouquetsFromRequest.size() % 60 + " reminder");
-        return allBouquetsFromRequest.size() % 60;
-    }
-
     // методы для взаимодействия с обьектом Букет
     public int getBouquetId() {
         return bouquet.getId();
+    }
+
+    public int getBouquetListReminder() {
+        return allBouquetsFromRequest.size() % 60;
     }
 
     public String getBouquetName() {
         return bouquet.getName();
     }
 
-    public int getBouquetPrice(CurrencyType currencyType) {
+    public String getBouquetPrice(CurrencyType currencyType) {
+        DecimalFormat decimalFormat = new DecimalFormat("0.00");
         return switch (currencyType) {
-            case EUR -> bouquet.getMin_price().getEur();
-            case KZT -> bouquet.getMin_price().getKzt();
-            case USD -> bouquet.getMin_price().getUsd();
-            case RUB -> bouquet.getMin_price().getRub();
+            case EUR -> decimalFormat.format(bouquet.getMin_price().getEur()).replace(",",".");
+            case KZT -> String.valueOf(bouquet.getMin_price().getKzt());
+            case USD -> decimalFormat.format(bouquet.getMin_price().getUsd()).replace(",",".");
+            case RUB -> String.valueOf(bouquet.getMin_price().getRub());
         };
     }
-
 
     public List<PriceItemDto> getPriceList() {
         return bouquet.getPriceList();
@@ -372,9 +371,6 @@ public class ApiClient {
 
     private BouquetDataItemDto getRandomBouquet(Map<String, BouquetDataItemDto> map) {
         List<BouquetDataItemDto> values = new ArrayList<>(map.values());
-        BouquetDataItemDto dataItemDto = values.get(new Random().nextInt(values.size()));
-        System.out.println(dataItemDto.getId() + " id");
-        System.out.println(dataItemDto.getName() + "name");
-        return dataItemDto;
+        return values.get(new Random().nextInt(values.size()));
     }
 }

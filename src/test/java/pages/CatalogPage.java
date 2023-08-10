@@ -101,7 +101,7 @@ public class CatalogPage {
             bouquetList.shouldHave(sizeGreaterThanOrEqual(apiClient.getBouquetListReminder()));
             for (SelenideElement se : bouquetList) {
                 if (se.getText().contains(bouquetName)) {
-                    assertEquals(bouquetPrice, se.$("._1KvrG3Aq").getText().replaceAll("\\D", ""),
+                    assertEquals(bouquetPrice, se.$("._1KvrG3Aq").getText().replaceAll("[^\\d.]+", ""),
                             "Incorrect bouquet price " + bouquetName);
                     se.click();
                     foundBouquet = true;
@@ -257,7 +257,7 @@ public class CatalogPage {
             case EUR -> setEurPrice.shouldBe(exist).click();
             case KZT -> setKztPrice.shouldBe(exist).click();
             case USD -> setUsdPrice.shouldBe(exist).click();
-            default -> setRubPrice.shouldBe(exist).click();
+            case RUB -> setRubPrice.shouldBe(exist).click();
         }
         return this;
     }

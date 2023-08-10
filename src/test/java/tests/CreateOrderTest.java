@@ -353,7 +353,11 @@ public class CreateOrderTest extends TestBase {
         catalogPage.openCatalogPage(baseUrl)
                 .closeCookiePopUp()
                 .setDeliveryCity()
-                .setCurrency(CurrencyType.EUR)
+                .setCurrency(CurrencyType.KZT)
                 .setRandomBouquet(BouquetType.FLORIST_RU, CurrencyType.KZT);
+
+        bouquetPage.openBouquetPage(baseUrl)
+                .assertBouquetName()
+                .assertVariationsPrices(CurrencyType.KZT);
     }
 }

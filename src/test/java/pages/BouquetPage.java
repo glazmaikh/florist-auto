@@ -4,6 +4,7 @@ import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import helpers.ApiClient;
+import helpers.CurrencyType;
 import helpers.HelperPage;
 import models.bouquet.PriceItemDto;
 
@@ -45,13 +46,13 @@ public class BouquetPage {
     }
 //    // не сработает для акции, вариации не по порядку
 
-    public BouquetPage assertVariationsPrices() {
+    public BouquetPage assertVariationsPrices(CurrencyType currencyType) {
         List<PriceItemDto> priceList = apiClient.getPriceList();
-        assertEquals(variation.size(), priceList.size(), "where is your variations?");
+        assertEquals(variation.size(), priceList.size(), "no variations");
 
         for (int i = 0; i < priceList.size(); i++) {
-            assertEquals(Integer.parseInt(variation.get(i).getText().replaceAll("[\\s₽]", "")),
-                    HelperPage.doubleToIntRound(priceList.get(i).getPrice().get("RUB")), "Variations price is not equals");
+            assertEquals(Double.parseDouble(variation.get(i).getText().replaceAll("[^\\d.]+", "")),
+                    priceList.get(i).getPrice().get(currencyType.name()), "Variations price is not equals");
         }
         return this;
     }
