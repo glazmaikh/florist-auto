@@ -169,9 +169,25 @@ public class ApiClient {
                 .map(BouquetDataItemDto::getName).toList();
     }
 
-    public List<Integer> getBouquetPriceRubList() {
-        return bouquetList.stream()
-                .map(e -> e.getMin_price().getRub()).toList();
+    public List<String> getBouquetPriceRubList(CurrencyType currencyType) {
+        return switch (currencyType) {
+            case EUR -> bouquetList.stream()
+                    .map(e -> e.getMin_price().getEur())
+                    .map(String::valueOf)
+                    .collect(Collectors.toList());
+            case KZT -> bouquetList.stream()
+                    .map(e -> e.getMin_price().getKzt())
+                    .map(String::valueOf)
+                    .collect(Collectors.toList());
+            case USD -> bouquetList.stream()
+                    .map(e -> e.getMin_price().getUsd())
+                    .map(String::valueOf)
+                    .collect(Collectors.toList());
+            case RUB -> bouquetList.stream()
+                    .map(e -> e.getMin_price().getRub())
+                    .map(String::valueOf)
+                    .collect(Collectors.toList());
+        };
     }
 
     @SneakyThrows
@@ -193,8 +209,12 @@ public class ApiClient {
         return extras.getName();
     }
 
-    public double getPriceExtrasFirstVariationRub() {
-        return extrasPrice.getPrice().get("RUB");
+    public String getPriceExtrasFirstVariation(CurrencyType currencyType) {
+        DecimalFormat decimalFormat = new DecimalFormat("0.00");
+        return switch (currencyType) {
+            case EUR, USD -> decimalFormat.format(extrasPrice.getPrice().get(currencyType.name())).replace(",",".");
+            case KZT, RUB -> String.valueOf(extrasPrice.getPrice().get(currencyType.name())).replaceAll("(\\d+)\\.\\d+", "$1");
+        };
     }
 
     public String getExtrasVariationName() {

@@ -353,13 +353,17 @@ public class CreateOrderTest extends TestBase {
         catalogPage.openCatalogPage(baseUrl)
                 .closeCookiePopUp()
                 .setDeliveryCity()
-                .setCurrency(CurrencyType.USD)
-                .setRandomBouquet(BouquetType.FLORIST_RU, CurrencyType.USD);
+                .setCurrency(CurrencyType.KZT)
+                .setRandomBouquet(BouquetType.FLORIST_RU, CurrencyType.KZT);
 
         bouquetPage.openBouquetPage(baseUrl)
                 .assertBouquetName()
-                .assertVariationsPrices(CurrencyType.USD)
+                .assertVariationsPrices(CurrencyType.KZT)
                 .setFirstVariation()
-                .assertDeliveryPrice(CurrencyType.USD);
+                .setRandomExtras(CurrencyType.KZT)
+                .assertExtras(CurrencyType.KZT)
+                .assertDeliveryPrice(CurrencyType.KZT)
+                .assertTotalPrice(CurrencyType.KZT);
+//                .addToCard(baseUrl);
     }
 }

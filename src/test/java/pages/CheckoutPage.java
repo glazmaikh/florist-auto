@@ -5,6 +5,7 @@ import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import helpers.ApiClient;
+import helpers.CurrencyType;
 import helpers.HelperPage;
 import org.openqa.selenium.JavascriptExecutor;
 
@@ -96,8 +97,8 @@ public class CheckoutPage {
         return this;
     }
 
-    public CheckoutPage assertBouquetPrice() {
-        List<String> bouquetsPrices = apiClient.getBouquetPriceRubList().stream()
+    public CheckoutPage assertBouquetPrice(CurrencyType currencyType) {
+        List<String> bouquetsPrices = apiClient.getBouquetPriceRubList(currencyType).stream()
                 .map(String::valueOf)
                 .map(HelperPage::priceRegexRub)
                 .toList();

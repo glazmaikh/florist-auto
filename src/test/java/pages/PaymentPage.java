@@ -3,6 +3,7 @@ package pages;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import helpers.ApiClient;
+import helpers.CurrencyType;
 import helpers.HelperPage;
 import lombok.SneakyThrows;
 
@@ -65,8 +66,8 @@ public class PaymentPage {
         return this;
     }
 
-    public PaymentPage assertBouquetPrice() {
-        List<String> bouquetsPrices = apiClient.getBouquetPriceRubList().stream()
+    public PaymentPage assertBouquetPrice(CurrencyType currencyType) {
+        List<String> bouquetsPrices = apiClient.getBouquetPriceRubList(currencyType).stream()
                 .map(String::valueOf)
                 .map(HelperPage::priceRegexRub)
                 .toList();
@@ -118,20 +119,20 @@ public class PaymentPage {
         return new CatalogPage(apiClient);
     }
 
-    public PaymentPage setPromoCode(String promo) {
-        checkOnPromoCodeInput.shouldBe(exist).click();
-        promoCodeInput.shouldBe(exist).sendKeys(promo);
-        promoCodeAppliedButton.shouldBe(exist).click();
-        promoCodeAppliedPopup.shouldBe(visible);
-        promoCodeAppliedArea.shouldBe(visible);
-
-        int sum = apiClient.getBouquetPriceRubList().stream()
-                .map(price -> (int) (price * 0.1))
-                .mapToInt(Integer::intValue)
-                .sum();
-
-        orderList.shouldHave(text("Скидка по промокоду"));
-        orderList.shouldHave(text(HelperPage.priceRegexRub(String.valueOf(sum))));
-        return this;
-    }
+//    public PaymentPage setPromoCode(String promo, CurrencyType currencyType) {
+//        checkOnPromoCodeInput.shouldBe(exist).click();
+//        promoCodeInput.shouldBe(exist).sendKeys(promo);
+//        promoCodeAppliedButton.shouldBe(exist).click();
+//        promoCodeAppliedPopup.shouldBe(visible);
+//        promoCodeAppliedArea.shouldBe(visible);
+//
+//        int sum = apiClient.getBouquetPriceRubList(currencyType).stream()
+//                .map(price -> (int) (price * 0.1))
+//                .mapToInt(Integer::intValue)
+//                .sum();
+//
+//        orderList.shouldHave(text("Скидка по промокоду"));
+//        orderList.shouldHave(text(HelperPage.priceRegexRub(String.valueOf(sum))));
+//        return this;
+//    }
 }

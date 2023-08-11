@@ -2,6 +2,7 @@ package helpers;
 
 import com.codeborne.selenide.SelenideElement;
 
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -142,5 +143,15 @@ public class HelperPage {
         return list.stream()
                 .mapToInt(Integer::intValue)
                 .sum();
+    }
+
+    public static boolean containsDecimalNumber(String input) {
+        String pattern = "\\d+\\.\\d{2}$";
+        return input.matches(pattern);
+    }
+
+    public static String formatToCents(double number) {
+        DecimalFormat decimalFormat = new DecimalFormat("#.00");
+        return decimalFormat.format(number).replace(",", ".");
     }
 }

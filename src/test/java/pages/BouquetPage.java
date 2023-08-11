@@ -11,8 +11,7 @@ import models.bouquet.PriceItemDto;
 import java.time.Duration;
 import java.util.List;
 
-import static com.codeborne.selenide.Condition.exist;
-import static com.codeborne.selenide.Condition.text;
+import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.*;
 import static com.codeborne.selenide.WebDriverConditions.url;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -25,7 +24,7 @@ public class BouquetPage {
     private final ElementsCollection variation = $$x("//div[@class='hmJhIXSe']/div/div");
     private final ElementsCollection extrases = $$("._38l21lFz");
     private final ApiClient apiClient;
-    private static int extrasPrice = 0;
+    private static final int extrasPrice = 0;
 
     public BouquetPage(ApiClient apiClient) {
         this.apiClient = apiClient;
@@ -79,9 +78,9 @@ public class BouquetPage {
         return new CheckoutPage(apiClient);
     }
 
-    public BouquetPage setRandomExtras() {
+    public BouquetPage setRandomExtras(CurrencyType currencyType) {
         String extrasName = apiClient.getExtrasName();
-        extrasPrice = HelperPage.doubleToIntRound(apiClient.getPriceExtrasFirstVariationRub());
+        String extrasPrice = apiClient.getPriceExtrasFirstVariation(currencyType);
         for (SelenideElement se : extrases) {
             if (se.getText().contains(extrasName)) {
                 assertTrue(HelperPage.priceRegex(se).contains(String.valueOf(extrasPrice)));
@@ -92,25 +91,30 @@ public class BouquetPage {
         return this;
     }
 
-    public BouquetPage assertExtras() {
-        int extrasPrice = HelperPage.doubleToIntRound(apiClient.getPriceExtrasFirstVariationRub());
+    public BouquetPage assertExtras(CurrencyType currencyType) {
+        String extrasPrice = apiClient.getPriceExtrasFirstVariation(currencyType);
         bouquetSection.shouldHave(text(apiClient.getExtrasName()));
         bouquetSection.shouldHave(text(apiClient.getExtrasVariationName()));
-        if (extrasPrice == 0) {
+        if (Double.parseDouble(extrasPrice) == 0) {
             bouquetSection.shouldHave(text("бесплатно"));
         } else {
-            bouquetSection.shouldHave(text(HelperPage.priceRegexRub(String.valueOf(extrasPrice))));
+            bouquetSection.shouldHave(text(HelperPage.priceRegex(extrasPrice)));
         }
 
         return this;
     }
 
-    public BouquetPage assertTotalPrice() {
-        int bouquetFirstVariationPrice = apiClient.getBouquetPriceRubList().get(apiClient.getBouquetPriceRubList().size() - 1);
-        //int deliveryPrice = HelperPage.doubleToIntRound(apiClient.getDeliveryPrice());
-        //int totalPrice = bouquetFirstVariationPrice + extrasPrice + deliveryPrice;
+    public BouquetPage assertTotalPrice(CurrencyType currencyType) {
+        String bouquetFirstVariationPrice = apiClient.getBouquetPriceRubList(currencyType).get(apiClient.getBouquetPriceRubList(currencyType).size() - 1);
+        String deliveryPrice = apiClient.getDeliveryPrice(currencyType);
+        String extrasPrice = apiClient.getPriceExtrasFirstVariation(currencyType);
+        double totalPrice = Double.parseDouble(bouquetFirstVariationPrice) +  Double.parseDouble(extrasPrice) + Double.parseDouble(deliveryPrice);
 
-        //bouquetSection.shouldHave(text(HelperPage.priceRegexRub(String.valueOf(totalPrice))));
+        if (HelperPage.containsDecimalNumber(bouquetFirstVariationPrice)) {
+            bouquetSection.shouldHave(text(HelperPage.formatToCents(totalPrice)));
+        } else {
+            bouquetSection.shouldHave(text(HelperPage.priceRegex(String.valueOf(totalPrice).replaceAll("\\.(\\d+)", ""))));
+        }
         return this;
     }
 }
