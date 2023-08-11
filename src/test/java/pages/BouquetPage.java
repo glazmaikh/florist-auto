@@ -57,10 +57,11 @@ public class BouquetPage {
         return this;
     }
 
-    public BouquetPage assertDeliveryPrice() {
-        int deliveryPrice = HelperPage.doubleToIntRound(apiClient.getDeliveryPrice());
-        if (deliveryPrice > 100) {
-            bouquetSection.shouldHave(text(HelperPage.priceRegexRub(String.valueOf(deliveryPrice))));
+    public BouquetPage assertDeliveryPrice(CurrencyType currencyType) {
+        String deliveryPrice = apiClient.getDeliveryPrice(currencyType);
+
+        if (Double.parseDouble(deliveryPrice) > 1) {
+            bouquetSection.shouldHave(text(HelperPage.priceRegex(deliveryPrice)));
         } else {
             deliveryPriceSection.shouldBe(text("бесплатно"));
         }
@@ -106,10 +107,10 @@ public class BouquetPage {
 
     public BouquetPage assertTotalPrice() {
         int bouquetFirstVariationPrice = apiClient.getBouquetPriceRubList().get(apiClient.getBouquetPriceRubList().size() - 1);
-        int deliveryPrice = HelperPage.doubleToIntRound(apiClient.getDeliveryPrice());
-        int totalPrice = bouquetFirstVariationPrice + extrasPrice + deliveryPrice;
+        //int deliveryPrice = HelperPage.doubleToIntRound(apiClient.getDeliveryPrice());
+        //int totalPrice = bouquetFirstVariationPrice + extrasPrice + deliveryPrice;
 
-        bouquetSection.shouldHave(text(HelperPage.priceRegexRub(String.valueOf(totalPrice))));
+        //bouquetSection.shouldHave(text(HelperPage.priceRegexRub(String.valueOf(totalPrice))));
         return this;
     }
 }

@@ -222,8 +222,12 @@ public class ApiClient {
     }
 
     // методы взаимодействия с обьектом Data - цен доставки по slug города
-    public double getDeliveryPrice() {
-        return data.getDelivery().get("RUB");
+    public String getDeliveryPrice(CurrencyType currencyType) {
+        DecimalFormat decimalFormat = new DecimalFormat("0.00");
+        return switch (currencyType) {
+            case EUR, USD -> decimalFormat.format(data.getDelivery().get(currencyType.name())).replace(",",".");
+            case KZT, RUB -> String.valueOf(data.getDelivery().get(currencyType.name())).replaceAll("(\\d+)\\.\\d+", "$1");
+        };
     }
 
     // получение обьекта OrderData о заказе из ERP

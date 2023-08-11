@@ -25,6 +25,10 @@ public class HelperPage {
         return price.replaceAll("(\\d)(?=(\\d{3})+$)", "$1 ") + " ₽";
     }
 
+    public static String priceRegex(String price) {
+        return price.replaceAll("(\\d)(?=(\\d{3})+$)", "$1 ");
+    }
+
     public static String getOrderNumber() {
         String path = webdriver().driver().url();
         Pattern pattern = Pattern.compile("/order/payment/(\\d+)/");
