@@ -24,7 +24,7 @@ public class PaymentPage {
     private final SelenideElement submitButton = $x("//button[@type='submit']");
     private final SelenideElement confirmSubmitButton = $(byName("SET"));
     private final SelenideElement iframeAssist = $x("//div[@id='modal-overlay']//iframe");
-    private final SelenideElement orderList = $(".AEYhRIG-");
+    private final SelenideElement orderSection = $(".AEYhRIG-");
     private final SelenideElement header = $x("//h1");
     private final SelenideElement thanksFor = $x("//h1[text() ='Спасибо за заказ']");
     private final SelenideElement checkOnPromoCodeInput = $x("//div[@class='_2ke-1fXm']//span");
@@ -51,27 +51,27 @@ public class PaymentPage {
     }
 
     public PaymentPage assertBouquetName() {
-        assertTrue(HelperPage.isOrderListContainsAllFromBouquets(orderList, apiClient.getBouquetNameList()),
+        assertTrue(HelperPage.isOrderSectionContainsAllFromBouquets(orderSection, apiClient.getBouquetNameList()),
                 "bouquets names not equals");
         return this;
     }
 
-    public PaymentPage assertDeliveryPrice() {
-//        int deliveryPrice = HelperPage.doubleToIntRound(apiClient.getDeliveryPrice());
-//        if (deliveryPrice > 100) {
-//            orderList.shouldHave(text(HelperPage.priceRegexRub(String.valueOf(deliveryPrice))));
-//        } else {
-//            orderList.shouldHave(text("бесплатно"));
-//        }
+    public PaymentPage assertDeliveryPrice(CurrencyType currencyType) {
+        String deliveryPrice = apiClient.getDeliveryPrice(currencyType);
+        if (Double.parseDouble(deliveryPrice) > 1) {
+            orderSection.shouldHave(text(HelperPage.priceRegex(deliveryPrice)));
+        } else {
+            orderSection.shouldHave(text("бесплатно"));
+        }
         return this;
     }
 
     public PaymentPage assertBouquetPrice(CurrencyType currencyType) {
-        List<String> bouquetsPrices = apiClient.getBouquetPriceRubList(currencyType).stream()
+        List<String> bouquetsPrices = apiClient.getBouquetPriceList(currencyType).stream()
                 .map(String::valueOf)
                 .map(HelperPage::priceRegexRub)
                 .toList();
-        assertTrue(HelperPage.isOrderListContainsAllFromBouquets(orderList, bouquetsPrices),
+        assertTrue(HelperPage.isOrderSectionContainsAllFromBouquets(orderSection, bouquetsPrices),
                 "bouquets prices not equals");
         return this;
     }
@@ -81,7 +81,7 @@ public class PaymentPage {
                 .map(String::valueOf)
                 .map(HelperPage::priceRegexRub)
                 .toList();
-        assertTrue(HelperPage.isOrderListContainsAllFromBouquets(orderList, extrasPrices),
+        assertTrue(HelperPage.isOrderSectionContainsAllFromBouquets(orderSection, extrasPrices),
                 "extrases prices not equals");
         return this;
     }
@@ -89,7 +89,7 @@ public class PaymentPage {
     public PaymentPage assertTotalPrice() {
         apiClient.getOrderData();
         String totalDataPrice = HelperPage.priceRegexRub(String.valueOf(apiClient.getOrderTotalPrice()));
-        orderList.shouldHave(text(totalDataPrice));
+        orderSection.shouldHave(text(totalDataPrice));
         return this;
     }
 
@@ -119,20 +119,22 @@ public class PaymentPage {
         return new CatalogPage(apiClient);
     }
 
-//    public PaymentPage setPromoCode(String promo, CurrencyType currencyType) {
-//        checkOnPromoCodeInput.shouldBe(exist).click();
-//        promoCodeInput.shouldBe(exist).sendKeys(promo);
-//        promoCodeAppliedButton.shouldBe(exist).click();
-//        promoCodeAppliedPopup.shouldBe(visible);
-//        promoCodeAppliedArea.shouldBe(visible);
-//
-//        int sum = apiClient.getBouquetPriceRubList(currencyType).stream()
-//                .map(price -> (int) (price * 0.1))
-//                .mapToInt(Integer::intValue)
-//                .sum();
-//
-//        orderList.shouldHave(text("Скидка по промокоду"));
-//        orderList.shouldHave(text(HelperPage.priceRegexRub(String.valueOf(sum))));
-//        return this;
-//    }
+    public PaymentPage setPromoCode(String promo, CurrencyType currencyType) {
+        checkOnPromoCodeInput.shouldBe(exist).click();
+        promoCodeInput.shouldBe(exist).sendKeys(promo);
+        promoCodeAppliedButton.shouldBe(exist).click();
+        promoCodeAppliedPopup.shouldBe(visible);
+        promoCodeAppliedArea.shouldBe(visible);
+
+        double sum = apiClient.getBouquetPriceList(currencyType).stream()
+                .map(Double::valueOf)
+                .mapToInt(price -> (int) (price * 0.1))
+                .sum();
+
+        orderSection.shouldHave(text("Скидка по промокоду"));
+        System.out.println(sum + " sum");
+        System.out.println(HelperPage.priceRegex(String.valueOf(sum)) + "рудз sum");
+        orderSection.shouldHave(text(HelperPage.priceRegex(String.valueOf(sum))));
+        return this;
+    }
 }

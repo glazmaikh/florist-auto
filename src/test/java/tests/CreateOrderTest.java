@@ -5,9 +5,16 @@ import helpers.ApiClient;
 import helpers.BouquetType;
 import helpers.CurrencyType;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import pages.*;
+
+import java.util.stream.Stream;
 
 public class CreateOrderTest extends TestBase {
     private final TestData testData = new TestData();
@@ -314,56 +321,62 @@ public class CreateOrderTest extends TestBase {
 //        checkoutPage.removeFromCard();
 //    }
 //
-//    @Test
-//    @Tag("create_order")
-//    void usingPromoСodeTest() {
-//        catalogPage.openCatalogPage(baseUrl)
-//                .closeCookiePopUp()
-//                .setDeliveryCity()
-//                .setRandomBouquet(BouquetType.FLORIST_RU);
-//
-//        bouquetPage.openBouquetPage(baseUrl)
-//                .assertBouquetName()
-//                .assertVariationsPrices()
-//                .setFirstVariation()
-//                .assertDeliveryPrice()
-//                .assertTotalPrice()
-//                .addToCard(baseUrl);
-//
-//        checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
-//                .getRandomDeliveryDate()
-//                .getRandomDeliveryTime()
-//                .assertBouquetName()
-//                .assertDeliveryPrice()
-//                .assertBouquetPrice()
-//                .assertTotalPrice()
-//                .goToPaymentPage();
-//
-//        paymentPage.assertPaymentStatus(baseUrl)
-//                .assertBouquetName()
-//                .assertDeliveryPrice()
-//                .assertBouquetPrice()
-//                .assertTotalPrice()
-//                .setPromoCode(promo);
-//    }
-
     @Test
     @Tag("create_order")
-    void createTengeOrderTest() {
+    void usingPromoСodeTest() {
         catalogPage.openCatalogPage(baseUrl)
                 .closeCookiePopUp()
                 .setDeliveryCity()
-                .setCurrency(CurrencyType.KZT)
-                .setRandomBouquet(BouquetType.FLORIST_RU, CurrencyType.KZT);
+                .setRandomBouquet(BouquetType.FLORIST_RU, CurrencyType.RUB);
 
         bouquetPage.openBouquetPage(baseUrl)
                 .assertBouquetName()
-                .assertVariationsPrices(CurrencyType.KZT)
+                .assertVariationsPrices(CurrencyType.RUB)
                 .setFirstVariation()
-                .setRandomExtras(CurrencyType.KZT)
-                .assertExtras(CurrencyType.KZT)
-                .assertDeliveryPrice(CurrencyType.KZT)
-                .assertTotalPrice(CurrencyType.KZT);
-//                .addToCard(baseUrl);
+                .assertDeliveryPrice(CurrencyType.RUB)
+                .assertTotalPrice(CurrencyType.RUB)
+                .addToCard(baseUrl);
+
+        checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
+                .getRandomDeliveryDate()
+                .getRandomDeliveryTime()
+                .assertBouquetName()
+                .assertDeliveryPrice(CurrencyType.RUB)
+                .assertBouquetPrice(CurrencyType.RUB)
+                .assertTotalPrice(CurrencyType.RUB)
+                .goToPaymentPage();
+
+        paymentPage.assertPaymentStatus(baseUrl)
+                .assertBouquetName()
+                .assertDeliveryPrice(CurrencyType.RUB)
+                .assertBouquetPrice(CurrencyType.RUB)
+                .assertTotalPrice()
+                .setPromoCode(promo, CurrencyType.RUB);
+    }
+
+    @ParameterizedTest(name = "Тест на проверку оформления заказа и оплаты в валюте {0} доступной на сайте")
+    @MethodSource("currencyEnumProvider")
+    @Tag("create_order")
+    void createOrderDifferentCurrencyTest(CurrencyType currency) {
+        catalogPage.openCatalogPage(baseUrl)
+                .closeCookiePopUp()
+                .setDeliveryCity()
+                .setCurrency(currency)
+                .setRandomBouquet(BouquetType.FLORIST_RU, currency);
+
+        bouquetPage.openBouquetPage(baseUrl)
+                .assertBouquetName()
+                .assertVariationsPrices(currency)
+                .setFirstVariation()
+                .setRandomExtras(currency)
+                .assertExtras(currency)
+                .assertDeliveryPrice(currency)
+                .assertTotalPrice(currency)
+                .addToCard(baseUrl);
+    }
+
+    public static Stream<Arguments> currencyEnumProvider() {
+        return Stream.of(CurrencyType.values())
+                .map(Arguments::of);
     }
 }

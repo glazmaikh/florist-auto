@@ -105,10 +105,27 @@ public class BouquetPage {
     }
 
     public BouquetPage assertTotalPrice(CurrencyType currencyType) {
-        String bouquetFirstVariationPrice = apiClient.getBouquetPriceRubList(currencyType).get(apiClient.getBouquetPriceRubList(currencyType).size() - 1);
+        String bouquetFirstVariationPrice = apiClient.getBouquetPriceList(currencyType).get(apiClient.getBouquetPriceList(currencyType).size() - 1);
+        String deliveryPrice = apiClient.getDeliveryPrice(currencyType);
+        double totalPrice = Double.parseDouble(bouquetFirstVariationPrice) + Double.parseDouble(deliveryPrice);
+
+        if (HelperPage.containsDecimalNumber(bouquetFirstVariationPrice)) {
+            bouquetSection.shouldHave(text(HelperPage.formatToCents(totalPrice)));
+        } else {
+            bouquetSection.shouldHave(text(HelperPage.priceRegex(String.valueOf(totalPrice).replaceAll("\\.(\\d+)", ""))));
+        }
+        return this;
+    }
+
+    public BouquetPage assertTotalPriceWithExtras(CurrencyType currencyType) {
+        String bouquetFirstVariationPrice = apiClient.getBouquetPriceList(currencyType).get(apiClient.getBouquetPriceList(currencyType).size() - 1);
         String deliveryPrice = apiClient.getDeliveryPrice(currencyType);
         String extrasPrice = apiClient.getPriceExtrasFirstVariation(currencyType);
         double totalPrice = Double.parseDouble(bouquetFirstVariationPrice) +  Double.parseDouble(extrasPrice) + Double.parseDouble(deliveryPrice);
+
+        if (!extrasPrice.isEmpty()) {
+            totalPrice += Double.parseDouble(extrasPrice);
+        }
 
         if (HelperPage.containsDecimalNumber(bouquetFirstVariationPrice)) {
             bouquetSection.shouldHave(text(HelperPage.formatToCents(totalPrice)));

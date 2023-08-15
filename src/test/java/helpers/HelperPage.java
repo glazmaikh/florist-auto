@@ -135,7 +135,7 @@ public class HelperPage {
         return getRandomStringFromList(dates);
     }
 
-    public static boolean isOrderListContainsAllFromBouquets(SelenideElement orderList, List<String> names) {
+    public static boolean isOrderSectionContainsAllFromBouquets(SelenideElement orderList, List<String> names) {
         return names.stream().allMatch(name -> orderList.getText().contains(name));
     }
 

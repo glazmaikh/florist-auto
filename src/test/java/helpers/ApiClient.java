@@ -169,7 +169,7 @@ public class ApiClient {
                 .map(BouquetDataItemDto::getName).toList();
     }
 
-    public List<String> getBouquetPriceRubList(CurrencyType currencyType) {
+    public List<String> getBouquetPriceList(CurrencyType currencyType) {
         return switch (currencyType) {
             case EUR -> bouquetList.stream()
                     .map(e -> e.getMin_price().getEur())

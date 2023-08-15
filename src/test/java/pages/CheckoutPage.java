@@ -31,8 +31,8 @@ public class CheckoutPage {
     private ElementsCollection deliveryAllDays = $$x("//button[contains(@class, 'react-calendar__tile') and not(@disabled)]/abbr");
     private final SelenideElement payButton = $(byText("Оплатить"));
     private final SelenideElement priceSection = payButton.$(".no-wrap");
-    private final SelenideElement orderList = $("._2pTgtswS  ");
-    private final ElementsCollection orderListPrices = orderList.$$x("//svg");
+    private final SelenideElement orderSection = $("._2pTgtswS  ");
+    private final ElementsCollection orderListPrices = orderSection.$$x("//svg");
     private final SelenideElement header = $x("//h1");
     private final SelenideElement createdOrderText = $("._2fUGBItB");
     private final SelenideElement returnToPayButton = $x("//a[@class='btn']");
@@ -82,27 +82,27 @@ public class CheckoutPage {
     }
 
     public CheckoutPage assertBouquetName() {
-        assertTrue(HelperPage.isOrderListContainsAllFromBouquets(orderList, apiClient.getBouquetNameList()),
+        assertTrue(HelperPage.isOrderSectionContainsAllFromBouquets(orderSection, apiClient.getBouquetNameList()),
                 "bouquets names not equals");
         return this;
     }
 
-    public CheckoutPage assertDeliveryPrice() {
-//        int deliveryPrice = HelperPage.doubleToIntRound(apiClient.getDeliveryPrice());
-//        if (deliveryPrice > 100) {
-//            orderList.shouldHave(text(HelperPage.priceRegexRub(String.valueOf(deliveryPrice))));
-//        } else {
-//            orderList.shouldBe(text("бесплатно"));
-//        }
+    public CheckoutPage assertDeliveryPrice(CurrencyType currencyType) {
+        String deliveryPrice = apiClient.getDeliveryPrice(currencyType);
+        if (Double.parseDouble(deliveryPrice) > 1) {
+            orderSection.shouldHave(text(HelperPage.priceRegex(deliveryPrice)));
+        } else {
+            orderSection.shouldHave(text("бесплатно"));
+        }
         return this;
     }
 
     public CheckoutPage assertBouquetPrice(CurrencyType currencyType) {
-        List<String> bouquetsPrices = apiClient.getBouquetPriceRubList(currencyType).stream()
+        List<String> bouquetsPrices = apiClient.getBouquetPriceList(currencyType).stream()
                 .map(String::valueOf)
                 .map(HelperPage::priceRegexRub)
                 .toList();
-        assertTrue(HelperPage.isOrderListContainsAllFromBouquets(orderList, bouquetsPrices),
+        assertTrue(HelperPage.isOrderSectionContainsAllFromBouquets(orderSection, bouquetsPrices),
                 "bouquets prices not equals");
         return this;
     }
@@ -112,18 +112,31 @@ public class CheckoutPage {
                 .map(String::valueOf)
                 .map(HelperPage::priceRegexRub)
                 .toList();
-        assertTrue(HelperPage.isOrderListContainsAllFromBouquets(orderList, extrasPrices),
+        assertTrue(HelperPage.isOrderSectionContainsAllFromBouquets(orderSection, extrasPrices),
                 "extrases prices not equals");
         return this;
     }
 
-    public CheckoutPage assertTotalPrice() {
-//        int deliveryPrice = HelperPage.doubleToIntRound(apiClient.getDeliveryPrice());
-//        int totalPrice = HelperPage.sumIntegerList(apiClient.getBouquetPriceRubList());
-//        totalPrice += deliveryPrice;
+//    public CheckoutPage assertTotalPrice(CurrencyType currencyType) {
+//        String deliveryPrice = apiClient.getDeliveryPrice(currencyType);
+//        double totalPrice = HelperPage.sumIntegerList(apiClient.getBouquetPriceList());
+//        totalPrice += Double.parseDouble(deliveryPrice);
 //        totalPrice += BouquetPage.getExtrasPrice();
 //        assertTrue(orderList.getText().contains(HelperPage.priceRegexRub(String.valueOf(totalPrice))),
 //                "total price not equals");
+//        return this;
+//    }
+
+    public CheckoutPage assertTotalPrice(CurrencyType currencyType) {
+        String bouquetFirstVariationPrice = apiClient.getBouquetPriceList(currencyType).get(apiClient.getBouquetPriceList(currencyType).size() - 1);
+        String deliveryPrice = apiClient.getDeliveryPrice(currencyType);
+        double totalPrice = Double.parseDouble(bouquetFirstVariationPrice) + Double.parseDouble(deliveryPrice);
+
+        if (HelperPage.containsDecimalNumber(bouquetFirstVariationPrice)) {
+            orderSection.shouldHave(text(HelperPage.formatToCents(totalPrice)));
+        } else {
+            orderSection.shouldHave(text(HelperPage.priceRegex(String.valueOf(totalPrice).replaceAll("\\.(\\d+)", ""))));
+        }
         return this;
     }
 

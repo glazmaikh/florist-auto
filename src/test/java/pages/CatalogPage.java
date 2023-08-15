@@ -257,7 +257,7 @@ public class CatalogPage {
             case EUR -> setEurPrice.shouldBe(exist).click();
             case KZT -> setKztPrice.shouldBe(exist).click();
             case USD -> setUsdPrice.shouldBe(exist).click();
-            case RUB -> setRubPrice.shouldBe(exist).click();
+            //case RUB -> setRubPrice.shouldBe(exist).click();
         }
         return this;
     }
