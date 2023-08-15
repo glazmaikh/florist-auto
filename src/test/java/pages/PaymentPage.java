@@ -132,9 +132,14 @@ public class PaymentPage {
                 .sum();
 
         orderSection.shouldHave(text("Скидка по промокоду"));
-        System.out.println(sum + " sum");
-        System.out.println(HelperPage.priceRegex(String.valueOf(sum)) + "рудз sum");
-        orderSection.shouldHave(text(HelperPage.priceRegex(String.valueOf(sum))));
+
+        if (HelperPage.containsDecimalNumber(String.valueOf(sum))) {
+            System.out.println(HelperPage.formatToCents(sum));
+            orderSection.shouldHave(text(HelperPage.formatToCents(sum)));
+        } else {
+            System.out.println(HelperPage.priceRegex(String.valueOf(sum).replaceAll("\\.(\\d+)", "")));
+            orderSection.shouldHave(text(HelperPage.priceRegex(String.valueOf(sum).replaceAll("\\.(\\d+)", ""))));
+        }
         return this;
     }
 }

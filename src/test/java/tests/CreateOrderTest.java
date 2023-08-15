@@ -327,31 +327,32 @@ public class CreateOrderTest extends TestBase {
         catalogPage.openCatalogPage(baseUrl)
                 .closeCookiePopUp()
                 .setDeliveryCity()
-                .setRandomBouquet(BouquetType.FLORIST_RU, CurrencyType.RUB);
+                .setCurrency(CurrencyType.USD)
+                .setRandomBouquet(BouquetType.FLORIST_RU, CurrencyType.USD);
 
         bouquetPage.openBouquetPage(baseUrl)
                 .assertBouquetName()
-                .assertVariationsPrices(CurrencyType.RUB)
+                .assertVariationsPrices(CurrencyType.USD)
                 .setFirstVariation()
-                .assertDeliveryPrice(CurrencyType.RUB)
-                .assertTotalPrice(CurrencyType.RUB)
+                .assertDeliveryPrice(CurrencyType.USD)
+                .assertTotalPrice(CurrencyType.USD)
                 .addToCard(baseUrl);
 
         checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
                 .getRandomDeliveryDate()
                 .getRandomDeliveryTime()
                 .assertBouquetName()
-                .assertDeliveryPrice(CurrencyType.RUB)
-                .assertBouquetPrice(CurrencyType.RUB)
-                .assertTotalPrice(CurrencyType.RUB)
+                .assertDeliveryPrice(CurrencyType.USD)
+                .assertBouquetPrice(CurrencyType.USD)
+                .assertTotalPrice(CurrencyType.USD)
                 .goToPaymentPage();
 
         paymentPage.assertPaymentStatus(baseUrl)
                 .assertBouquetName()
-                .assertDeliveryPrice(CurrencyType.RUB)
-                .assertBouquetPrice(CurrencyType.RUB)
+                .assertDeliveryPrice(CurrencyType.USD)
+                .assertBouquetPrice(CurrencyType.USD)
                 .assertTotalPrice()
-                .setPromoCode(promo, CurrencyType.RUB);
+                .setPromoCode(promo, CurrencyType.USD);
     }
 
     @ParameterizedTest(name = "Тест на проверку оформления заказа и оплаты в валюте {0} доступной на сайте")
