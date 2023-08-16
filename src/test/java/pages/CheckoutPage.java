@@ -100,8 +100,10 @@ public class CheckoutPage {
     public CheckoutPage assertBouquetPrice(CurrencyType currencyType) {
         List<String> bouquetsPrices = apiClient.getBouquetPriceList(currencyType).stream()
                 .map(String::valueOf)
-                .map(HelperPage::priceRegexRub)
+                .map(e -> HelperPage.priceCurrencyFormat(currencyType, e))
                 .toList();
+        System.out.println(bouquetsPrices + " bouquetsPrices");
+        System.out.println(orderSection.getText() + " orderSection.getText()");
         assertTrue(HelperPage.isOrderSectionContainsAllFromBouquets(orderSection, bouquetsPrices),
                 "bouquets prices not equals");
         return this;
@@ -117,20 +119,14 @@ public class CheckoutPage {
         return this;
     }
 
-//    public CheckoutPage assertTotalPrice(CurrencyType currencyType) {
-//        String deliveryPrice = apiClient.getDeliveryPrice(currencyType);
-//        double totalPrice = HelperPage.sumIntegerList(apiClient.getBouquetPriceList());
-//        totalPrice += Double.parseDouble(deliveryPrice);
-//        totalPrice += BouquetPage.getExtrasPrice();
-//        assertTrue(orderList.getText().contains(HelperPage.priceRegexRub(String.valueOf(totalPrice))),
-//                "total price not equals");
-//        return this;
-//    }
-
     public CheckoutPage assertTotalPrice(CurrencyType currencyType) {
         String bouquetFirstVariationPrice = apiClient.getBouquetPriceList(currencyType).get(apiClient.getBouquetPriceList(currencyType).size() - 1);
         String deliveryPrice = apiClient.getDeliveryPrice(currencyType);
         double totalPrice = Double.parseDouble(bouquetFirstVariationPrice) + Double.parseDouble(deliveryPrice);
+
+        if (apiClient.getPriceExtrasFirstVariation(currencyType) != null) {
+            totalPrice += Double.parseDouble(apiClient.getPriceExtrasFirstVariation(currencyType));
+        }
 
         if (HelperPage.containsDecimalNumber(bouquetFirstVariationPrice)) {
             orderSection.shouldHave(text(HelperPage.formatToCents(totalPrice)));

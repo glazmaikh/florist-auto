@@ -7,6 +7,8 @@ import helpers.ApiClient;
 import helpers.CurrencyType;
 import helpers.HelperPage;
 import models.bouquet.PriceItemDto;
+import models.extras.ExtrasDataItemDto;
+import models.extras.ExtrasPrice;
 
 import java.time.Duration;
 import java.util.List;
@@ -28,10 +30,6 @@ public class BouquetPage {
 
     public BouquetPage(ApiClient apiClient) {
         this.apiClient = apiClient;
-    }
-
-    public static int getExtrasPrice() {
-        return extrasPrice;
     }
 
     public BouquetPage openBouquetPage(String baseUrl) {
@@ -79,6 +77,7 @@ public class BouquetPage {
     }
 
     public BouquetPage setRandomExtras(CurrencyType currencyType) {
+        apiClient.initExtras();
         String extrasName = apiClient.getExtrasName();
         String extrasPrice = apiClient.getPriceExtrasFirstVariation(currencyType);
         for (SelenideElement se : extrases) {
@@ -109,22 +108,8 @@ public class BouquetPage {
         String deliveryPrice = apiClient.getDeliveryPrice(currencyType);
         double totalPrice = Double.parseDouble(bouquetFirstVariationPrice) + Double.parseDouble(deliveryPrice);
 
-        if (HelperPage.containsDecimalNumber(bouquetFirstVariationPrice)) {
-            bouquetSection.shouldHave(text(HelperPage.formatToCents(totalPrice)));
-        } else {
-            bouquetSection.shouldHave(text(HelperPage.priceRegex(String.valueOf(totalPrice).replaceAll("\\.(\\d+)", ""))));
-        }
-        return this;
-    }
-
-    public BouquetPage assertTotalPriceWithExtras(CurrencyType currencyType) {
-        String bouquetFirstVariationPrice = apiClient.getBouquetPriceList(currencyType).get(apiClient.getBouquetPriceList(currencyType).size() - 1);
-        String deliveryPrice = apiClient.getDeliveryPrice(currencyType);
-        String extrasPrice = apiClient.getPriceExtrasFirstVariation(currencyType);
-        double totalPrice = Double.parseDouble(bouquetFirstVariationPrice) +  Double.parseDouble(extrasPrice) + Double.parseDouble(deliveryPrice);
-
-        if (!extrasPrice.isEmpty()) {
-            totalPrice += Double.parseDouble(extrasPrice);
+        if (apiClient.getPriceExtrasFirstVariation(currencyType) != null) {
+            totalPrice += Double.parseDouble(apiClient.getPriceExtrasFirstVariation(currencyType));
         }
 
         if (HelperPage.containsDecimalNumber(bouquetFirstVariationPrice)) {
@@ -134,4 +119,22 @@ public class BouquetPage {
         }
         return this;
     }
+
+//    public BouquetPage assertTotalPriceWithExtras(CurrencyType currencyType) {
+//        String bouquetFirstVariationPrice = apiClient.getBouquetPriceList(currencyType).get(apiClient.getBouquetPriceList(currencyType).size() - 1);
+//        String deliveryPrice = apiClient.getDeliveryPrice(currencyType);
+//        String extrasPrice = apiClient.getPriceExtrasFirstVariation(currencyType);
+//        double totalPrice = Double.parseDouble(bouquetFirstVariationPrice) +  Double.parseDouble(extrasPrice) + Double.parseDouble(deliveryPrice);
+//
+//        if (!extrasPrice.isEmpty()) {
+//            totalPrice += Double.parseDouble(extrasPrice);
+//        }
+//
+//        if (HelperPage.containsDecimalNumber(bouquetFirstVariationPrice)) {
+//            bouquetSection.shouldHave(text(HelperPage.formatToCents(totalPrice)));
+//        } else {
+//            bouquetSection.shouldHave(text(HelperPage.priceRegex(String.valueOf(totalPrice).replaceAll("\\.(\\d+)", ""))));
+//        }
+//        return this;
+//    }
 }

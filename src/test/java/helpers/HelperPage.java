@@ -139,6 +139,15 @@ public class HelperPage {
         return names.stream().allMatch(name -> orderList.getText().contains(name));
     }
 
+    public static String priceCurrencyFormat(CurrencyType currencyType, String price) {
+        return switch (currencyType) {
+            case EUR -> price.replaceAll("(\\d)(?=(\\d{3})+$)", "$1 ") + " €";
+            case USD -> price.replaceAll("(\\d)(?=(\\d{3})+$)", "$1 ") + " $";
+            case KZT -> price.replaceAll("(\\d)(?=(\\d{3})+$)", "$1 ") + " ₸";
+            case RUB -> price.replaceAll("(\\d)(?=(\\d{3})+$)", "$1 ") + " ₽";
+        };
+    }
+
     public static int sumIntegerList(List<Integer> list) {
         return list.stream()
                 .mapToInt(Integer::intValue)

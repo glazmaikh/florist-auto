@@ -37,8 +37,10 @@ public class ApiClient {
     private final CityData city = getCity();
     private BouquetDataItemDto bouquet;
     private final List<ExtrasPrice> extrasList = new ArrayList<>();
-    private final ExtrasDataItemDto extras = getRandomExtras();
-    private final ExtrasPrice extrasPrice = getFirstExtrasVariation(extras.getPrices());
+    private ExtrasDataItemDto extras = new ExtrasDataItemDto();
+    private ExtrasPrice extrasPrice = null;
+
+    //private final ExtrasPrice extrasPrice = getFirstExtrasVariation(extras.getPrices());
     private OrderData orderData;
     private final Data data = getDeliveryPriceByCitySlug();
     private DeliveryTime deliveryTime;
@@ -190,8 +192,12 @@ public class ApiClient {
         };
     }
 
+    public void initExtras() {
+        getRandomExtras();
+    }
+
     @SneakyThrows
-    private ExtrasDataItemDto getRandomExtras() {
+    private void getRandomExtras() {
         RequestSpecification httpRequest = given();
         Response responseBouquet = httpRequest
                 .auth().basic("florist_api", "123")
@@ -202,11 +208,16 @@ public class ApiClient {
 
         ObjectMapper objectMapper = new ObjectMapper();
         ExtrasDataDto extrasData = objectMapper.readValue(bodyBouquet.asString(), ExtrasDataDto.class);
-        return getRandomExtrasFromMap(extrasData.getData());
+        extras = getRandomExtrasFromMap(extrasData.getData());
+        extrasPrice = getFirstExtrasVariation(extras.getPrices());
     }
 
     public String getExtrasName() {
         return extras.getName();
+    }
+
+    public String getExtrasPrice() {
+        return extrasPrice.getPrice().toString();
     }
 
     public String getPriceExtrasFirstVariation(CurrencyType currencyType) {

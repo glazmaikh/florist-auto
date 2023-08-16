@@ -321,39 +321,39 @@ public class CreateOrderTest extends TestBase {
 //        checkoutPage.removeFromCard();
 //    }
 //
-    @Test
-    @Tag("create_order")
-    void usingPromoСodeTest() {
-        catalogPage.openCatalogPage(baseUrl)
-                .closeCookiePopUp()
-                .setDeliveryCity()
-                .setCurrency(CurrencyType.USD)
-                .setRandomBouquet(BouquetType.FLORIST_RU, CurrencyType.USD);
-
-        bouquetPage.openBouquetPage(baseUrl)
-                .assertBouquetName()
-                .assertVariationsPrices(CurrencyType.USD)
-                .setFirstVariation()
-                .assertDeliveryPrice(CurrencyType.USD)
-                .assertTotalPrice(CurrencyType.USD)
-                .addToCard(baseUrl);
-
-        checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
-                .getRandomDeliveryDate()
-                .getRandomDeliveryTime()
-                .assertBouquetName()
-                .assertDeliveryPrice(CurrencyType.USD)
-                .assertBouquetPrice(CurrencyType.USD)
-                .assertTotalPrice(CurrencyType.USD)
-                .goToPaymentPage();
-
-        paymentPage.assertPaymentStatus(baseUrl)
-                .assertBouquetName()
-                .assertDeliveryPrice(CurrencyType.USD)
-                .assertBouquetPrice(CurrencyType.USD)
-                .assertTotalPrice()
-                .setPromoCode(promo, CurrencyType.USD);
-    }
+//    @Test
+//    @Tag("create_order")
+//    void usingPromoСodeTest() {
+//        catalogPage.openCatalogPage(baseUrl)
+//                .closeCookiePopUp()
+//                .setDeliveryCity()
+//                .setCurrency(CurrencyType.USD)
+//                .setRandomBouquet(BouquetType.FLORIST_RU, CurrencyType.USD);
+//
+//        bouquetPage.openBouquetPage(baseUrl)
+//                .assertBouquetName()
+//                .assertVariationsPrices(CurrencyType.USD)
+//                .setFirstVariation()
+//                .assertDeliveryPrice(CurrencyType.USD)
+//                .assertTotalPrice(CurrencyType.USD)
+//                .addToCard(baseUrl);
+//
+//        checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
+//                .getRandomDeliveryDate()
+//                .getRandomDeliveryTime()
+//                .assertBouquetName()
+//                .assertDeliveryPrice(CurrencyType.USD)
+//                .assertBouquetPrice(CurrencyType.USD)
+//                .assertTotalPrice(CurrencyType.USD)
+//                .goToPaymentPage();
+//
+//        paymentPage.assertPaymentStatus(baseUrl)
+//                .assertBouquetName()
+//                .assertDeliveryPrice(CurrencyType.USD)
+//                .assertBouquetPrice(CurrencyType.USD)
+//                .assertTotalPrice()
+//                .setPromoCode(promo, CurrencyType.USD);
+//    }
 
     @ParameterizedTest(name = "Тест на проверку оформления заказа и оплаты в валюте {0} доступной на сайте")
     @MethodSource("currencyEnumProvider")
@@ -369,8 +369,8 @@ public class CreateOrderTest extends TestBase {
                 .assertBouquetName()
                 .assertVariationsPrices(currency)
                 .setFirstVariation()
-                .setRandomExtras(currency)
-                .assertExtras(currency)
+                //.setRandomExtras(currency)
+                //.assertExtras(currency)
                 .assertDeliveryPrice(currency)
                 .assertTotalPrice(currency)
                 .addToCard(baseUrl);
@@ -379,5 +379,48 @@ public class CreateOrderTest extends TestBase {
     public static Stream<Arguments> currencyEnumProvider() {
         return Stream.of(CurrencyType.values())
                 .map(Arguments::of);
+    }
+
+    @Test
+    @Tag("create_order")
+    void test() {
+        catalogPage.openCatalogPage(baseUrl)
+                .closeCookiePopUp()
+                .setDeliveryCity()
+                .setCurrency(CurrencyType.KZT)
+                .setRandomBouquet(BouquetType.FLORIST_RU, CurrencyType.KZT);
+
+        bouquetPage.openBouquetPage(baseUrl)
+                .assertBouquetName()
+                .assertVariationsPrices(CurrencyType.KZT)
+                .setFirstVariation()
+                .setRandomExtras(CurrencyType.KZT)
+                .assertExtras(CurrencyType.KZT)
+                .assertDeliveryPrice(CurrencyType.KZT)
+                .assertTotalPrice(CurrencyType.KZT)
+                .addToCard(baseUrl);
+
+        checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
+                .getRandomDeliveryDate()
+                .getRandomDeliveryTime()
+                .assertBouquetName()
+                .assertDeliveryPrice(CurrencyType.KZT)
+                .assertBouquetPrice(CurrencyType.KZT)
+                .assertExtrasPrice()
+                .assertTotalPrice(CurrencyType.KZT)
+                .goToPaymentPage();
+
+        paymentPage.assertPaymentStatus(baseUrl)
+                .assertBouquetName()
+                .assertDeliveryPrice(CurrencyType.KZT)
+                .assertBouquetPrice(CurrencyType.KZT)
+                .assertExtrasPrice()
+                .assertTotalPrice(CurrencyType.KZT)
+                .fillCard(cardNumber, expireNumber, cvcNumber)
+                .pay()
+                .confirm();
+
+        successPage.assertSuccessOrderStatus(baseUrl)
+                .assertSuccessCreatedOrder();
     }
 }

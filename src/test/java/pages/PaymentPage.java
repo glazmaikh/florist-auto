@@ -86,9 +86,9 @@ public class PaymentPage {
         return this;
     }
 
-    public PaymentPage assertTotalPrice() {
+    public PaymentPage assertTotalPrice(CurrencyType currencyType) {
         apiClient.getOrderData();
-        String totalDataPrice = HelperPage.priceRegexRub(String.valueOf(apiClient.getOrderTotalPrice()));
+        String totalDataPrice = HelperPage.priceRegex(String.valueOf(apiClient.getOrderTotalPrice()));
         orderSection.shouldHave(text(totalDataPrice));
         return this;
     }
@@ -134,10 +134,8 @@ public class PaymentPage {
         orderSection.shouldHave(text("Скидка по промокоду"));
 
         if (HelperPage.containsDecimalNumber(String.valueOf(sum))) {
-            System.out.println(HelperPage.formatToCents(sum));
             orderSection.shouldHave(text(HelperPage.formatToCents(sum)));
         } else {
-            System.out.println(HelperPage.priceRegex(String.valueOf(sum).replaceAll("\\.(\\d+)", "")));
             orderSection.shouldHave(text(HelperPage.priceRegex(String.valueOf(sum).replaceAll("\\.(\\d+)", ""))));
         }
         return this;
