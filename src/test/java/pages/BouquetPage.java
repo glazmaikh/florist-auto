@@ -21,7 +21,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class BouquetPage extends AssertFixturesPage {
     private final SelenideElement addToCardButton = $x("//span[text()='Добавить в корзину']");
     private final SelenideElement bouquetSection = $("#bouquet-main");
-    private final SelenideElement deliveryPriceSection = $(".UFVGkjKP");
     private final ElementsCollection variation = $$x("//div[@class='hmJhIXSe']/div/div");
     private final ElementsCollection extrases = $$("._38l21lFz");
     private ApiClient apiClient;
@@ -40,18 +39,6 @@ public class BouquetPage extends AssertFixturesPage {
 
     public BouquetPage assertBouquetName() {
         bouquetSection.shouldHave(text(apiClient.getBouquetName()));
-        return this;
-    }
-//    // не сработает для акции, вариации не по порядку
-
-    public BouquetPage assertVariationsPrices(CurrencyType currencyType) {
-        List<PriceItemDto> priceList = apiClient.getPriceList();
-        assertEquals(variation.size(), priceList.size(), "no variations");
-
-        for (int i = 0; i < priceList.size(); i++) {
-            assertEquals(Double.parseDouble(variation.get(i).getText().replaceAll("[^\\d.]+", "")),
-                    priceList.get(i).getPrice().get(currencyType.name()), "Variations price is not equals");
-        }
         return this;
     }
 
@@ -107,7 +94,7 @@ public class BouquetPage extends AssertFixturesPage {
         String deliveryPrice = apiClient.getDeliveryPrice(currencyType);
         double totalPrice = Double.parseDouble(bouquetFirstVariationPrice) + Double.parseDouble(deliveryPrice);
 
-        if (apiClient.getPriceExtrasFirstVariation(currencyType) != null) {
+        if (apiClient.getExtrasPrice() != null) {
             totalPrice += Double.parseDouble(apiClient.getPriceExtrasFirstVariation(currencyType));
         }
         bouquetSection.shouldHave(text(HelperPage.priceCurrencyFormat(currencyType, String.valueOf(totalPrice))));

@@ -17,10 +17,6 @@ public class AssertFixturesPage {
         this.apiClient = apiClient;
     }
 
-    public static boolean isOrderSectionContainsAllFromBouquets(SelenideElement orderList, List<String> names) {
-        return names.stream().allMatch(name -> orderList.getText().contains(name));
-    }
-
     public void performAssertBouquetPrice(SelenideElement orderSection, CurrencyType currencyType) {
         String bouquetsPrice = HelperPage.priceCurrencyFormat(currencyType, apiClient.getBouquetPrice(currencyType));
         assertTrue(orderSection.getText().contains(bouquetsPrice), "bouquets price is not equals");

@@ -8,7 +8,6 @@ import helpers.HelperPage;
 import lombok.SneakyThrows;
 
 import java.time.Duration;
-import java.util.List;
 
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selectors.byName;

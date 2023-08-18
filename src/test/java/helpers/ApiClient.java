@@ -8,7 +8,6 @@ import io.restassured.specification.RequestSpecification;
 import lombok.SneakyThrows;
 import models.bouquet.BouquetDataDto;
 import models.bouquet.BouquetDataItemDto;
-import models.bouquet.PriceItemDto;
 import models.city.CityData;
 import models.city.CityResponse;
 import models.cityAlias.Data;
@@ -160,10 +159,6 @@ public class ApiClient {
         };
     }
 
-    public List<PriceItemDto> getPriceList() {
-        return bouquet.getPriceList();
-    }
-
     public List<String> getBouquetNameList() {
         return bouquetList.stream()
                 .map(BouquetDataItemDto::getName).toList();
@@ -210,6 +205,10 @@ public class ApiClient {
         extrasPrice = getFirstExtrasVariation(extras.getPrices());
     }
 
+    public ExtrasPrice getExtrasPrice() {
+        return extrasPrice;
+    }
+
     public String getExtrasName() {
         return extras.getName();
     }
@@ -220,10 +219,6 @@ public class ApiClient {
             case EUR, USD -> decimalFormat.format(extrasPrice.getPrice().get(currencyType.name())).replace(",",".");
             case KZT, RUB -> String.valueOf(extrasPrice.getPrice().get(currencyType.name())).replaceAll("(\\d+)\\.\\d+", "$1");
         };
-    }
-
-    public String getExtrasVariationName() {
-        return extrasPrice.getName();
     }
 
     public List<String> getExtrasPriceList(CurrencyType currencyType) {
@@ -386,7 +381,6 @@ public class ApiClient {
 
     private ExtrasPrice getFirstExtrasVariation(Map<String, ExtrasPrice> map) {
         ExtrasPrice extrasPrice = null;
-
         for (ExtrasPrice price : map.values()) {
             if ("Стандартный".equals(price.getName())) {
                 extrasPrice = price;

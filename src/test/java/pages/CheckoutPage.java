@@ -32,7 +32,6 @@ public class CheckoutPage {
     private final SelenideElement payButton = $(byText("Оплатить"));
     private final SelenideElement priceSection = payButton.$(".no-wrap");
     private final SelenideElement orderSection = $("._2pTgtswS  ");
-    private final ElementsCollection orderListPrices = orderSection.$$x("//svg");
     private final SelenideElement header = $x("//h1");
     private final SelenideElement createdOrderText = $("._2fUGBItB");
     private final SelenideElement returnToPayButton = $x("//a[@class='btn']");

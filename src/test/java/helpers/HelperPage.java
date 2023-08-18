@@ -3,7 +3,6 @@ package helpers;
 import com.codeborne.selenide.SelenideElement;
 
 import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -14,11 +13,6 @@ import java.util.regex.Pattern;
 import static com.codeborne.selenide.Selenide.*;
 
 public class HelperPage {
-
-    public static String priceRegexRub(String price) {
-        return price.replaceAll("(\\d)(?=(\\d{3})+$)", "$1 ") + " ₽";
-    }
-
     public static String priceRegex(String price) {
         return price.replaceAll("(\\d)(?=(\\d{3})+$)", "$1 ");
     }
