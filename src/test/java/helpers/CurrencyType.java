@@ -1,5 +1,17 @@
 package helpers;
 
 public enum CurrencyType {
-    RUB, USD, EUR, KZT
+    EUR("€"),
+    USD("$"),
+    KZT("₸"),
+    RUB("₽");
+
+    private final String symbol;
+    CurrencyType(String symbol) {
+        this.symbol = symbol;
+    }
+
+    public String getSymbol() {
+        return symbol;
+    }
 }

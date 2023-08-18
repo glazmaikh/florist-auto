@@ -1,7 +1,7 @@
 package pages;
 
-import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
+import fixtures.AssertFixturesPage;
 import helpers.ApiClient;
 import helpers.CurrencyType;
 import helpers.HelperPage;
@@ -33,9 +33,11 @@ public class PaymentPage {
     private final SelenideElement promoCodeAppliedArea = $("._3aKs9p4n");
     private final SelenideElement promoCodeAppliedButton = $x("//span[text()='Применить']");
     private final ApiClient apiClient;
+    private AssertFixturesPage assertFixturesPage;
 
-    public PaymentPage(ApiClient apiClient) {
+    public PaymentPage(ApiClient apiClient, AssertFixturesPage assertFixturesPage) {
         this.apiClient = apiClient;
+        this.assertFixturesPage = assertFixturesPage;
     }
 
     @SneakyThrows
@@ -57,38 +59,23 @@ public class PaymentPage {
     }
 
     public PaymentPage assertDeliveryPrice(CurrencyType currencyType) {
-        String deliveryPrice = apiClient.getDeliveryPrice(currencyType);
-        if (Double.parseDouble(deliveryPrice) > 1) {
-            orderSection.shouldHave(text(HelperPage.priceRegex(deliveryPrice)));
-        } else {
-            orderSection.shouldHave(text("бесплатно"));
-        }
+        assertFixturesPage.performAssertDeliveryPrice(orderSection, currencyType);
         return this;
     }
 
     public PaymentPage assertBouquetPrice(CurrencyType currencyType) {
-        List<String> bouquetsPrices = apiClient.getBouquetPriceList(currencyType).stream()
-                .map(String::valueOf)
-                .map(HelperPage::priceRegexRub)
-                .toList();
-        assertTrue(HelperPage.isOrderSectionContainsAllFromBouquets(orderSection, bouquetsPrices),
-                "bouquets prices not equals");
+        assertFixturesPage.performAssertBouquetPriceList(orderSection, currencyType);
         return this;
     }
 
-    public PaymentPage assertExtrasPrice() {
-        List<String> extrasPrices = apiClient.getExtrasPriceRubList().stream()
-                .map(String::valueOf)
-                .map(HelperPage::priceRegexRub)
-                .toList();
-        assertTrue(HelperPage.isOrderSectionContainsAllFromBouquets(orderSection, extrasPrices),
-                "extrases prices not equals");
+    public PaymentPage assertExtrasPrice(CurrencyType currencyType) {
+        assertFixturesPage.performAssertExtrasPrice(orderSection, currencyType);
         return this;
     }
 
     public PaymentPage assertTotalPrice(CurrencyType currencyType) {
         apiClient.getOrderData();
-        String totalDataPrice = HelperPage.priceRegex(String.valueOf(apiClient.getOrderTotalPrice()));
+        String totalDataPrice = HelperPage.priceCurrencyFormat(currencyType, apiClient.getOrderTotalPrice(currencyType));
         orderSection.shouldHave(text(totalDataPrice));
         return this;
     }
@@ -134,7 +121,7 @@ public class PaymentPage {
         orderSection.shouldHave(text("Скидка по промокоду"));
 
         if (HelperPage.containsDecimalNumber(String.valueOf(sum))) {
-            orderSection.shouldHave(text(HelperPage.formatToCents(sum)));
+            orderSection.shouldHave(text(String.valueOf(sum)));
         } else {
             orderSection.shouldHave(text(HelperPage.priceRegex(String.valueOf(sum).replaceAll("\\.(\\d+)", ""))));
         }

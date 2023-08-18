@@ -39,8 +39,6 @@ public class ApiClient {
     private final List<ExtrasPrice> extrasList = new ArrayList<>();
     private ExtrasDataItemDto extras = new ExtrasDataItemDto();
     private ExtrasPrice extrasPrice = null;
-
-    //private final ExtrasPrice extrasPrice = getFirstExtrasVariation(extras.getPrices());
     private OrderData orderData;
     private final Data data = getDeliveryPriceByCitySlug();
     private DeliveryTime deliveryTime;
@@ -216,10 +214,6 @@ public class ApiClient {
         return extras.getName();
     }
 
-    public String getExtrasPrice() {
-        return extrasPrice.getPrice().toString();
-    }
-
     public String getPriceExtrasFirstVariation(CurrencyType currencyType) {
         DecimalFormat decimalFormat = new DecimalFormat("0.00");
         return switch (currencyType) {
@@ -232,9 +226,11 @@ public class ApiClient {
         return extrasPrice.getName();
     }
 
-    public List<Integer> getExtrasPriceRubList() {
+    public List<String> getExtrasPriceList(CurrencyType currencyType) {
         return extrasList.stream()
-                .map(e -> HelperPage.doubleToIntRound(e.getPrice().get("RUB"))).toList();
+                .map(e -> e.getPrice().get(currencyType.name()))
+                .map(String::valueOf)
+                .collect(Collectors.toList());
     }
 
     // получение обьекта Data - цены доставки по slug города
@@ -281,8 +277,13 @@ public class ApiClient {
         return orderData.getData().getId();
     }
 
-    public int getOrderTotalPrice() {
-        return orderData.getData().getTotal().getRUB();
+    public String getOrderTotalPrice(CurrencyType currencyType) {
+        return switch (currencyType) {
+            case EUR -> String.valueOf(orderData.getData().getTotal().getEUR());
+            case KZT -> String.valueOf(orderData.getData().getTotal().getKZT());
+            case USD -> String.valueOf(orderData.getData().getTotal().getUSD());
+            case RUB -> String.valueOf(orderData.getData().getTotal().getRUB());
+        };
     }
 
     public String getOrderStatus() {

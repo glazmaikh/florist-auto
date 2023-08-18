@@ -1,0 +1,54 @@
+package fixtures;
+
+import com.codeborne.selenide.SelenideElement;
+import helpers.ApiClient;
+import helpers.CurrencyType;
+import helpers.HelperPage;
+
+import java.util.List;
+
+import static com.codeborne.selenide.Condition.text;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+public class AssertFixturesPage {
+    private final ApiClient apiClient;
+
+    public AssertFixturesPage(ApiClient apiClient) {
+        this.apiClient = apiClient;
+    }
+
+    public static boolean isOrderSectionContainsAllFromBouquets(SelenideElement orderList, List<String> names) {
+        return names.stream().allMatch(name -> orderList.getText().contains(name));
+    }
+
+    public void performAssertBouquetPrice(SelenideElement orderSection, CurrencyType currencyType) {
+        String bouquetsPrice = HelperPage.priceCurrencyFormat(currencyType, apiClient.getBouquetPrice(currencyType));
+        assertTrue(orderSection.getText().contains(bouquetsPrice), "bouquets price is not equals");
+    }
+
+    public void performAssertBouquetPriceList(SelenideElement orderSection, CurrencyType currencyType) {
+        List<String> bouquetsPrices = apiClient.getBouquetPriceList(currencyType).stream()
+                .map(String::valueOf)
+                .map(e -> HelperPage.priceCurrencyFormat(currencyType, e))
+                .toList();
+        assertTrue(HelperPage.isOrderSectionContainsAllFromBouquets(orderSection, bouquetsPrices),
+                "bouquets prices not equals");
+    }
+
+    public void performAssertDeliveryPrice(SelenideElement orderSection, CurrencyType currencyType) {
+        String deliveryPrice = apiClient.getDeliveryPrice(currencyType);
+        if (Double.parseDouble(deliveryPrice) > 1) {
+            orderSection.shouldHave(text(HelperPage.priceCurrencyFormat(currencyType, deliveryPrice)));
+        } else {
+            orderSection.shouldBe(text("бесплатно"));
+        }
+    }
+
+    public void performAssertExtrasPrice(SelenideElement orderSection, CurrencyType currencyType) {
+        List<String> extrasPrices = apiClient.getExtrasPriceList(currencyType).stream()
+                .map(e -> HelperPage.priceCurrencyFormat(currencyType, e))
+                .toList();
+        assertTrue(HelperPage.isOrderSectionContainsAllFromBouquets(orderSection, extrasPrices),
+                "prices of extras are not equals");
+    }
+}

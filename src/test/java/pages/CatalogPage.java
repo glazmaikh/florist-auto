@@ -1,15 +1,14 @@
 package pages;
 
-import com.codeborne.selenide.CollectionCondition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
+import fixtures.AssertFixturesPage;
 import helpers.ApiClient;
 import helpers.BouquetType;
 import helpers.CurrencyType;
-import models.bouquet.BouquetDataItemDto;
+import helpers.HelperPage;
 
 import java.time.Duration;
-import java.util.List;
 
 import static com.codeborne.selenide.CollectionCondition.*;
 import static com.codeborne.selenide.Condition.*;
@@ -18,6 +17,7 @@ import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.*;
 import static com.codeborne.selenide.WebDriverConditions.url;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.TestBase.baseUrl;
 
 public class CatalogPage {
@@ -101,7 +101,7 @@ public class CatalogPage {
             bouquetList.shouldHave(sizeGreaterThanOrEqual(apiClient.getBouquetListReminder()));
             for (SelenideElement se : bouquetList) {
                 if (se.getText().contains(bouquetName)) {
-                    assertEquals(bouquetPrice, se.$("._1KvrG3Aq").getText().replaceAll("[^\\d.]+", ""),
+                    assertTrue(se.$("._1KvrG3Aq").getText().contains(HelperPage.priceCurrencyFormat(currencyType, bouquetPrice)),
                             "Incorrect bouquet price " + bouquetName);
                     se.click();
                     foundBouquet = true;
@@ -114,7 +114,7 @@ public class CatalogPage {
                 page++;
             }
         }
-        return new BouquetPage(apiClient);
+        return new BouquetPage(apiClient, new AssertFixturesPage(apiClient));
     }
 
     public CatalogPage closeCookiePopUp() {

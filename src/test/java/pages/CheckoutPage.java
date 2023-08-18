@@ -4,6 +4,7 @@ import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
+import fixtures.AssertFixturesPage;
 import helpers.ApiClient;
 import helpers.CurrencyType;
 import helpers.HelperPage;
@@ -16,7 +17,6 @@ import java.util.*;
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selectors.*;
 import static com.codeborne.selenide.Selenide.*;
-import static com.codeborne.selenide.WebDriverConditions.url;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class CheckoutPage {
@@ -44,10 +44,12 @@ public class CheckoutPage {
     private final SelenideElement timeToInput = $x("//span[text()='До']/parent::label");
     private final SelenideElement removeFromCard = $(byCssSelector("div.YVf8EOae > svg"));
     private final ApiClient apiClient;
+    private AssertFixturesPage assertFixturesPage;
     private String deliveryDate;
 
-    public CheckoutPage(ApiClient apiClient) {
+    public CheckoutPage(ApiClient apiClient, AssertFixturesPage assertFixturesPage) {
         this.apiClient = apiClient;
+        this.assertFixturesPage = assertFixturesPage;
     }
 
     public CheckoutPage simpleFillForm(String name, String phone, String address) {
@@ -76,7 +78,6 @@ public class CheckoutPage {
         } catch (AssertionError e) {
             addressInput.shouldNotBe(hidden).val(address);
         }
-
         deliveryDateInput.click();
         return this;
     }
@@ -88,51 +89,35 @@ public class CheckoutPage {
     }
 
     public CheckoutPage assertDeliveryPrice(CurrencyType currencyType) {
-        String deliveryPrice = apiClient.getDeliveryPrice(currencyType);
-        if (Double.parseDouble(deliveryPrice) > 1) {
-            orderSection.shouldHave(text(HelperPage.priceRegex(deliveryPrice)));
-        } else {
-            orderSection.shouldHave(text("бесплатно"));
-        }
+        assertFixturesPage.performAssertDeliveryPrice(orderSection, currencyType);
         return this;
     }
 
     public CheckoutPage assertBouquetPrice(CurrencyType currencyType) {
-        List<String> bouquetsPrices = apiClient.getBouquetPriceList(currencyType).stream()
-                .map(String::valueOf)
-                .map(e -> HelperPage.priceCurrencyFormat(currencyType, e))
-                .toList();
-        System.out.println(bouquetsPrices + " bouquetsPrices");
-        System.out.println(orderSection.getText() + " orderSection.getText()");
-        assertTrue(HelperPage.isOrderSectionContainsAllFromBouquets(orderSection, bouquetsPrices),
-                "bouquets prices not equals");
+        assertFixturesPage.performAssertBouquetPriceList(orderSection, currencyType);
         return this;
     }
 
-    public CheckoutPage assertExtrasPrice() {
-        List<String> extrasPrices = apiClient.getExtrasPriceRubList().stream()
-                .map(String::valueOf)
-                .map(HelperPage::priceRegexRub)
-                .toList();
-        assertTrue(HelperPage.isOrderSectionContainsAllFromBouquets(orderSection, extrasPrices),
-                "extrases prices not equals");
+    public CheckoutPage assertExtrasPrice(CurrencyType currencyType) {
+        assertFixturesPage.performAssertExtrasPrice(orderSection, currencyType);
         return this;
     }
 
     public CheckoutPage assertTotalPrice(CurrencyType currencyType) {
-        String bouquetFirstVariationPrice = apiClient.getBouquetPriceList(currencyType).get(apiClient.getBouquetPriceList(currencyType).size() - 1);
-        String deliveryPrice = apiClient.getDeliveryPrice(currencyType);
-        double totalPrice = Double.parseDouble(bouquetFirstVariationPrice) + Double.parseDouble(deliveryPrice);
+        double bouquetPrices = apiClient.getBouquetPriceList(currencyType).stream()
+                .mapToDouble(Double::parseDouble)
+                .sum();
 
-        if (apiClient.getPriceExtrasFirstVariation(currencyType) != null) {
-            totalPrice += Double.parseDouble(apiClient.getPriceExtrasFirstVariation(currencyType));
-        }
+        double extrasPrices = apiClient.getExtrasPriceList(currencyType).stream()
+                .mapToDouble(Double::parseDouble)
+                .sum();
 
-        if (HelperPage.containsDecimalNumber(bouquetFirstVariationPrice)) {
-            orderSection.shouldHave(text(HelperPage.formatToCents(totalPrice)));
-        } else {
-            orderSection.shouldHave(text(HelperPage.priceRegex(String.valueOf(totalPrice).replaceAll("\\.(\\d+)", ""))));
+        double totalPrice = bouquetPrices + extrasPrices;
+
+        if (!apiClient.getDeliveryPrice(currencyType).equals("Бесплатно")) {
+            totalPrice += Double.parseDouble(apiClient.getDeliveryPrice(currencyType));
         }
+        orderSection.shouldHave(text(HelperPage.priceCurrencyFormat(currencyType, String.valueOf(totalPrice))));
         return this;
     }
 
@@ -141,7 +126,7 @@ public class CheckoutPage {
         Selenide.Wait().until(webDriver -> {
             return ((JavascriptExecutor) webDriver).executeScript("return document.readyState").equals("complete");
         });
-        return new PaymentPage(apiClient);
+        return new PaymentPage(apiClient, assertFixturesPage);
     }
 
     public CheckoutPage getRandomDeliveryDate() {
@@ -197,7 +182,7 @@ public class CheckoutPage {
         assertTrue(apiClient.getOrderStatus().contains("Ожидает оплаты"));
 
         returnToPayButton.shouldBe(exist).click();
-        return new PaymentPage(apiClient);
+        return new PaymentPage(apiClient, assertFixturesPage);
     }
 
     public CheckoutPage removeFromCard() {
