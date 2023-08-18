@@ -1,13 +1,13 @@
 package pages;
 
-import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
+import fixtures.AssertFixturesPage;
 import helpers.ApiClient;
+import helpers.CurrencyType;
 import helpers.HelperPage;
 import lombok.SneakyThrows;
 
 import java.time.Duration;
-import java.util.List;
 
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selectors.byName;
@@ -23,7 +23,7 @@ public class PaymentPage {
     private final SelenideElement submitButton = $x("//button[@type='submit']");
     private final SelenideElement confirmSubmitButton = $(byName("SET"));
     private final SelenideElement iframeAssist = $x("//div[@id='modal-overlay']//iframe");
-    private final SelenideElement orderList = $(".AEYhRIG-");
+    private final SelenideElement orderSection = $(".AEYhRIG-");
     private final SelenideElement header = $x("//h1");
     private final SelenideElement thanksFor = $x("//h1[text() ='Спасибо за заказ']");
     private final SelenideElement checkOnPromoCodeInput = $x("//div[@class='_2ke-1fXm']//span");
@@ -32,9 +32,11 @@ public class PaymentPage {
     private final SelenideElement promoCodeAppliedArea = $("._3aKs9p4n");
     private final SelenideElement promoCodeAppliedButton = $x("//span[text()='Применить']");
     private final ApiClient apiClient;
+    private AssertFixturesPage assertFixturesPage;
 
-    public PaymentPage(ApiClient apiClient) {
+    public PaymentPage(ApiClient apiClient, AssertFixturesPage assertFixturesPage) {
         this.apiClient = apiClient;
+        this.assertFixturesPage = assertFixturesPage;
     }
 
     @SneakyThrows
@@ -50,45 +52,30 @@ public class PaymentPage {
     }
 
     public PaymentPage assertBouquetName() {
-        assertTrue(HelperPage.isOrderListContainsAllFromBouquets(orderList, apiClient.getBouquetNameList()),
+        assertTrue(HelperPage.isOrderSectionContainsAllFromBouquets(orderSection, apiClient.getBouquetNameList()),
                 "bouquets names not equals");
         return this;
     }
 
-    public PaymentPage assertDeliveryPrice() {
-        int deliveryPrice = HelperPage.doubleToIntRound(apiClient.getDeliveryPrice());
-        if (deliveryPrice > 100) {
-            orderList.shouldHave(text(HelperPage.priceRegexRub(String.valueOf(deliveryPrice))));
-        } else {
-            orderList.shouldHave(text("бесплатно"));
-        }
+    public PaymentPage assertDeliveryPrice(CurrencyType currencyType) {
+        assertFixturesPage.performAssertDeliveryPrice(orderSection, currencyType);
         return this;
     }
 
-    public PaymentPage assertBouquetPrice() {
-        List<String> bouquetsPrices = apiClient.getBouquetPriceRubList().stream()
-                .map(String::valueOf)
-                .map(HelperPage::priceRegexRub)
-                .toList();
-        assertTrue(HelperPage.isOrderListContainsAllFromBouquets(orderList, bouquetsPrices),
-                "bouquets prices not equals");
+    public PaymentPage assertBouquetPrice(CurrencyType currencyType) {
+        assertFixturesPage.performAssertBouquetPriceList(orderSection, currencyType);
         return this;
     }
 
-    public PaymentPage assertExtrasPrice() {
-        List<String> extrasPrices = apiClient.getExtrasPriceRubList().stream()
-                .map(String::valueOf)
-                .map(HelperPage::priceRegexRub)
-                .toList();
-        assertTrue(HelperPage.isOrderListContainsAllFromBouquets(orderList, extrasPrices),
-                "extrases prices not equals");
+    public PaymentPage assertExtrasPrice(CurrencyType currencyType) {
+        assertFixturesPage.performAssertExtrasPrice(orderSection, currencyType);
         return this;
     }
 
-    public PaymentPage assertTotalPrice() {
+    public PaymentPage assertTotalPrice(CurrencyType currencyType) {
         apiClient.getOrderData();
-        String totalDataPrice = HelperPage.priceRegexRub(String.valueOf(apiClient.getOrderTotalPrice()));
-        orderList.shouldHave(text(totalDataPrice));
+        String totalDataPrice = HelperPage.priceCurrencyFormat(currencyType, apiClient.getOrderTotalPrice(currencyType));
+        orderSection.shouldHave(text(totalDataPrice));
         return this;
     }
 
@@ -118,20 +105,25 @@ public class PaymentPage {
         return new CatalogPage(apiClient);
     }
 
-    public PaymentPage setPromoCode(String promo) {
+    public PaymentPage setPromoCode(String promo, CurrencyType currencyType) {
         checkOnPromoCodeInput.shouldBe(exist).click();
         promoCodeInput.shouldBe(exist).sendKeys(promo);
         promoCodeAppliedButton.shouldBe(exist).click();
         promoCodeAppliedPopup.shouldBe(visible);
         promoCodeAppliedArea.shouldBe(visible);
 
-        int sum = apiClient.getBouquetPriceRubList().stream()
-                .map(price -> (int) (price * 0.1))
-                .mapToInt(Integer::intValue)
+        double sum = apiClient.getBouquetPriceList(currencyType).stream()
+                .map(Double::valueOf)
+                .mapToInt(price -> (int) (price * 0.1))
                 .sum();
 
-        orderList.shouldHave(text("Скидка по промокоду"));
-        orderList.shouldHave(text(HelperPage.priceRegexRub(String.valueOf(sum))));
+        orderSection.shouldHave(text("Скидка по промокоду"));
+
+        if (HelperPage.containsDecimalNumber(String.valueOf(sum))) {
+            orderSection.shouldHave(text(String.valueOf(sum)));
+        } else {
+            orderSection.shouldHave(text(HelperPage.priceRegex(String.valueOf(sum).replaceAll("\\.(\\d+)", ""))));
+        }
         return this;
     }
 }

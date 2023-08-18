@@ -1,6 +1,7 @@
 package models.bouquet;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import helpers.CurrencyType;
 import lombok.Data;
 
 import java.util.ArrayList;

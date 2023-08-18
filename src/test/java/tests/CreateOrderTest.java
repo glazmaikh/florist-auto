@@ -1,12 +1,19 @@
 package tests;
 
+import fixtures.AssertFixturesPage;
 import helpers.ApiClient;
 
 import helpers.BouquetType;
+import helpers.CurrencyType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import pages.*;
+
+import java.util.stream.Stream;
 
 public class CreateOrderTest extends TestBase {
     private final TestData testData = new TestData();
@@ -16,6 +23,7 @@ public class CreateOrderTest extends TestBase {
     private PaymentPage paymentPage;
     private SuccessPage successPage;
     private AccountOrderPage accountOrderPage;
+    private AssertFixturesPage assertFixturesPage;
     private String yourName, yourEmail, yourPhone, firstName, phone, address, password;
 
     @BeforeEach
@@ -30,10 +38,11 @@ public class CreateOrderTest extends TestBase {
 
         ApiClient apiClient = new ApiClient();
 
+        assertFixturesPage = new AssertFixturesPage(apiClient);
         catalogPage = new CatalogPage(apiClient);
-        bouquetPage = new BouquetPage(apiClient);
-        checkoutPage = new CheckoutPage(apiClient);
-        paymentPage = new PaymentPage(apiClient);
+        bouquetPage = new BouquetPage(apiClient, assertFixturesPage);
+        checkoutPage = new CheckoutPage(apiClient, assertFixturesPage);
+        paymentPage = new PaymentPage(apiClient, assertFixturesPage);
         successPage = new SuccessPage(apiClient);
         accountOrderPage = new AccountOrderPage(apiClient);
     }
@@ -44,36 +53,36 @@ public class CreateOrderTest extends TestBase {
         catalogPage.openCatalogPage(baseUrl)
                 .closeCookiePopUp()
                 .setDeliveryCity()
-                .setRandomBouquet(BouquetType.FLORIST_RU);
+                .setRandomBouquet(BouquetType.FLORIST_RU, CurrencyType.RUB);
 
         bouquetPage.openBouquetPage(baseUrl)
-                .assertBouquetName()
-                .assertVariationsPrices()
                 .setFirstVariation()
-                .assertDeliveryPrice()
-                .assertTotalPrice()
+                .assertBouquetName()
+                .assertBouquetPrice(CurrencyType.RUB)
+                .assertDeliveryPrice(CurrencyType.RUB)
+                .assertTotalPrice(CurrencyType.RUB)
                 .addToCard(baseUrl);
 
         checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
                 .getRandomDeliveryDate()
                 .getRandomDeliveryTime()
                 .assertBouquetName()
-                .assertDeliveryPrice()
-                .assertBouquetPrice()
-                .assertTotalPrice()
+                .assertDeliveryPrice(CurrencyType.RUB)
+                .assertBouquetPrice(CurrencyType.RUB)
+                .assertTotalPrice(CurrencyType.RUB)
                 .goToPaymentPage();
 
         paymentPage.assertPaymentStatus(baseUrl)
                 .assertBouquetName()
-                .assertDeliveryPrice()
-                .assertBouquetPrice()
-                .assertTotalPrice()
+                .assertDeliveryPrice(CurrencyType.RUB)
+                .assertBouquetPrice(CurrencyType.RUB)
+                .assertTotalPrice(CurrencyType.RUB)
                 .fillCard(cardNumber, expireNumber, cvcNumber)
                 .pay()
                 .confirm();
 
         successPage.assertSuccessOrderStatus(baseUrl)
-                .assertSuccessCreatedOrder();
+                .assertSuccessCreatedOrder(CurrencyType.RUB);
     }
 
     @Test
@@ -82,47 +91,47 @@ public class CreateOrderTest extends TestBase {
         catalogPage.openCatalogPage(baseUrl)
                 .closeCookiePopUp()
                 .setDeliveryCity()
-                .setRandomBouquet(BouquetType.FLORIST_RU);
+                .setRandomBouquet(BouquetType.FLORIST_RU, CurrencyType.RUB);
 
         bouquetPage.openBouquetPage(baseUrl)
-                .assertBouquetName()
-                .assertVariationsPrices()
                 .setFirstVariation()
-                .assertDeliveryPrice()
-                .assertTotalPrice()
+                .assertBouquetName()
+                .assertBouquetPrice(CurrencyType.RUB)
+                .assertDeliveryPrice(CurrencyType.RUB)
+                .assertTotalPrice(CurrencyType.RUB)
                 .addToCard(baseUrl);
 
         catalogPage.openCatalogPage(baseUrl)
-                .setRandomBouquet(BouquetType.FLORIST_RU);
+                .setRandomBouquet(BouquetType.FLORIST_RU, CurrencyType.RUB);
 
         bouquetPage.openBouquetPage(baseUrl)
-                .assertBouquetName()
-                .assertVariationsPrices()
                 .setFirstVariation()
-                .assertDeliveryPrice()
-                .assertTotalPrice()
+                .assertBouquetName()
+                .assertBouquetPrice(CurrencyType.RUB)
+                .assertDeliveryPrice(CurrencyType.RUB)
+                .assertTotalPrice(CurrencyType.RUB)
                 .addToCard(baseUrl);
 
         checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
                 .getRandomDeliveryDate()
                 .getRandomDeliveryTime()
                 .assertBouquetName()
-                .assertDeliveryPrice()
-                .assertBouquetPrice()
-                .assertTotalPrice()
+                .assertDeliveryPrice(CurrencyType.RUB)
+                .assertBouquetPrice(CurrencyType.RUB)
+                .assertTotalPrice(CurrencyType.RUB)
                 .goToPaymentPage();
 
         paymentPage.assertPaymentStatus(baseUrl)
                 .assertBouquetName()
-                .assertDeliveryPrice()
-                .assertBouquetPrice()
-                .assertTotalPrice()
+                .assertDeliveryPrice(CurrencyType.RUB)
+                .assertBouquetPrice(CurrencyType.RUB)
+                .assertTotalPrice(CurrencyType.RUB)
                 .fillCard(cardNumber, expireNumber, cvcNumber)
                 .pay()
                 .confirm();
 
         successPage.assertSuccessOrderStatus(baseUrl)
-                .assertSuccessCreatedOrder();
+                .assertSuccessCreatedOrder(CurrencyType.RUB);
     }
 
     @Test
@@ -131,36 +140,36 @@ public class CreateOrderTest extends TestBase {
         catalogPage.openCatalogPage(baseUrl)
                 .closeCookiePopUp()
                 .setDeliveryCity()
-                .setRandomBouquet(BouquetType.IFLORIST);
+                .setRandomBouquet(BouquetType.IFLORIST, CurrencyType.RUB);
 
         bouquetPage.openBouquetPage(baseUrl)
-                .assertBouquetName()
-                .assertVariationsPrices()
                 .setFirstVariation()
-                .assertDeliveryPrice()
-                .assertTotalPrice()
+                .assertBouquetName()
+                .assertBouquetPrice(CurrencyType.RUB)
+                .assertDeliveryPrice(CurrencyType.RUB)
+                .assertTotalPrice(CurrencyType.RUB)
                 .addToCard(baseUrl);
 
         checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
                 .getRandomDeliveryDate()
                 .getRandomDeliveryTime()
                 .assertBouquetName()
-                .assertDeliveryPrice()
-                .assertBouquetPrice()
-                .assertTotalPrice()
+                .assertDeliveryPrice(CurrencyType.RUB)
+                .assertBouquetPrice(CurrencyType.RUB)
+                .assertTotalPrice(CurrencyType.RUB)
                 .goToPaymentPage();
 
         paymentPage.assertPaymentStatus(baseUrl)
                 .assertBouquetName()
-                .assertDeliveryPrice()
-                .assertBouquetPrice()
-                .assertTotalPrice()
+                .assertDeliveryPrice(CurrencyType.RUB)
+                .assertBouquetPrice(CurrencyType.RUB)
+                .assertTotalPrice(CurrencyType.RUB)
                 .fillCard(cardNumber, expireNumber, cvcNumber)
                 .pay()
                 .confirm();
 
         successPage.assertSuccessOrderStatus(baseUrl)
-                .assertSuccessCreatedOrder();
+                .assertSuccessCreatedOrder(CurrencyType.RUB);
     }
 
     @Test
@@ -169,30 +178,31 @@ public class CreateOrderTest extends TestBase {
         catalogPage.openCatalogPage(baseUrl)
                 .closeCookiePopUp()
                 .setDeliveryCity()
-                .setRandomBouquet(BouquetType.ALL_BOUQUETS);
+                .setRandomBouquet(BouquetType.ALL_BOUQUETS, CurrencyType.RUB);
 
         bouquetPage.openBouquetPage(baseUrl)
-                .assertBouquetName()
-                .assertVariationsPrices()
                 .setFirstVariation()
-                .assertDeliveryPrice()
-                .assertTotalPrice()
+                .assertBouquetName()
+                .assertBouquetPrice(CurrencyType.RUB)
+                .assertDeliveryPrice(CurrencyType.RUB)
+                .assertTotalPrice(CurrencyType.RUB)
                 .addToCard(baseUrl);
 
         checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
                 .getRandomDeliveryDate()
                 .getRandomDeliveryTime()
                 .assertBouquetName()
-                .assertDeliveryPrice()
-                .assertBouquetPrice()
-                .assertTotalPrice()
+                .assertDeliveryPrice(CurrencyType.RUB)
+                .assertBouquetPrice(CurrencyType.RUB)
+                .assertTotalPrice(CurrencyType.RUB)
                 .goToPaymentPage();
 
         paymentPage.assertPaymentStatus(baseUrl)
                 .assertBouquetName()
-                .assertDeliveryPrice()
-                .assertBouquetPrice()
-                .assertTotalPrice()
+                .assertDeliveryPrice(CurrencyType.RUB)
+                .assertBouquetPrice(CurrencyType.RUB)
+                .assertExtrasPrice(CurrencyType.RUB)
+                .assertTotalPrice(CurrencyType.RUB)
                 .backOnPrevious();
 
         checkoutPage.assertOrderAndBackToPay();
@@ -202,7 +212,7 @@ public class CreateOrderTest extends TestBase {
                 .confirm();
 
         successPage.assertSuccessOrderStatus(baseUrl)
-                .assertSuccessCreatedOrder();
+                .assertSuccessCreatedOrder(CurrencyType.RUB);
     }
 
     @Test
@@ -218,35 +228,36 @@ public class CreateOrderTest extends TestBase {
 
         catalogPage.openCatalogPage(baseUrl)
                 .setDeliveryCity()
-                .setRandomBouquet(BouquetType.FLORIST_RU);
+                .setRandomBouquet(BouquetType.ALL_BOUQUETS, CurrencyType.RUB);
 
         bouquetPage.openBouquetPage(baseUrl)
-                .assertBouquetName()
-                .assertVariationsPrices()
                 .setFirstVariation()
-                .assertDeliveryPrice()
+                .assertBouquetName()
+                .assertBouquetPrice(CurrencyType.RUB)
+                .assertDeliveryPrice(CurrencyType.RUB)
+                .assertTotalPrice(CurrencyType.RUB)
                 .addToCard(baseUrl);
 
         checkoutPage.simpleFillForm(firstName, phone, address)
                 .getRandomDeliveryDate()
                 .getRandomDeliveryTime()
                 .assertBouquetName()
-                .assertDeliveryPrice()
-                .assertBouquetPrice()
-                .assertTotalPrice()
+                .assertDeliveryPrice(CurrencyType.RUB)
+                .assertBouquetPrice(CurrencyType.RUB)
+                .assertTotalPrice(CurrencyType.RUB)
                 .goToPaymentPage();
 
         paymentPage.assertPaymentStatus(baseUrl)
                 .assertBouquetName()
-                .assertDeliveryPrice()
-                .assertBouquetPrice()
-                .assertTotalPrice()
+                .assertDeliveryPrice(CurrencyType.RUB)
+                .assertBouquetPrice(CurrencyType.RUB)
+                .assertTotalPrice(CurrencyType.RUB)
                 .fillCard(cardNumber, expireNumber, cvcNumber)
                 .pay()
                 .confirm();
 
         successPage.assertSuccessOrderStatus(baseUrl)
-                .assertSuccessCreatedOrder();
+                .assertSuccessCreatedOrder(CurrencyType.RUB);
 
         catalogPage.openAccountOrderPage();
         accountOrderPage.assertCreatedOrderFromAuthUser(baseUrl, yourName);
@@ -258,40 +269,40 @@ public class CreateOrderTest extends TestBase {
         catalogPage.openCatalogPage(baseUrl)
                 .closeCookiePopUp()
                 .setDeliveryCity()
-                .setRandomBouquet(BouquetType.FLORIST_RU);
+                .setRandomBouquet(BouquetType.FLORIST_RU, CurrencyType.RUB);
 
         bouquetPage.openBouquetPage(baseUrl)
-                .assertBouquetName()
-                .assertVariationsPrices()
                 .setFirstVariation()
-                .setRandomExtras()
-                .assertExtras()
-                .assertDeliveryPrice()
-                .assertTotalPrice()
+                .assertBouquetName()
+                .assertBouquetPrice(CurrencyType.RUB)
+                .setRandomExtras(CurrencyType.RUB)
+                .assertExtrasPrice(CurrencyType.RUB)
+                .assertDeliveryPrice(CurrencyType.RUB)
+                .assertTotalPrice(CurrencyType.RUB)
                 .addToCard(baseUrl);
 
         checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
                 .getRandomDeliveryDate()
                 .getRandomDeliveryTime()
                 .assertBouquetName()
-                .assertDeliveryPrice()
-                .assertBouquetPrice()
-                .assertExtrasPrice()
-                .assertTotalPrice()
+                .assertDeliveryPrice(CurrencyType.RUB)
+                .assertBouquetPrice(CurrencyType.RUB)
+                .assertExtrasPrice(CurrencyType.RUB)
+                .assertTotalPrice(CurrencyType.RUB)
                 .goToPaymentPage();
 
         paymentPage.assertPaymentStatus(baseUrl)
                 .assertBouquetName()
-                .assertDeliveryPrice()
-                .assertBouquetPrice()
-                .assertExtrasPrice()
-                .assertTotalPrice()
+                .assertDeliveryPrice(CurrencyType.RUB)
+                .assertBouquetPrice(CurrencyType.RUB)
+                .assertExtrasPrice(CurrencyType.RUB)
+                .assertTotalPrice(CurrencyType.RUB)
                 .fillCard(cardNumber, expireNumber, cvcNumber)
                 .pay()
                 .confirm();
 
         successPage.assertSuccessOrderStatus(baseUrl)
-                .assertSuccessCreatedOrder();
+                .assertSuccessCreatedOrder(CurrencyType.RUB);
     }
 
     @Test
@@ -300,14 +311,14 @@ public class CreateOrderTest extends TestBase {
         catalogPage.openCatalogPage(baseUrl)
                 .closeCookiePopUp()
                 .setDeliveryCity()
-                .setRandomBouquet(BouquetType.FLORIST_RU);
+                .setRandomBouquet(BouquetType.FLORIST_RU, CurrencyType.RUB);
 
         bouquetPage.openBouquetPage(baseUrl)
-                .assertBouquetName()
-                .assertVariationsPrices()
                 .setFirstVariation()
-                .assertDeliveryPrice()
-                .assertTotalPrice()
+                .assertBouquetName()
+                .assertBouquetPrice(CurrencyType.RUB)
+                .assertDeliveryPrice(CurrencyType.RUB)
+                .assertTotalPrice(CurrencyType.RUB)
                 .addToCard(baseUrl);
 
         checkoutPage.removeFromCard();
@@ -319,30 +330,82 @@ public class CreateOrderTest extends TestBase {
         catalogPage.openCatalogPage(baseUrl)
                 .closeCookiePopUp()
                 .setDeliveryCity()
-                .setRandomBouquet(BouquetType.FLORIST_RU);
+                .setRandomBouquet(BouquetType.FLORIST_RU, CurrencyType.RUB);
 
         bouquetPage.openBouquetPage(baseUrl)
-                .assertBouquetName()
-                .assertVariationsPrices()
                 .setFirstVariation()
-                .assertDeliveryPrice()
-                .assertTotalPrice()
+                .assertBouquetName()
+                .assertBouquetPrice(CurrencyType.RUB)
+                .assertDeliveryPrice(CurrencyType.RUB)
+                .assertTotalPrice(CurrencyType.RUB)
                 .addToCard(baseUrl);
 
         checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
                 .getRandomDeliveryDate()
                 .getRandomDeliveryTime()
                 .assertBouquetName()
-                .assertDeliveryPrice()
-                .assertBouquetPrice()
-                .assertTotalPrice()
+                .assertDeliveryPrice(CurrencyType.RUB)
+                .assertBouquetPrice(CurrencyType.RUB)
+                .assertTotalPrice(CurrencyType.RUB)
                 .goToPaymentPage();
 
         paymentPage.assertPaymentStatus(baseUrl)
                 .assertBouquetName()
-                .assertDeliveryPrice()
-                .assertBouquetPrice()
-                .assertTotalPrice()
-                .setPromoCode(promo);
+                .assertDeliveryPrice(CurrencyType.RUB)
+                .assertBouquetPrice(CurrencyType.RUB)
+                .assertExtrasPrice(CurrencyType.RUB)
+                .assertTotalPrice(CurrencyType.RUB)
+                .setPromoCode(promo, CurrencyType.RUB)
+                .fillCard(cardNumber, expireNumber, cvcNumber)
+                .pay()
+                .confirm();
+
+        successPage.assertSuccessOrderStatus(baseUrl)
+                .assertSuccessCreatedOrder(CurrencyType.RUB);
+    }
+
+    @ParameterizedTest(name = "Тест на проверку оформления заказа и оплаты в валюте {0} доступной на сайте")
+    @MethodSource("currencyEnumProvider")
+    @Tag("create_order")
+    void createOrderDifferentCurrencyTest(CurrencyType currency) {
+        catalogPage.openCatalogPage(baseUrl)
+                .closeCookiePopUp()
+                .setDeliveryCity()
+                .setCurrency(currency)
+                .setRandomBouquet(BouquetType.FLORIST_RU, currency);
+
+        bouquetPage.openBouquetPage(baseUrl)
+                .setFirstVariation()
+                .assertBouquetName()
+                .assertBouquetPrice(currency)
+                .assertDeliveryPrice(currency)
+                .assertTotalPrice(currency)
+                .addToCard(baseUrl);
+
+        checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
+                .getRandomDeliveryDate()
+                .getRandomDeliveryTime()
+                .assertBouquetName()
+                .assertDeliveryPrice(currency)
+                .assertBouquetPrice(currency)
+                .assertTotalPrice(currency)
+                .goToPaymentPage();
+
+        paymentPage.assertPaymentStatus(baseUrl)
+                .assertBouquetName()
+                .assertDeliveryPrice(currency)
+                .assertBouquetPrice(currency)
+                .assertTotalPrice(currency)
+                .fillCard(cardNumber, expireNumber, cvcNumber)
+                .pay()
+                .confirm();
+
+        successPage.assertSuccessOrderStatus(baseUrl)
+                .assertSuccessCreatedOrder(currency);
+    }
+
+    public static Stream<Arguments> currencyEnumProvider() {
+        return Stream.of(CurrencyType.values())
+                .map(Arguments::of);
     }
 }

@@ -8,7 +8,6 @@ import io.restassured.specification.RequestSpecification;
 import lombok.SneakyThrows;
 import models.bouquet.BouquetDataDto;
 import models.bouquet.BouquetDataItemDto;
-import models.bouquet.PriceItemDto;
 import models.city.CityData;
 import models.city.CityResponse;
 import models.cityAlias.Data;
@@ -23,6 +22,7 @@ import models.order.OrderData;
 import models.register.User;
 import models.register.UserWrapper;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -36,12 +36,13 @@ public class ApiClient {
     private final CityData city = getCity();
     private BouquetDataItemDto bouquet;
     private final List<ExtrasPrice> extrasList = new ArrayList<>();
-    private final ExtrasDataItemDto extras = getRandomExtras();
-    private final ExtrasPrice extrasPrice = getFirstExtrasVariation(extras.getPrices());
+    private ExtrasDataItemDto extras = new ExtrasDataItemDto();
+    private ExtrasPrice extrasPrice = null;
     private OrderData orderData;
     private final Data data = getDeliveryPriceByCitySlug();
     private DeliveryTime deliveryTime;
     private final List<BouquetDataItemDto> bouquetList = new ArrayList<>();
+    private List<BouquetDataItemDto> allBouquetsFromRequest = new ArrayList<>();
 
     // Получение обьекта города Астрахань
     @SneakyThrows
@@ -80,12 +81,13 @@ public class ApiClient {
                 .auth().basic("florist_api", "123")
                 .param("city", getCityId())
                 .param("showPrices", 1)
-                .param("includeIflorist", 0)
+                .param("includeIflorist", 1)
                 .get("api/bouquet");
         ResponseBody bodyBouquet = responseBouquet.getBody();
 
         ObjectMapper objectMapper = new ObjectMapper();
         BouquetDataDto bouquetData = objectMapper.readValue(bodyBouquet.asString(), BouquetDataDto.class);
+        allBouquetsFromRequest = new ArrayList<>(bouquetData.getData().values());
         bouquet = getRandomBouquetFloristRu(bouquetData.getData());
         bouquetList.add(bouquet);
     }
@@ -103,6 +105,7 @@ public class ApiClient {
 
         ObjectMapper objectMapper = new ObjectMapper();
         BouquetDataDto bouquetData = objectMapper.readValue(bodyBouquet.asString(), BouquetDataDto.class);
+        allBouquetsFromRequest = new ArrayList<>(bouquetData.getData().values());
         bouquet = getBouquetIFloristList(bouquetData.getData());
         bouquetList.add(bouquet);
     }
@@ -120,6 +123,7 @@ public class ApiClient {
 
         ObjectMapper objectMapper = new ObjectMapper();
         BouquetDataDto bouquetData = objectMapper.readValue(bodyBouquet.asString(), BouquetDataDto.class);
+        allBouquetsFromRequest = new ArrayList<>(bouquetData.getData().values());
         bouquet = getRandomBouquet(bouquetData.getData());
         bouquetList.add(bouquet);
     }
@@ -137,16 +141,22 @@ public class ApiClient {
         return bouquet.getId();
     }
 
+    public int getBouquetListReminder() {
+        return allBouquetsFromRequest.size() % 60;
+    }
+
     public String getBouquetName() {
         return bouquet.getName();
     }
 
-    public int getBouquetPrice() {
-        return bouquet.getMin_price().getRub();
-    }
-
-    public List<PriceItemDto> getPriceList() {
-        return bouquet.getPriceList();
+    public String getBouquetPrice(CurrencyType currencyType) {
+        DecimalFormat decimalFormat = new DecimalFormat("0.00");
+        return switch (currencyType) {
+            case EUR -> decimalFormat.format(bouquet.getMin_price().getEur()).replace(",",".");
+            case KZT -> String.valueOf(bouquet.getMin_price().getKzt());
+            case USD -> decimalFormat.format(bouquet.getMin_price().getUsd()).replace(",",".");
+            case RUB -> String.valueOf(bouquet.getMin_price().getRub());
+        };
     }
 
     public List<String> getBouquetNameList() {
@@ -154,13 +164,33 @@ public class ApiClient {
                 .map(BouquetDataItemDto::getName).toList();
     }
 
-    public List<Integer> getBouquetPriceRubList() {
-        return bouquetList.stream()
-                .map(e -> e.getMin_price().getRub()).toList();
+    public List<String> getBouquetPriceList(CurrencyType currencyType) {
+        return switch (currencyType) {
+            case EUR -> bouquetList.stream()
+                    .map(e -> e.getMin_price().getEur())
+                    .map(String::valueOf)
+                    .collect(Collectors.toList());
+            case KZT -> bouquetList.stream()
+                    .map(e -> e.getMin_price().getKzt())
+                    .map(String::valueOf)
+                    .collect(Collectors.toList());
+            case USD -> bouquetList.stream()
+                    .map(e -> e.getMin_price().getUsd())
+                    .map(String::valueOf)
+                    .collect(Collectors.toList());
+            case RUB -> bouquetList.stream()
+                    .map(e -> e.getMin_price().getRub())
+                    .map(String::valueOf)
+                    .collect(Collectors.toList());
+        };
+    }
+
+    public void initExtras() {
+        getRandomExtras();
     }
 
     @SneakyThrows
-    private ExtrasDataItemDto getRandomExtras() {
+    private void getRandomExtras() {
         RequestSpecification httpRequest = given();
         Response responseBouquet = httpRequest
                 .auth().basic("florist_api", "123")
@@ -171,24 +201,31 @@ public class ApiClient {
 
         ObjectMapper objectMapper = new ObjectMapper();
         ExtrasDataDto extrasData = objectMapper.readValue(bodyBouquet.asString(), ExtrasDataDto.class);
-        return getRandomExtrasFromMap(extrasData.getData());
+        extras = getRandomExtrasFromMap(extrasData.getData());
+        extrasPrice = getFirstExtrasVariation(extras.getPrices());
+    }
+
+    public ExtrasPrice getExtrasPrice() {
+        return extrasPrice;
     }
 
     public String getExtrasName() {
         return extras.getName();
     }
 
-    public double getPriceExtrasFirstVariationRub() {
-        return extrasPrice.getPrice().get("RUB");
+    public String getPriceExtrasFirstVariation(CurrencyType currencyType) {
+        DecimalFormat decimalFormat = new DecimalFormat("0.00");
+        return switch (currencyType) {
+            case EUR, USD -> decimalFormat.format(extrasPrice.getPrice().get(currencyType.name())).replace(",",".");
+            case KZT, RUB -> String.valueOf(extrasPrice.getPrice().get(currencyType.name())).replaceAll("(\\d+)\\.\\d+", "$1");
+        };
     }
 
-    public String getExtrasVariationName() {
-        return extrasPrice.getName();
-    }
-
-    public List<Integer> getExtrasPriceRubList() {
+    public List<String> getExtrasPriceList(CurrencyType currencyType) {
         return extrasList.stream()
-                .map(e -> HelperPage.doubleToIntRound(e.getPrice().get("RUB"))).toList();
+                .map(e -> e.getPrice().get(currencyType.name()))
+                .map(String::valueOf)
+                .collect(Collectors.toList());
     }
 
     // получение обьекта Data - цены доставки по slug города
@@ -207,8 +244,12 @@ public class ApiClient {
     }
 
     // методы взаимодействия с обьектом Data - цен доставки по slug города
-    public double getDeliveryPrice() {
-        return data.getDelivery().get("RUB");
+    public String getDeliveryPrice(CurrencyType currencyType) {
+        DecimalFormat decimalFormat = new DecimalFormat("0.00");
+        return switch (currencyType) {
+            case EUR, USD -> decimalFormat.format(data.getDelivery().get(currencyType.name())).replace(",",".");
+            case KZT, RUB -> String.valueOf(data.getDelivery().get(currencyType.name())).replaceAll("(\\d+)\\.\\d+", "$1");
+        };
     }
 
     // получение обьекта OrderData о заказе из ERP
@@ -231,8 +272,13 @@ public class ApiClient {
         return orderData.getData().getId();
     }
 
-    public int getOrderTotalPrice() {
-        return orderData.getData().getTotal().getRUB();
+    public String getOrderTotalPrice(CurrencyType currencyType) {
+        return switch (currencyType) {
+            case EUR -> String.valueOf(orderData.getData().getTotal().getEUR());
+            case KZT -> String.valueOf(orderData.getData().getTotal().getKZT());
+            case USD -> String.valueOf(orderData.getData().getTotal().getUSD());
+            case RUB -> String.valueOf(orderData.getData().getTotal().getRUB());
+        };
     }
 
     public String getOrderStatus() {
@@ -321,8 +367,11 @@ public class ApiClient {
     // методы получения рандомного обьекта Букета
     // иногда error index must be positive
     private BouquetDataItemDto getRandomBouquetFloristRu(Map<String, BouquetDataItemDto> bouquetMap) {
-        List<BouquetDataItemDto> values = new ArrayList<>(bouquetMap.values());
-        return values.get(new Random().nextInt(values.size()));
+        Map<String, BouquetDataItemDto> filteredMap = bouquetMap.entrySet()
+                .stream()
+                .filter(e -> e.getKey().startsWith("6"))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        return getRandomBouquet(filteredMap);
     }
 
     private ExtrasDataItemDto getRandomExtrasFromMap(Map<String, ExtrasDataItemDto> extrasMap) {
@@ -332,7 +381,6 @@ public class ApiClient {
 
     private ExtrasPrice getFirstExtrasVariation(Map<String, ExtrasPrice> map) {
         ExtrasPrice extrasPrice = null;
-
         for (ExtrasPrice price : map.values()) {
             if ("Стандартный".equals(price.getName())) {
                 extrasPrice = price;

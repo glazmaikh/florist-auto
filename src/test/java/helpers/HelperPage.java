@@ -2,6 +2,7 @@ package helpers;
 
 import com.codeborne.selenide.SelenideElement;
 
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -12,17 +13,8 @@ import java.util.regex.Pattern;
 import static com.codeborne.selenide.Selenide.*;
 
 public class HelperPage {
-
-    public static int doubleToIntRound(Double value) {
-        return (int) Math.round(value);
-    }
-
-    public static String priceRegex(SelenideElement element) {
-        return element.getText().replaceAll("[\\s₽]", "");
-    }
-
-    public static String priceRegexRub(String price) {
-        return price.replaceAll("(\\d)(?=(\\d{3})+$)", "$1 ") + " ₽";
+    public static String priceRegex(String price) {
+        return price.replaceAll("(\\d)(?=(\\d{3})+$)", "$1 ");
     }
 
     public static String getOrderNumber() {
@@ -130,13 +122,28 @@ public class HelperPage {
         return getRandomStringFromList(dates);
     }
 
-    public static boolean isOrderListContainsAllFromBouquets(SelenideElement orderList, List<String> names) {
+    public static boolean isOrderSectionContainsAllFromBouquets(SelenideElement orderList, List<String> names) {
         return names.stream().allMatch(name -> orderList.getText().contains(name));
     }
 
-    public static int sumIntegerList(List<Integer> list) {
-        return list.stream()
-                .mapToInt(Integer::intValue)
-                .sum();
+    public static String priceCurrencyFormat(CurrencyType currencyType, String price) {
+        DecimalFormat decimalFormat = new DecimalFormat("#.00");
+        String cleanedPrice = price.replaceAll("[^\\d.,]", "");
+
+        return switch (currencyType) {
+            case EUR, USD -> cleanedPrice.equals("0.00") || cleanedPrice.equals("0.0") ? "0.00" :
+                    currencyType.getSymbol() +
+                    decimalFormat.format(Double.parseDouble(cleanedPrice.replaceAll("(\\d)(?=(\\d{3})+$)", "$1")))
+                            .replace(",", ".");
+            case KZT, RUB -> {
+                int intValue = Integer.parseInt(cleanedPrice.split("\\.")[0]);
+                yield String.valueOf(intValue).replaceAll("(\\d)(?=(\\d{3})+$)", "$1 ") + " " + currencyType.getSymbol();
+            }
+        };
+    }
+
+    public static boolean containsDecimalNumber(String input) {
+        String pattern = "\\d+\\.\\d{2}$";
+        return input.matches(pattern);
     }
 }

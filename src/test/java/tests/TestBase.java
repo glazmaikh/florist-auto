@@ -28,7 +28,7 @@ public class TestBase {
         cvcNumber = config.getCvcNumber();
         promo = config.getPromo();
 
-        //System.setProperty("webdriver.chrome.driver", "C://webdrivers/chromedriver114.exe");
+        //System.setProperty("webdriver.chrome.driver", "C://webdrivers/chromedriver116.exe");
         Configuration.baseUrl = System.getProperty("base_url", "https://www.stage.florist.local/");
         Configuration.browser = System.getProperty("browser", "chrome");
         RestAssured.baseURI = baseUrl;

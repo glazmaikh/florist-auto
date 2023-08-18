@@ -2,20 +2,22 @@ package pages;
 
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
+import fixtures.AssertFixturesPage;
 import helpers.ApiClient;
 import helpers.BouquetType;
-import models.bouquet.BouquetDataItemDto;
+import helpers.CurrencyType;
+import helpers.HelperPage;
 
 import java.time.Duration;
-import java.util.List;
 
-import static com.codeborne.selenide.CollectionCondition.size;
+import static com.codeborne.selenide.CollectionCondition.*;
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selectors.byName;
 import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.*;
 import static com.codeborne.selenide.WebDriverConditions.url;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.TestBase.baseUrl;
 
 public class CatalogPage {
@@ -27,7 +29,7 @@ public class CatalogPage {
     private final SelenideElement cityLoader = $(".css-1gl4k7y");
     private final ElementsCollection droppedCityList = $$("._8PeWF0tD");
     private final SelenideElement bouquetLoader = $(".w0pOM9kK");
-    private final ElementsCollection bouquetList = $$("._3fIsQ45s");
+    private ElementsCollection bouquetList = $$("._3fIsQ45s");
     private final SelenideElement authRegisterButton = $("button[aria-label='Войти на сайт']");
     private final SelenideElement createAccountTab = $x("//ul/span[text()='Создать аккаунт']");
     private final SelenideElement nameInput = $(byName("name"));
@@ -50,6 +52,11 @@ public class CatalogPage {
     private final SelenideElement alertIncorrectPhoneInput = $x("//span[text()='Введите корректный номер телефона']");
     private final SelenideElement alertIncorrectEmailInput = $x("//span[text()='Введите корректный email адрес']");
     private final SelenideElement userAlreadyExistsError = $(byText("User with this email already exists"));
+    private final SelenideElement currencyDropper = $(byText("₽ Руб."));
+    private final SelenideElement setKztPrice = $(byText("₸ Казахстанский тенге"));
+    private final SelenideElement setRubPrice = $(byText("₽ Российский рубль"));
+    private final SelenideElement setEurPrice = $(byText("€ Евро"));
+    private final SelenideElement setUsdPrice = $(byText("$ Доллар США"));
 
     public CatalogPage(ApiClient apiClient) {
         this.apiClient = apiClient;
@@ -82,18 +89,19 @@ public class CatalogPage {
         return this;
     }
 
-    public BouquetPage setRandomBouquet(BouquetType bouquetType) {
+    public BouquetPage setRandomBouquet(BouquetType bouquetType, CurrencyType currencyType) {
         apiClient.initBouquet(bouquetType);
         bouquetLoader.shouldNotBe(visible, Duration.ofSeconds(30));
         String bouquetName = apiClient.getBouquetName();
-        String bouquetPrice = String.valueOf(apiClient.getBouquetPrice());
+        String bouquetPrice = String.valueOf(apiClient.getBouquetPrice(currencyType));
         int page = 1;
 
         boolean foundBouquet = false;
         while (!foundBouquet) {
+            bouquetList.shouldHave(sizeGreaterThanOrEqual(apiClient.getBouquetListReminder()));
             for (SelenideElement se : bouquetList) {
                 if (se.getText().contains(bouquetName)) {
-                    assertEquals(bouquetPrice, se.$("._1KvrG3Aq").getText().replaceAll("\\D", ""),
+                    assertTrue(se.$("._1KvrG3Aq").getText().contains(HelperPage.priceCurrencyFormat(currencyType, bouquetPrice)),
                             "Incorrect bouquet price " + bouquetName);
                     se.click();
                     foundBouquet = true;
@@ -106,7 +114,7 @@ public class CatalogPage {
                 page++;
             }
         }
-        return new BouquetPage(apiClient);
+        return new BouquetPage(apiClient, new AssertFixturesPage(apiClient));
     }
 
     public CatalogPage closeCookiePopUp() {
@@ -240,6 +248,17 @@ public class CatalogPage {
 
     public CatalogPage assertAlreadyExistsEmailWhenRegister() {
         userAlreadyExistsError.shouldBe(exist);
+        return this;
+    }
+
+    public CatalogPage setCurrency(CurrencyType currencyType) {
+        currencyDropper.shouldBe(exist).click();
+        switch (currencyType) {
+            case EUR -> setEurPrice.shouldBe(exist).click();
+            case KZT -> setKztPrice.shouldBe(exist).click();
+            case USD -> setUsdPrice.shouldBe(exist).click();
+            //case RUB -> setRubPrice.shouldBe(exist).click();
+        }
         return this;
     }
 }
