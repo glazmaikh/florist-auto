@@ -3,21 +3,21 @@ package config;
 import org.aeonbits.owner.Config;
 
 @Config.Sources({
-        "classpath:base.properties"
+        "classpath:${TEST_ENV}.properties"
 })
 public interface BaseConfig extends Config {
-    @Key("base_url")
+    @Key("base.url")
     String getBaseUrl();
 
-    @Key("card_number")
+    @Key("card.number")
     String getCardNumber();
 
-    @Key("expire_number")
+    @Key("expire.number")
     String getExpireNumber();
 
-    @Key("cvc_number")
+    @Key("cvc.number")
     String getCvcNumber();
 
-    @Key("promo")
-    String getPromo();
+    @Key("promo.code")
+    String getPromoCode();
 }
