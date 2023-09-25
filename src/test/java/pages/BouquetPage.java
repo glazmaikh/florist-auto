@@ -7,10 +7,8 @@ import fixtures.AssertFixturesPage;
 import helpers.ApiClient;
 import helpers.CurrencyType;
 import helpers.HelperPage;
-import models.bouquet.PriceItemDto;
 
 import java.time.Duration;
-import java.util.List;
 
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.*;
@@ -30,6 +28,18 @@ public class BouquetPage extends AssertFixturesPage {
         super(apiClient);
         this.apiClient = apiClient;
         this.assertFixturesPage = assertFixturesPage;
+    }
+
+    public int getBouquetId() {
+        return apiClient.getBouquetId();
+    }
+
+    public String getDeliveryPrice(CurrencyType currencyType) {
+        return apiClient.getDeliveryPrice(currencyType);
+    }
+
+    public String getBouquetName() {
+        return apiClient.getBouquetName();
     }
 
     public BouquetPage openBouquetPage(String baseUrl) {

@@ -60,6 +60,12 @@ test {
     }
 }
 
+tasks.register('test_order', Test) {
+    useJUnitPlatform {
+        includeTags("test_order")
+    }
+}
+
 tasks.register('create_order_test', Test) {
     useJUnitPlatform {
         includeTags("create_order")

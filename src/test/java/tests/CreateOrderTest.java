@@ -13,6 +13,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import pages.*;
 
+import java.time.LocalTime;
 import java.util.stream.Stream;
 
 public class CreateOrderTest extends TestBase {
@@ -407,5 +408,56 @@ public class CreateOrderTest extends TestBase {
     public static Stream<Arguments> currencyEnumProvider() {
         return Stream.of(CurrencyType.values())
                 .map(Arguments::of);
+    }
+
+    @Test
+    @Tag("test_order")
+    void createNewFloristRuOrderErpTest() {
+        catalogPage.openCatalogPage(baseUrl)
+                .closeCookiePopUp()
+                .setDeliveryCity()
+                .setRandomBouquet(BouquetType.FLORIST_RU, CurrencyType.RUB);
+
+        String bouquetId = String.valueOf(bouquetPage.getBouquetId());
+        String bouquetName = bouquetPage.getBouquetName();
+        String deliveryPrice = bouquetPage.getDeliveryPrice(CurrencyType.RUB);
+
+        bouquetPage.openBouquetPage(baseUrl)
+                .setFirstVariation()
+                .assertBouquetName()
+                .assertBouquetPrice(CurrencyType.RUB)
+                .assertDeliveryPrice(CurrencyType.RUB)
+                .assertTotalPrice(CurrencyType.RUB)
+                .addToCard(baseUrl);
+
+        checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
+                .getRandomDeliveryDate()
+                .getRandomDeliveryTime();
+
+        String deliveryDate = checkoutPage.getDeliveryDate();
+
+        LocalTime timeFrom = checkoutPage.getDeliveryTimeFrom();
+        LocalTime timeTo = checkoutPage.getDeliveryTimeTo();
+
+        checkoutPage.assertBouquetName()
+                .assertDeliveryPrice(CurrencyType.RUB)
+                .assertBouquetPrice(CurrencyType.RUB)
+                .assertTotalPrice(CurrencyType.RUB)
+                .goToPaymentPage();
+
+        paymentPage.assertPaymentStatus(baseUrl)
+                .assertBouquetName()
+                .assertDeliveryPrice(CurrencyType.RUB)
+                .assertBouquetPrice(CurrencyType.RUB);
+
+        String totalPrice = paymentPage.getTotalPrice(CurrencyType.RUB);
+
+        paymentPage.assertTotalPrice(CurrencyType.RUB)
+                .fillCard(cardNumber, expireNumber, cvcNumber)
+                .pay()
+                .confirm();
+
+        successPage.assertSuccessOrderStatus(baseUrl)
+                .assertSuccessCreatedOrder(CurrencyType.RUB);
     }
 }
