@@ -5,6 +5,7 @@ import helpers.ApiClient;
 
 import helpers.BouquetType;
 import helpers.CurrencyType;
+import helpers.HelperPage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -23,6 +24,7 @@ public class CreateOrderTest extends TestBase {
     private CheckoutPage checkoutPage;
     private PaymentPage paymentPage;
     private SuccessPage successPage;
+    private OrderERPPage orderERPPage;
     private AccountOrderPage accountOrderPage;
     private AssertFixturesPage assertFixturesPage;
     private String yourName, yourEmail, yourPhone, firstName, phone, address, password;
@@ -46,6 +48,7 @@ public class CreateOrderTest extends TestBase {
         paymentPage = new PaymentPage(apiClient, assertFixturesPage);
         successPage = new SuccessPage(apiClient);
         accountOrderPage = new AccountOrderPage(apiClient);
+        orderERPPage = new OrderERPPage(apiClient);
     }
 
     @Test
@@ -450,6 +453,7 @@ public class CreateOrderTest extends TestBase {
                 .assertDeliveryPrice(CurrencyType.RUB)
                 .assertBouquetPrice(CurrencyType.RUB);
 
+        String orderId = HelperPage.getOrderNumber();
         String totalPrice = paymentPage.getTotalPrice(CurrencyType.RUB);
 
         paymentPage.assertTotalPrice(CurrencyType.RUB)
@@ -459,5 +463,7 @@ public class CreateOrderTest extends TestBase {
 
         successPage.assertSuccessOrderStatus(baseUrl)
                 .assertSuccessCreatedOrder(CurrencyType.RUB);
+
+        orderERPPage.openOrder(baseUrl, orderId);
     }
 }

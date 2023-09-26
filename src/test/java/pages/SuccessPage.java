@@ -22,7 +22,7 @@ public class SuccessPage {
         this.apiClient = apiClient;
     }
 
-    public SuccessPage assertSuccessCreatedOrder(CurrencyType currencyType) {
+    public OrderERPPage assertSuccessCreatedOrder(CurrencyType currencyType) {
         apiClient.getOrderData();
         String orderId = String.valueOf(apiClient.getOrderId());
         String totalDataPrice = HelperPage.priceCurrencyFormat(currencyType, apiClient.getOrderTotalPrice(currencyType));
@@ -31,7 +31,7 @@ public class SuccessPage {
         orderSection.shouldHave(text(orderId));
         orderSection.shouldHave(text(totalDataPrice));
         orderSection.shouldHave(text(orderCreatedDate));
-        return this;
+        return new OrderERPPage(apiClient);
     }
 
     public SuccessPage assertSuccessOrderStatus(String baseUrl) {
