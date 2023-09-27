@@ -7,10 +7,8 @@ import fixtures.AssertFixturesPage;
 import helpers.ApiClient;
 import helpers.CurrencyType;
 import helpers.HelperPage;
-import models.bouquet.PriceItemDto;
 
 import java.time.Duration;
-import java.util.List;
 
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.*;
@@ -32,6 +30,18 @@ public class BouquetPage extends AssertFixturesPage {
         this.assertFixturesPage = assertFixturesPage;
     }
 
+    public int getBouquetId() {
+        return apiClient.getBouquetId();
+    }
+
+    public String getDeliveryPrice(CurrencyType currencyType) {
+        return apiClient.getDeliveryPrice(currencyType);
+    }
+
+    public String getBouquetName() {
+        return apiClient.getBouquetName();
+    }
+
     public BouquetPage openBouquetPage(String baseUrl) {
         webdriver().shouldHave(url(baseUrl + apiClient.getCitySlug() + "/bouquet-" + apiClient.getBouquetId()));
         return this;
@@ -42,9 +52,9 @@ public class BouquetPage extends AssertFixturesPage {
         return this;
     }
 
-    public BouquetPage assertBouquetPrice(CurrencyType currencyType) {
+    public String assertBouquetPrice(CurrencyType currencyType) {
         assertFixturesPage.performAssertBouquetPrice(bouquetSection, currencyType);
-        return this;
+        return apiClient.getBouquetPrice(currencyType);
     }
 
     public BouquetPage assertDeliveryPrice(CurrencyType currencyType) {

@@ -72,6 +72,11 @@ public class PaymentPage {
         return this;
     }
 
+    public String getTotalPrice(CurrencyType currencyType) {
+        apiClient.getOrderData();
+        return apiClient.getOrderTotalPrice(currencyType);
+    }
+
     public PaymentPage assertTotalPrice(CurrencyType currencyType) {
         apiClient.getOrderData();
         String totalDataPrice = HelperPage.priceCurrencyFormat(currencyType, apiClient.getOrderTotalPrice(currencyType));

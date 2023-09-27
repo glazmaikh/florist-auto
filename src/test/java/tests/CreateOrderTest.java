@@ -5,6 +5,7 @@ import helpers.ApiClient;
 
 import helpers.BouquetType;
 import helpers.CurrencyType;
+import helpers.HelperPage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -13,6 +14,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import pages.*;
 
+import java.time.LocalTime;
 import java.util.stream.Stream;
 
 public class CreateOrderTest extends TestBase {
@@ -22,29 +24,30 @@ public class CreateOrderTest extends TestBase {
     private CheckoutPage checkoutPage;
     private PaymentPage paymentPage;
     private SuccessPage successPage;
+    private OrderERPPage orderERPPage;
     private AccountOrderPage accountOrderPage;
-    private AssertFixturesPage assertFixturesPage;
-    private String yourName, yourEmail, yourPhone, firstName, phone, address, password;
+    private String yourName, yourEmail, yourPhone, recipientName, phone, address;
 
     @BeforeEach
     void setData() {
         yourName = testData.getYourFullName();
         yourEmail = testData.getYourEmail();
         yourPhone = testData.getYourPhone();
-        firstName = testData.getFirstName();
+        recipientName = testData.getRecipientName();
         phone = testData.getPhone();
         address = testData.getAddress();
         password = testData.getPassword();
 
         ApiClient apiClient = new ApiClient();
 
-        assertFixturesPage = new AssertFixturesPage(apiClient);
+        AssertFixturesPage assertFixturesPage = new AssertFixturesPage(apiClient);
         catalogPage = new CatalogPage(apiClient);
         bouquetPage = new BouquetPage(apiClient, assertFixturesPage);
         checkoutPage = new CheckoutPage(apiClient, assertFixturesPage);
         paymentPage = new PaymentPage(apiClient, assertFixturesPage);
         successPage = new SuccessPage(apiClient);
         accountOrderPage = new AccountOrderPage(apiClient);
+        orderERPPage = new OrderERPPage(apiClient);
     }
 
     @Test
@@ -58,12 +61,12 @@ public class CreateOrderTest extends TestBase {
         bouquetPage.openBouquetPage(baseUrl)
                 .setFirstVariation()
                 .assertBouquetName()
-                .assertBouquetPrice(CurrencyType.RUB)
-                .assertDeliveryPrice(CurrencyType.RUB)
+                .assertBouquetPrice(CurrencyType.RUB);
+        bouquetPage.assertDeliveryPrice(CurrencyType.RUB)
                 .assertTotalPrice(CurrencyType.RUB)
                 .addToCard(baseUrl);
 
-        checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
+        checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, recipientName, phone, address)
                 .getRandomDeliveryDate()
                 .getRandomDeliveryTime()
                 .assertBouquetName()
@@ -96,8 +99,8 @@ public class CreateOrderTest extends TestBase {
         bouquetPage.openBouquetPage(baseUrl)
                 .setFirstVariation()
                 .assertBouquetName()
-                .assertBouquetPrice(CurrencyType.RUB)
-                .assertDeliveryPrice(CurrencyType.RUB)
+                .assertBouquetPrice(CurrencyType.RUB);
+        bouquetPage.assertDeliveryPrice(CurrencyType.RUB)
                 .assertTotalPrice(CurrencyType.RUB)
                 .addToCard(baseUrl);
 
@@ -107,12 +110,12 @@ public class CreateOrderTest extends TestBase {
         bouquetPage.openBouquetPage(baseUrl)
                 .setFirstVariation()
                 .assertBouquetName()
-                .assertBouquetPrice(CurrencyType.RUB)
-                .assertDeliveryPrice(CurrencyType.RUB)
+                .assertBouquetPrice(CurrencyType.RUB);
+        bouquetPage.assertDeliveryPrice(CurrencyType.RUB)
                 .assertTotalPrice(CurrencyType.RUB)
                 .addToCard(baseUrl);
 
-        checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
+        checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, recipientName, phone, address)
                 .getRandomDeliveryDate()
                 .getRandomDeliveryTime()
                 .assertBouquetName()
@@ -145,12 +148,12 @@ public class CreateOrderTest extends TestBase {
         bouquetPage.openBouquetPage(baseUrl)
                 .setFirstVariation()
                 .assertBouquetName()
-                .assertBouquetPrice(CurrencyType.RUB)
-                .assertDeliveryPrice(CurrencyType.RUB)
+                .assertBouquetPrice(CurrencyType.RUB);
+        bouquetPage.assertDeliveryPrice(CurrencyType.RUB)
                 .assertTotalPrice(CurrencyType.RUB)
                 .addToCard(baseUrl);
 
-        checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
+        checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, recipientName, phone, address)
                 .getRandomDeliveryDate()
                 .getRandomDeliveryTime()
                 .assertBouquetName()
@@ -183,12 +186,12 @@ public class CreateOrderTest extends TestBase {
         bouquetPage.openBouquetPage(baseUrl)
                 .setFirstVariation()
                 .assertBouquetName()
-                .assertBouquetPrice(CurrencyType.RUB)
-                .assertDeliveryPrice(CurrencyType.RUB)
+                .assertBouquetPrice(CurrencyType.RUB);
+        bouquetPage.assertDeliveryPrice(CurrencyType.RUB)
                 .assertTotalPrice(CurrencyType.RUB)
                 .addToCard(baseUrl);
 
-        checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
+        checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, recipientName, phone, address)
                 .getRandomDeliveryDate()
                 .getRandomDeliveryTime()
                 .assertBouquetName()
@@ -233,12 +236,12 @@ public class CreateOrderTest extends TestBase {
         bouquetPage.openBouquetPage(baseUrl)
                 .setFirstVariation()
                 .assertBouquetName()
-                .assertBouquetPrice(CurrencyType.RUB)
-                .assertDeliveryPrice(CurrencyType.RUB)
+                .assertBouquetPrice(CurrencyType.RUB);
+        bouquetPage.assertDeliveryPrice(CurrencyType.RUB)
                 .assertTotalPrice(CurrencyType.RUB)
                 .addToCard(baseUrl);
 
-        checkoutPage.simpleFillForm(firstName, phone, address)
+        checkoutPage.simpleFillForm(recipientName, phone, address)
                 .getRandomDeliveryDate()
                 .getRandomDeliveryTime()
                 .assertBouquetName()
@@ -274,14 +277,14 @@ public class CreateOrderTest extends TestBase {
         bouquetPage.openBouquetPage(baseUrl)
                 .setFirstVariation()
                 .assertBouquetName()
-                .assertBouquetPrice(CurrencyType.RUB)
-                .setRandomExtras(CurrencyType.RUB)
+                .assertBouquetPrice(CurrencyType.RUB);
+        bouquetPage.setRandomExtras(CurrencyType.RUB)
                 .assertExtrasPrice(CurrencyType.RUB)
                 .assertDeliveryPrice(CurrencyType.RUB)
                 .assertTotalPrice(CurrencyType.RUB)
                 .addToCard(baseUrl);
 
-        checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
+        checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, recipientName, phone, address)
                 .getRandomDeliveryDate()
                 .getRandomDeliveryTime()
                 .assertBouquetName()
@@ -316,8 +319,8 @@ public class CreateOrderTest extends TestBase {
         bouquetPage.openBouquetPage(baseUrl)
                 .setFirstVariation()
                 .assertBouquetName()
-                .assertBouquetPrice(CurrencyType.RUB)
-                .assertDeliveryPrice(CurrencyType.RUB)
+                .assertBouquetPrice(CurrencyType.RUB);
+        bouquetPage.assertDeliveryPrice(CurrencyType.RUB)
                 .assertTotalPrice(CurrencyType.RUB)
                 .addToCard(baseUrl);
 
@@ -335,12 +338,12 @@ public class CreateOrderTest extends TestBase {
         bouquetPage.openBouquetPage(baseUrl)
                 .setFirstVariation()
                 .assertBouquetName()
-                .assertBouquetPrice(CurrencyType.RUB)
-                .assertDeliveryPrice(CurrencyType.RUB)
+                .assertBouquetPrice(CurrencyType.RUB);
+        bouquetPage.assertDeliveryPrice(CurrencyType.RUB)
                 .assertTotalPrice(CurrencyType.RUB)
                 .addToCard(baseUrl);
 
-        checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
+        checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, recipientName, phone, address)
                 .getRandomDeliveryDate()
                 .getRandomDeliveryTime()
                 .assertBouquetName()
@@ -377,12 +380,12 @@ public class CreateOrderTest extends TestBase {
         bouquetPage.openBouquetPage(baseUrl)
                 .setFirstVariation()
                 .assertBouquetName()
-                .assertBouquetPrice(currency)
-                .assertDeliveryPrice(currency)
+                .assertBouquetPrice(currency);
+        bouquetPage.assertDeliveryPrice(currency)
                 .assertTotalPrice(currency)
                 .addToCard(baseUrl);
 
-        checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, firstName, phone, address)
+        checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, recipientName, phone, address)
                 .getRandomDeliveryDate()
                 .getRandomDeliveryTime()
                 .assertBouquetName()
@@ -407,5 +410,61 @@ public class CreateOrderTest extends TestBase {
     public static Stream<Arguments> currencyEnumProvider() {
         return Stream.of(CurrencyType.values())
                 .map(Arguments::of);
+    }
+
+    @Test
+    @Tag("test_order")
+    void createNewFloristRuOrderErpTest() {
+        catalogPage.openCatalogPage(baseUrl)
+                .closeCookiePopUp()
+                .setDeliveryCity()
+                .setRandomBouquet(BouquetType.FLORIST_RU, CurrencyType.RUB);
+
+        String bouquetId = String.valueOf(bouquetPage.getBouquetId());
+        String bouquetName = bouquetPage.getBouquetName();
+        String deliveryPrice = bouquetPage.getDeliveryPrice(CurrencyType.RUB);
+        bouquetPage.openBouquetPage(baseUrl)
+                .setFirstVariation()
+                .assertBouquetName();
+
+        String bouquetPrice = bouquetPage.assertBouquetPrice(CurrencyType.RUB);
+        bouquetPage.assertDeliveryPrice(CurrencyType.RUB)
+                .assertTotalPrice(CurrencyType.RUB)
+                .addToCard(baseUrl);
+
+        checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, recipientName, phone, address)
+                .getRandomDeliveryDate()
+                .getRandomDeliveryTime();
+
+        String deliveryDate = checkoutPage.getDeliveryDate();
+        LocalTime timeFrom = checkoutPage.getDeliveryTimeFrom();
+        LocalTime timeTo = checkoutPage.getDeliveryTimeTo();
+        checkoutPage.assertBouquetName()
+                .assertDeliveryPrice(CurrencyType.RUB)
+                .assertBouquetPrice(CurrencyType.RUB)
+                .assertTotalPrice(CurrencyType.RUB)
+                .goToPaymentPage();
+
+        paymentPage.assertPaymentStatus(baseUrl)
+                .assertBouquetName()
+                .assertDeliveryPrice(CurrencyType.RUB)
+                .assertBouquetPrice(CurrencyType.RUB);
+
+        String orderId = HelperPage.getOrderNumber();
+        String totalPrice = paymentPage.getTotalPrice(CurrencyType.RUB);
+
+        paymentPage.assertTotalPrice(CurrencyType.RUB)
+                .fillCard(cardNumber, expireNumber, cvcNumber)
+                .pay()
+                .confirm();
+
+        successPage.assertSuccessOrderStatus(baseUrl)
+                .assertSuccessCreatedOrder(CurrencyType.RUB);
+
+        orderERPPage.openOrder(baseUrl, orderId)
+                .assertBouquetInfo(orderId, bouquetId, bouquetName, bouquetPrice)
+                .assertPrices(deliveryPrice, totalPrice, deliveryDate)
+                .assertPaymentCompletedChecked()
+                .assertRecipientInfo(recipientName, address, phone, timeFrom, timeTo);
     }
 }

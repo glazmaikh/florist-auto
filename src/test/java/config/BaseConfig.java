@@ -20,4 +20,10 @@ public interface BaseConfig extends Config {
 
     @Key("promo.code")
     String getPromoCode();
+
+    @Key("login")
+    String getLogin();
+
+    @Key("password")
+    String getPassword();
 }

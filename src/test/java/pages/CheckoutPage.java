@@ -51,6 +51,18 @@ public class CheckoutPage {
         this.assertFixturesPage = assertFixturesPage;
     }
 
+    public String getDeliveryDate() {
+        return deliveryDate;
+    }
+
+    public LocalTime getDeliveryTimeFrom() {
+        return HelperPage.doubleToTime(apiClient.getDeliveryTimeFrom());
+    }
+
+    public LocalTime getDeliveryTimeTo() {
+        return HelperPage.doubleToTime(apiClient.getDeliveryTimeTo());
+    }
+
     public CheckoutPage simpleFillForm(String name, String phone, String address) {
         nameInput.shouldBe(exist, Duration.ofSeconds(10)).val(name);
         phoneInput.val(phone);

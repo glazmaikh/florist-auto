@@ -14,7 +14,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
 
@@ -24,6 +23,8 @@ public class TestBase {
     static String expireNumber;
     static String cvcNumber;
     static String promo;
+    static String login;
+    static String password;
 
     @BeforeAll
     static void setUp() throws IOException {
@@ -37,6 +38,8 @@ public class TestBase {
         expireNumber = config.getExpireNumber();
         cvcNumber = config.getCvcNumber();
         promo = config.getPromoCode();
+        login = config.getLogin();
+        password = config.getPassword();
 
         //System.setProperty("webdriver.chrome.driver", "C://webdrivers/chromedriver116.exe");
         Configuration.baseUrl = System.getProperty("base_url", "https://www.stage.florist.local/");
