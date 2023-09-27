@@ -6,6 +6,7 @@ import com.codeborne.selenide.SelenideElement;
 import helpers.ApiClient;
 import org.openqa.selenium.JavascriptExecutor;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -16,6 +17,7 @@ import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 public class OrderERPPage {
     SelenideElement orderSection = $x("//input[@name='id']");
     SelenideElement bouquetSection = $x("//form[@name='main1']");
+    SelenideElement paymentCompleteCheckbox = $("#seed1");
     private ApiClient apiClient;
 
     public OrderERPPage(ApiClient apiClient) {
@@ -42,6 +44,10 @@ public class OrderERPPage {
         bouquetSection.shouldHave(text(deliveryPrice));
         bouquetSection.shouldHave(text(totalPrice));
         bouquetSection.shouldHave(text(deliveryDate));
+        return this;
+    }
+    public OrderERPPage assertPaymentCompletedChecked() {
+        paymentCompleteCheckbox.shouldBe(checked, Duration.ofSeconds(20));
         return this;
     }
 
