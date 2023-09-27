@@ -12,7 +12,7 @@ public class TestData {
     }
 
     public String getYourFullName() {
-        return faker.name().fullName();
+        return faker.name().firstName();
     }
 
     public String getYourEmail() {
@@ -25,8 +25,8 @@ public class TestData {
         return "+7" + faker.phoneNumber().cellPhone().replaceAll("[\\s\\p{Punct}]","");
     }
 
-    public String getFirstName() {
-        return faker.name().firstName();
+    public String getRecipientName() {
+        return faker.name().fullName();
     }
 
     public String getPhone() {

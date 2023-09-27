@@ -52,9 +52,9 @@ public class BouquetPage extends AssertFixturesPage {
         return this;
     }
 
-    public BouquetPage assertBouquetPrice(CurrencyType currencyType) {
+    public String assertBouquetPrice(CurrencyType currencyType) {
         assertFixturesPage.performAssertBouquetPrice(bouquetSection, currencyType);
-        return this;
+        return apiClient.getBouquetPrice(currencyType);
     }
 
     public BouquetPage assertDeliveryPrice(CurrencyType currencyType) {
