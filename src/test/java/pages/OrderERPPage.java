@@ -4,20 +4,19 @@ import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import helpers.ApiClient;
-import org.openqa.selenium.JavascriptExecutor;
 
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalTime;
 
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.*;
-import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 
 public class OrderERPPage {
     SelenideElement orderSection = $x("//input[@name='id']");
     SelenideElement bouquetSection = $x("//form[@name='main1']");
+    SelenideElement recipientSection = $x("//td[@style='word-break: break-all']");
     SelenideElement paymentCompleteCheckbox = $("#seed1");
+    SelenideElement deliveryTimeSection = $x("//font[@size='+1']");
     private ApiClient apiClient;
 
     public OrderERPPage(ApiClient apiClient) {
@@ -27,7 +26,7 @@ public class OrderERPPage {
     public OrderERPPage openOrder(String baseUrl, String orderId) {
         baseUrl = baseUrl.replaceAll("https://www\\.", "");
         String url = "https://s_orlovskiy:SdfrFr5548@" + baseUrl + "dbnew/db/purchase.php?id=" + orderId;
-        Selenide.executeJavaScript("window.open('"+ url + "')");
+        Selenide.executeJavaScript("window.open('" + url + "')");
         Selenide.switchTo().window(1);
         return this;
     }
@@ -46,10 +45,18 @@ public class OrderERPPage {
         bouquetSection.shouldHave(text(deliveryDate));
         return this;
     }
+
     public OrderERPPage assertPaymentCompletedChecked() {
         paymentCompleteCheckbox.shouldBe(checked, Duration.ofSeconds(20));
         return this;
     }
 
-    // String recipientName, String address, LocalTime timeFrom, LocalTime timeTo
+    public OrderERPPage assertRecipientInfo(String recipientName, String address, String phone, LocalTime timeFrom, LocalTime timeTo) {
+        recipientSection.shouldHave(text(recipientName));
+        recipientSection.shouldHave(text(address));
+        recipientSection.shouldHave(text(phone));
+        deliveryTimeSection.shouldHave(text(String.valueOf(timeFrom)));
+        deliveryTimeSection.shouldHave(text(String.valueOf(timeTo)));
+        return this;
+    }
 }

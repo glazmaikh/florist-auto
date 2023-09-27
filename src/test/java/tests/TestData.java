@@ -30,7 +30,7 @@ public class TestData {
     }
 
     public String getPhone() {
-        return faker.phoneNumber().cellPhone();
+        return faker.numerify("##########");
     }
 
     public String getAddress() {
