@@ -8,11 +8,14 @@ import java.time.Duration;
 
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.*;
+import static org.hamcrest.Matchers.endsWith;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class OrderERPPage {
     SelenideElement orderSection = $x("//input[@name='id']");
     SelenideElement bouquetSection = $x("//form[@name='main1']");
     SelenideElement recipientSection = $x("//td[@style='word-break: break-all']");
+    SelenideElement addressSection = $("#card-recipient-address");
     SelenideElement paymentCompleteCheckbox = $("#seed1");
     SelenideElement deliveryTimeSection = $x("//font[@size='+1']");
     private ApiClient apiClient;
@@ -30,6 +33,7 @@ public class OrderERPPage {
     }
 
     public OrderERPPage assertBouquetInfo(String orderId, String bouquetId, String bouquetName, String bouquetPrice) {
+        System.out.println(orderId + " orderId");
         orderSection.shouldHave(attribute("value", orderId));
         bouquetSection.shouldHave(text(bouquetId));
         bouquetSection.shouldHave(text(bouquetName));
@@ -51,9 +55,9 @@ public class OrderERPPage {
 
     public OrderERPPage assertRecipientInfo(String recipientName, String address, String phone, String deliveryTimeFrom) {
         recipientSection.shouldHave(text(recipientName));
-        recipientSection.shouldHave(text(address));
+        assertTrue(addressSection.getText().contains(address));
         recipientSection.shouldHave(text(phone));
-        //deliveryTimeSection.shouldHave(text(deliveryTimeFrom));
+        deliveryTimeSection.shouldHave(text(deliveryTimeFrom));
         return this;
     }
 }
