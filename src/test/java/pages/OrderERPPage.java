@@ -1,12 +1,10 @@
 package pages;
 
-import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import helpers.ApiClient;
 
 import java.time.Duration;
-import java.time.LocalTime;
 
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.*;
@@ -55,10 +53,7 @@ public class OrderERPPage {
         recipientSection.shouldHave(text(recipientName));
         recipientSection.shouldHave(text(address));
         recipientSection.shouldHave(text(phone));
-        System.out.println(deliveryTimeFrom + " deliveryTimeFrom");
-
         deliveryTimeSection.shouldHave(text(deliveryTimeFrom));
-//        deliveryTimeSection.shouldHave(text(String.valueOf(timeTo)));
         return this;
     }
 }
