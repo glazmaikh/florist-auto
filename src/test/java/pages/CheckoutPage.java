@@ -55,14 +55,6 @@ public class CheckoutPage {
         return deliveryDate;
     }
 
-    public LocalTime getDeliveryTimeFrom() {
-        return HelperPage.doubleToTime(apiClient.getDeliveryTimeFrom());
-    }
-
-    public LocalTime getDeliveryTimeTo() {
-        return HelperPage.doubleToTime(apiClient.getDeliveryTimeTo());
-    }
-
     public CheckoutPage simpleFillForm(String name, String phone, String address) {
         nameInput.shouldBe(exist, Duration.ofSeconds(10)).val(name);
         phoneInput.val(phone);
@@ -161,20 +153,20 @@ public class CheckoutPage {
         return this;
     }
 
-    public CheckoutPage getRandomDeliveryTime() {
+    public String getRandomDeliveryTime() {
         apiClient.getDeliveryDateInterval(deliveryDate);
         LocalTime timeFrom = HelperPage.doubleToTime(apiClient.getDeliveryTimeFrom());
         LocalTime timeTo = HelperPage.doubleToTime(apiClient.getDeliveryTimeTo());
         String time = HelperPage.getRandomTimeInterval(timeFrom, timeTo);
-        String timeBeforeInterval = timeTo.plusMinutes(15).toString();
-        String timeAfterInterval = timeFrom.minusMinutes(15).toString();
 
         timeFromInput.shouldBe(exist).click();
         timeDropped.shouldBe(exist);
 
         assertTrue(timeIntervals.stream().anyMatch(e -> e.getText().equals(time)), "time intervals contains correct delivery time");
-        assertTrue(timeIntervals.stream().noneMatch(e -> e.getText().equals(timeBeforeInterval)), "time intervals not contains before time delivery");
-        assertTrue(timeIntervals.stream().noneMatch(e -> e.getText().equals(timeAfterInterval)), "time intervals not contains after time delivery");
+        assertTrue(timeIntervals.stream().noneMatch(e -> e.getText().equals(timeTo.plusMinutes(15).toString())),
+                "time intervals not contains before time delivery");
+        assertTrue(timeIntervals.stream().noneMatch(e -> e.getText().equals(timeFrom.minusMinutes(15).toString())),
+                "time intervals not contains after time delivery");
 
         for (SelenideElement se : timeIntervals) {
             if (se.getText().equals(time)) {
@@ -182,8 +174,7 @@ public class CheckoutPage {
                 break;
             }
         }
-
-        return this;
+        return time;
     }
 
     public PaymentPage assertOrderAndBackToPay() {

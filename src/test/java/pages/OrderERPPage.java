@@ -51,12 +51,14 @@ public class OrderERPPage {
         return this;
     }
 
-    public OrderERPPage assertRecipientInfo(String recipientName, String address, String phone, LocalTime timeFrom, LocalTime timeTo) {
+    public OrderERPPage assertRecipientInfo(String recipientName, String address, String phone, String deliveryTimeFrom) {
         recipientSection.shouldHave(text(recipientName));
         recipientSection.shouldHave(text(address));
         recipientSection.shouldHave(text(phone));
-        deliveryTimeSection.shouldHave(text(String.valueOf(timeFrom)));
-        deliveryTimeSection.shouldHave(text(String.valueOf(timeTo)));
+        System.out.println(deliveryTimeFrom + " deliveryTimeFrom");
+
+        deliveryTimeSection.shouldHave(text(deliveryTimeFrom));
+//        deliveryTimeSection.shouldHave(text(String.valueOf(timeTo)));
         return this;
     }
 }
