@@ -132,12 +132,12 @@ public class CatalogPage {
 
     public CatalogPage fillRegisterForm(String name, String phone, String email, String password) {
         nameInput.shouldBe(exist).sendKeys(name);
-        phoneInput.sendKeys(phone);
-        emailInput.sendKeys(email);
-        phoneInput.sendKeys(email);
-        passwordInput.sendKeys(password);
-        repeatPasswordInput.sendKeys(password);
-        privacyPolicyInput.click();
+        phoneInput.shouldBe(exist).sendKeys(phone);
+        emailInput.shouldBe(exist).sendKeys(email);
+        phoneInput.shouldBe(exist).sendKeys(email);
+        passwordInput.shouldBe(exist).sendKeys(password);
+        repeatPasswordInput.shouldBe(exist).sendKeys(password);
+        privacyPolicyInput.shouldBe(exist).click();
         privacyAlert.shouldNotBe(exist);
 
         registerNewAccountButton.shouldBe(exist).click();
