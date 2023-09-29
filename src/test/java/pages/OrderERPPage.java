@@ -33,7 +33,6 @@ public class OrderERPPage {
     }
 
     public OrderERPPage assertBouquetInfo(String orderId, String bouquetId, String bouquetName, String bouquetPrice) {
-        System.out.println(orderId + " orderId");
         orderSection.shouldHave(attribute("value", orderId));
         bouquetSection.shouldHave(text(bouquetId));
         bouquetSection.shouldHave(text(bouquetName));
