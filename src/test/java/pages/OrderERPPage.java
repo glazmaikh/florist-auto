@@ -8,7 +8,6 @@ import java.time.Duration;
 
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.*;
-import static org.hamcrest.Matchers.endsWith;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class OrderERPPage {
@@ -56,7 +55,7 @@ public class OrderERPPage {
         recipientSection.shouldHave(text(recipientName));
         assertTrue(addressSection.getText().contains(address));
         recipientSection.shouldHave(text(phone));
-        deliveryTimeSection.shouldHave(text(deliveryTimeFrom));
+        deliveryTimeSection.shouldHave(text(deliveryTimeFrom.replaceAll("^0", "")));
         return this;
     }
 }

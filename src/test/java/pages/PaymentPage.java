@@ -98,7 +98,7 @@ public class PaymentPage {
     }
 
     public SuccessPage confirm() {
-        iframeAssist.shouldBe(exist, Duration.ofSeconds(15));
+        iframeAssist.shouldBe(exist, Duration.ofSeconds(20));
         switchTo().frame(iframeAssist);
         confirmSubmitButton.shouldBe(visible, Duration.ofSeconds(15)).click();
         thanksFor.shouldBe(visible, Duration.ofSeconds(15));

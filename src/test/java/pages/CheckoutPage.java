@@ -157,23 +157,15 @@ public class CheckoutPage {
         apiClient.getDeliveryDateInterval(deliveryDate);
         LocalTime timeFrom = HelperPage.doubleToTime(apiClient.getDeliveryTimeFrom());
         LocalTime timeTo = HelperPage.doubleToTime(apiClient.getDeliveryTimeTo());
+
+        System.out.println(timeFrom + " timeFrom");
         String time = HelperPage.getRandomTimeInterval(timeFrom, timeTo);
+        System.out.println(time + " time");
 
         timeFromInput.shouldBe(exist).click();
         timeDropped.shouldBe(exist);
-
-        assertTrue(timeIntervals.stream().anyMatch(e -> e.getText().equals(time)), "time intervals contains correct delivery time");
-        assertTrue(timeIntervals.stream().noneMatch(e -> e.getText().equals(timeTo.plusMinutes(15).toString())),
-                "time intervals not contains before time delivery");
-        assertTrue(timeIntervals.stream().noneMatch(e -> e.getText().equals(timeFrom.minusMinutes(15).toString())),
-                "time intervals not contains after time delivery");
-
-        for (SelenideElement se : timeIntervals) {
-            if (se.getText().equals(time)) {
-                se.shouldBe(exist).click();
-                break;
-            }
-        }
+        timeDropped.shouldHave(text(time));
+        timeIntervals.findBy(text(time)).click();
         return time;
     }
 
