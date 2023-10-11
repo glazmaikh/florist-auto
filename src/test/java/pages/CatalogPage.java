@@ -22,7 +22,7 @@ import static tests.TestBase.baseUrl;
 
 public class CatalogPage {
     private final ApiClient apiClient;
-    private final SelenideElement cookiePopUp = $("._3bcT6MiV");
+    private final SelenideElement cookiePopUp = $("._3IvvXl4z");
     private final SelenideElement cookiePopUpClose = $(".lkfJru7k");
     private final SelenideElement deliveryCityModal = $x("//span[text()='Укажите город доставки в поле:']");
     private final SelenideElement cityPopUpInput = $("#location-select");
@@ -120,7 +120,7 @@ public class CatalogPage {
     public CatalogPage closeCookiePopUp() {
         cookiePopUp.shouldBe(visible, Duration.ofSeconds(15));
         cookiePopUpClose.shouldBe(visible, Duration.ofSeconds(15)).click();
-        cookiePopUp.shouldNotBe(visible, Duration.ofSeconds(10));
+        cookiePopUp.shouldNotBe(visible);
         return this;
     }
 
