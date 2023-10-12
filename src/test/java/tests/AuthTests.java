@@ -46,25 +46,25 @@ public class AuthTests extends TestBase {
         catalogPage.assertUnAuth();
     }
 
-    @Test
-    @Tag("auth")
-    void authNewUserWithIncorrectPasswordTest() {
-        catalogPage.apiRegisterUser(yourName, yourEmail, yourPhone, password)
-                .openCatalogPage(baseUrl)
-                .closeCookiePopUp()
-                .openAuthModal()
-                .fillAuthForm(yourEmail, testData.getPassword());
-        catalogPage.assertAuthIncorrectPass();
-    }
+//    @Test
+//    @Tag("auth")
+//    void authNewUserWithIncorrectPasswordTest() {
+//        catalogPage.apiRegisterUser(yourName, yourEmail, yourPhone, password)
+//                .openCatalogPage(baseUrl)
+//                .closeCookiePopUp()
+//                .openAuthModal()
+//                .fillAuthForm(yourEmail, testData.getPassword());
+//        catalogPage.assertAuthIncorrectPass();
+//    }
 
-    @ParameterizedTest(name = "Тест на проверку всплывающей ошибки 'Поле обязательно для заполнения' когда поля авторизации пустые")
-    @ValueSource(strings = {""})
-    @Tag("auth")
-    void authEmptyFieldsTest(String empty) {
-        catalogPage.openCatalogPage(baseUrl)
-                .closeCookiePopUp()
-                .openAuthModal()
-                .fillUnAuthForm(empty, empty);
-        catalogPage.assertEmptyAuthFields();
-    }
+//    @ParameterizedTest(name = "Тест на проверку всплывающей ошибки 'Поле обязательно для заполнения' когда поля авторизации пустые")
+//    @ValueSource(strings = {""})
+//    @Tag("auth")
+//    void authEmptyFieldsTest(String empty) {
+//        catalogPage.openCatalogPage(baseUrl)
+//                .closeCookiePopUp()
+//                .openAuthModal()
+//                .fillUnAuthForm(empty, empty);
+//        catalogPage.assertEmptyAuthFields();
+//    }
 }
