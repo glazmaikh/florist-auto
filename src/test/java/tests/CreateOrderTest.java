@@ -413,7 +413,6 @@ public class CreateOrderTest extends TestBase {
 //    }
 
     @Test
-    @Tag("test_order")
     void createNewFloristRuOrderErpTest() {
         catalogPage.openCatalogPage(baseUrl)
                 .closeCookiePopUp()
