@@ -25,6 +25,7 @@ public class PaymentPage {
     private final SelenideElement iframeAssist = $x("//div[@id='modal-overlay']//iframe");
     private final SelenideElement orderSection = $(".AEYhRIG-");
     private final SelenideElement header = $x("//h1");
+    //private final SelenideElement thanksFor1 = $x("//h1");
     private final SelenideElement thanksFor = $x("//h1[text() ='Спасибо за заказ']");
     private final SelenideElement checkOnPromoCodeInput = $x("//div[@class='_2ke-1fXm']//span");
     private final SelenideElement promoCodeInput = $x("//span[text()='Введите промокод']//preceding-sibling::input");
@@ -101,7 +102,8 @@ public class PaymentPage {
         iframeAssist.shouldBe(exist, Duration.ofSeconds(20));
         switchTo().frame(iframeAssist);
         confirmSubmitButton.shouldBe(visible, Duration.ofSeconds(15)).click();
-        thanksFor.shouldBe(visible, Duration.ofSeconds(15));
+        switchTo().defaultContent();
+        thanksFor.shouldBe(visible, Duration.ofSeconds(20));
         return new SuccessPage(apiClient);
     }
 

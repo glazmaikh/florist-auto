@@ -41,9 +41,8 @@ public class TestBase {
         login = config.getLogin();
         password = config.getPassword();
 
-        //System.setProperty("webdriver.chrome.driver", "C://webdrivers/chromedriver116.exe");
+        //System.setProperty("webdriver.chrome.driver", "C://webdrivers/chromedriver118.exe");
         Configuration.baseUrl = System.getProperty("base_url", "https://www." + testEnv + ".florist.local/");
-        System.out.println(Configuration.baseUrl + " Configuration.baseUrl");
         Configuration.browser = System.getProperty("browser", "chrome");
         RestAssured.baseURI = baseUrl;
         //Configuration.holdBrowserOpen = true;

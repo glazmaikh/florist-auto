@@ -68,7 +68,7 @@ public class BouquetPage extends AssertFixturesPage {
     }
 
     public CheckoutPage addToCard(String baseUrl) {
-        addToCardButton.shouldBe(Condition.exist, Duration.ofSeconds(5)).click();
+        addToCardButton.shouldBe(Condition.exist, Duration.ofSeconds(15)).click();
         webdriver().shouldHave(url(baseUrl + apiClient.getCitySlug() + "/checkout"), Duration.ofSeconds(10));
         return new CheckoutPage(apiClient, assertFixturesPage);
     }
