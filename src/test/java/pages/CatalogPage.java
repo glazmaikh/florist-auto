@@ -22,8 +22,9 @@ import static tests.TestBase.baseUrl;
 
 public class CatalogPage {
     private final ApiClient apiClient;
-    private final SelenideElement cookiePopUp = $("._3IvvXl4z");
-    private final SelenideElement cookiePopUpClose = $(".lkfJru7k");
+    private final SelenideElement cookiePopUpCross = $("._3IvvXl4z");
+    private final SelenideElement cookiePopUp = $(".bco1zbf0");
+    private final SelenideElement cookiePopUpCrossArea = $(".lkfJru7k");
     private final SelenideElement deliveryCityModal = $x("//span[text()='Укажите город доставки в поле:']");
     private final SelenideElement cityPopUpInput = $("#location-select");
     private final SelenideElement cityLoader = $(".css-1gl4k7y");
@@ -118,8 +119,9 @@ public class CatalogPage {
     }
 
     public CatalogPage closeCookiePopUp() {
+        cookiePopUpCross.shouldBe(visible, Duration.ofSeconds(15));
         cookiePopUp.shouldBe(visible, Duration.ofSeconds(15));
-        cookiePopUpClose.shouldBe(visible, Duration.ofSeconds(15)).click();
+        cookiePopUpCrossArea.shouldBe(visible, Duration.ofSeconds(15)).click();
         cookiePopUp.shouldNotBe(visible, Duration.ofSeconds(15));
         return this;
     }
