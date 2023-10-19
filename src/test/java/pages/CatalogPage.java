@@ -120,7 +120,7 @@ public class CatalogPage {
     public CatalogPage closeCookiePopUp() {
         cookiePopUp.shouldBe(visible, Duration.ofSeconds(15));
         cookiePopUpClose.shouldBe(visible, Duration.ofSeconds(15)).click();
-        cookiePopUp.shouldNotBe(visible);
+        cookiePopUp.shouldNotBe(visible, Duration.ofSeconds(15));
         return this;
     }
 

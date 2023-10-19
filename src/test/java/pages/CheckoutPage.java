@@ -132,7 +132,7 @@ public class CheckoutPage {
         return new PaymentPage(apiClient, assertFixturesPage);
     }
 
-    public CheckoutPage getRandomDeliveryDate() {
+    public CheckoutPage setRandomDeliveryDate() {
         List<String> disabledDaysList = apiClient.getDisabledDeliveryDaysList();
         deliveryDate = HelperPage.getRandomDeliveryDayWithoutDisabled(disabledDaysList);
 
@@ -153,14 +153,11 @@ public class CheckoutPage {
         return this;
     }
 
-    public String getRandomDeliveryTime() {
+    public String setRandomDeliveryTime() {
         apiClient.getDeliveryDateInterval(deliveryDate);
         LocalTime timeFrom = HelperPage.doubleToTime(apiClient.getDeliveryTimeFrom());
         LocalTime timeTo = HelperPage.doubleToTime(apiClient.getDeliveryTimeTo());
-
-        System.out.println(timeFrom + " timeFrom");
         String time = HelperPage.getRandomTimeInterval(timeFrom, timeTo);
-        System.out.println(time + " time");
 
         timeFromInput.shouldBe(exist).click();
         timeDropped.shouldBe(exist);

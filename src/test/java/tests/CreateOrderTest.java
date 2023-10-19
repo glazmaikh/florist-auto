@@ -50,7 +50,7 @@ public class CreateOrderTest extends TestBase {
         orderERPPage = new OrderERPPage(apiClient);
     }
 
-//    @Test
+    //    @Test
 //    @Tag("create_order")
 //    void createNewFloristRuOrderTest() {
 //        catalogPage.openCatalogPage(baseUrl)
@@ -367,50 +367,52 @@ public class CreateOrderTest extends TestBase {
 //                .assertSuccessCreatedOrder(CurrencyType.RUB);
 //    }
 //
-//    @ParameterizedTest(name = "Тест на проверку оформления заказа и оплаты в валюте {0} доступной на сайте")
-//    @MethodSource("currencyEnumProvider")
-//    @Tag("create_order")
-//    void createOrderDifferentCurrencyTest(CurrencyType currency) {
-//        catalogPage.openCatalogPage(baseUrl)
-//                .closeCookiePopUp()
-//                .setDeliveryCity()
-//                .setCurrency(currency)
-//                .setRandomBouquet(BouquetType.FLORIST_RU, currency);
-//
-//        bouquetPage.openBouquetPage(baseUrl)
-//                .setFirstVariation()
-//                .assertBouquetName()
-//                .assertBouquetPrice(currency);
-//        bouquetPage.assertDeliveryPrice(currency)
-//                .assertTotalPrice(currency)
-//                .addToCard(baseUrl);
-//
-//        checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, recipientName, phone, address)
-//                .getRandomDeliveryDate()
-//                .getRandomDeliveryTime()
-//                .assertBouquetName()
-//                .assertDeliveryPrice(currency)
-//                .assertBouquetPrice(currency)
-//                .assertTotalPrice(currency)
-//                .goToPaymentPage();
-//
-//        paymentPage.assertPaymentStatus(baseUrl)
-//                .assertBouquetName()
-//                .assertDeliveryPrice(currency)
-//                .assertBouquetPrice(currency)
-//                .assertTotalPrice(currency)
-//                .fillCard(cardNumber, expireNumber, cvcNumber)
-//                .pay()
-//                .confirm();
-//
-//        successPage.assertSuccessOrderStatus(baseUrl)
-//                .assertSuccessCreatedOrder(currency);
-//    }
-//
-//    public static Stream<Arguments> currencyEnumProvider() {
-//        return Stream.of(CurrencyType.values())
-//                .map(Arguments::of);
-//    }
+    @ParameterizedTest(name = "Тест на проверку оформления заказа и оплаты в валюте {0} доступной на сайте")
+    @MethodSource("currencyEnumProvider")
+    @Tag("create_order")
+    void createOrderDifferentCurrencyTest(CurrencyType currency) {
+        catalogPage.openCatalogPage(baseUrl)
+                .closeCookiePopUp()
+                .setDeliveryCity()
+                .setCurrency(currency)
+                .setRandomBouquet(BouquetType.FLORIST_RU, currency);
+
+        bouquetPage.openBouquetPage(baseUrl)
+                .setFirstVariation()
+                .assertBouquetName()
+                .assertBouquetPrice(currency);
+
+        bouquetPage.assertDeliveryPrice(currency)
+                .assertTotalPrice(currency)
+                .addToCard(baseUrl);
+
+        checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, recipientName, phone, address)
+                .setRandomDeliveryDate()
+                .setRandomDeliveryTime();
+
+        checkoutPage.assertBouquetName()
+                .assertDeliveryPrice(currency)
+                .assertBouquetPrice(currency)
+                .assertTotalPrice(currency)
+                .goToPaymentPage();
+
+        paymentPage.assertPaymentStatus(baseUrl)
+                .assertBouquetName()
+                .assertDeliveryPrice(currency)
+                .assertBouquetPrice(currency)
+                .assertTotalPrice(currency)
+                .fillCard(cardNumber, expireNumber, cvcNumber)
+                .pay()
+                .confirm();
+
+        successPage.assertSuccessOrderStatus(baseUrl)
+                .assertSuccessCreatedOrder(currency);
+    }
+
+    public static Stream<Arguments> currencyEnumProvider() {
+        return Stream.of(CurrencyType.values())
+                .map(Arguments::of);
+    }
 
     @Test
     void createNewFloristRuOrderErpTest() {
@@ -434,9 +436,9 @@ public class CreateOrderTest extends TestBase {
                 .addToCard(baseUrl);
 
         checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, recipientName, phone, address)
-                .getRandomDeliveryDate();
+                .setRandomDeliveryDate();
 
-        String deliveryTimeFrom = checkoutPage.getRandomDeliveryTime();
+        String deliveryTimeFrom = checkoutPage.setRandomDeliveryTime();
         String deliveryDate = checkoutPage.getDeliveryDate();
 
         checkoutPage.assertBouquetName()
