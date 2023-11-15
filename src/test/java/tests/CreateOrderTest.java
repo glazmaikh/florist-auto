@@ -370,7 +370,7 @@ public class CreateOrderTest extends TestBase {
     @ParameterizedTest(name = "Тест на проверку оформления заказа и оплаты в валюте {0} доступной на сайте")
     @MethodSource("currencyEnumProvider")
     @Tag("create_order")
-    void createOrderDifferentCurrencyTest(CurrencyType currency) {
+    void createOrderDifferentCurrencyTest(CurrencyType currency) throws InterruptedException {
         catalogPage.openCatalogPage(baseUrl)
                 .closeCookiePopUp()
                 .setDeliveryCity()
@@ -415,7 +415,7 @@ public class CreateOrderTest extends TestBase {
     }
 
     @Test
-    void createNewFloristRuOrderErpTest() {
+    void createNewFloristRuOrderErpTest() throws InterruptedException {
         catalogPage.openCatalogPage(baseUrl)
                 .closeCookiePopUp()
                 .setDeliveryCity()

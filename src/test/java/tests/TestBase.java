@@ -12,9 +12,13 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 public class TestBase {
@@ -41,18 +45,27 @@ public class TestBase {
         login = config.getLogin();
         password = config.getPassword();
 
-        //System.setProperty("webdriver.chrome.driver", "C://webdrivers/chromedriver118.exe");
+        //System.setProperty("webdriver.chrome.driver", "C://webdrivers/chromedriver119.exe");
         Configuration.baseUrl = System.getProperty("base_url", "https://www." + testEnv + ".florist.local/");
+        //Configuration.baseUrl = System.getProperty("base_url", "https://www.test.florist.local/");
         Configuration.browser = System.getProperty("browser", "chrome");
         RestAssured.baseURI = baseUrl;
         //Configuration.holdBrowserOpen = true;
         Configuration.remote = "http://10.201.0.139:4444/wd/hub";
 
-//        SelenideLogger.addListener("allure", new AllureSelenide());
+        DesiredCapabilities capabilities = new DesiredCapabilities();
+        capabilities.setCapability("selenoid:options", Map.of(
+                "enableVNC", true,
+                "enableLogs", true,
+                "env", List.of("VERBOSE=true")));
+        Configuration.browserCapabilities = capabilities;
+
 //        DesiredCapabilities capabilities = new DesiredCapabilities();
 //        capabilities.setCapability("enableVNC", true);
 //        capabilities.setCapability("enableVideo", true);
 //        Configuration.browserCapabilities = capabilities;
+
+//        SelenideLogger.addListener("allure", new AllureSelenide());
     }
 
     @BeforeEach

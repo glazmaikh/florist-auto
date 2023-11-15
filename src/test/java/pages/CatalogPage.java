@@ -22,7 +22,7 @@ import static tests.TestBase.baseUrl;
 
 public class CatalogPage {
     private final ApiClient apiClient;
-    private final SelenideElement cookiePopUpCross = $("._3IvvXl4z");
+    private final SelenideElement cookiePopUpCross = $x("(.//*[normalize-space(text()) and normalize-space(.)='Флорист.ру — международная доставка цветов и букетов'])[1]/following::*[name()='svg'][3]");
     private final SelenideElement cookiePopUp = $(".bco1zbf0");
     private final SelenideElement cookiePopUpCrossArea = $(".lkfJru7k");
     private final SelenideElement deliveryCityModal = $x("//span[text()='Укажите город доставки в поле:']");
@@ -43,7 +43,7 @@ public class CatalogPage {
     private final SelenideElement privacyAlert = $(byText("Вы должны согласиться с условиями"));
     private final SelenideElement emptyFieldAlert = $x("//span[text()='Поле обязательно для заполнения']");
     private final SelenideElement submitButton = $("button[type='submit']");
-    private final SelenideElement deliveryCity = $(".CUvbyl33");
+    private final SelenideElement deliveryCity = $("._3APPs71Z");
     private final SelenideElement accountOrdersButton = $("button[aria-label='Перейти в личный кабинет']");
     private final SelenideElement registerNewAccountButton = $x("//span[text()='Создать аккаунт']/parent::button");
     private final SelenideElement userNotFoundSpan = $x("//span[text()='User not found']");
@@ -73,9 +73,9 @@ public class CatalogPage {
         return new AccountOrderPage(apiClient);
     }
 
-    public CatalogPage setDeliveryCity() {
-        deliveryCity.shouldBe(exist).click();
-        deliveryCityModal.shouldBe(exist);
+    public CatalogPage setDeliveryCity() throws InterruptedException {
+        deliveryCity.shouldBe(visible).click();
+        deliveryCityModal.shouldBe(visible);
 
         String cityName = apiClient.getCityName();
         cityPopUpInput.val(cityName);
