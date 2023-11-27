@@ -1,5 +1,6 @@
 package pages;
 
+import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import helpers.ApiClient;
 import helpers.CurrencyType;

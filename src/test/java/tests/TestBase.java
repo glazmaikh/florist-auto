@@ -6,20 +6,24 @@ import com.codeborne.selenide.logevents.SelenideLogger;
 import config.BaseConfig;
 import helpers.Attach;
 import io.qameta.allure.selenide.AllureSelenide;
+import io.qameta.allure.selenide.LogType;
 import io.restassured.RestAssured;
 import org.aeonbits.owner.ConfigFactory;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.openqa.selenium.logging.LoggingPreferences;
+import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.util.logging.Level;
 
 public class TestBase {
     public static String baseUrl;
@@ -46,8 +50,8 @@ public class TestBase {
         password = config.getPassword();
 
         //System.setProperty("webdriver.chrome.driver", "C://webdrivers/chromedriver119.exe");
-        Configuration.baseUrl = System.getProperty("base_url", "https://www." + testEnv + ".florist.local/");
-        //Configuration.baseUrl = System.getProperty("base_url", "https://www.test.florist.local/");
+        //Configuration.baseUrl = System.getProperty("base_url", "https://www." + testEnv + ".florist.local/");
+        Configuration.baseUrl = System.getProperty("base_url", "https://www.test.florist.local/");
         Configuration.browser = System.getProperty("browser", "chrome");
         RestAssured.baseURI = baseUrl;
         //Configuration.holdBrowserOpen = true;
@@ -59,17 +63,12 @@ public class TestBase {
                 "enableLogs", true,
                 "env", List.of("VERBOSE=true")));
         Configuration.browserCapabilities = capabilities;
-
-//        DesiredCapabilities capabilities = new DesiredCapabilities();
-//        capabilities.setCapability("enableVNC", true);
-//        capabilities.setCapability("enableVideo", true);
-//        Configuration.browserCapabilities = capabilities;
-
-//        SelenideLogger.addListener("allure", new AllureSelenide());
+        Configuration.browserSize = "1920x1080";
     }
 
     @BeforeEach
     void addListener() {
+        TimeZone.setDefault(TimeZone.getTimeZone("Pacific/Moscow"));
         SelenideLogger.addListener("AllureSelenide", new AllureSelenide());
     }
 

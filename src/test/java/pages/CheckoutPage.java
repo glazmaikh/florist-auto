@@ -157,7 +157,7 @@ public class CheckoutPage {
         apiClient.getDeliveryDateInterval(deliveryDate);
         LocalTime timeFrom = HelperPage.doubleToTime(apiClient.getDeliveryTimeFrom());
         LocalTime timeTo = HelperPage.doubleToTime(apiClient.getDeliveryTimeTo());
-        String time = HelperPage.getRandomTimeInterval(timeFrom, timeTo);
+        String time = HelperPage.getRandomTimeInterval(timeFrom, timeTo.minusHours(2));
 
         timeFromInput.shouldBe(exist).click();
         timeDropped.shouldBe(exist);
