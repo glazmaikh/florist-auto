@@ -121,16 +121,11 @@ public class PaymentPage {
 
         double sum = apiClient.getBouquetPriceList(currencyType).stream()
                 .map(Double::valueOf)
-                .mapToInt(price -> (int) (price * 0.1))
+                .mapToDouble(price -> price * 0.1)
                 .sum();
 
         orderSection.shouldHave(text("Скидка по промокоду"));
-
-        if (HelperPage.containsDecimalNumber(String.valueOf(sum))) {
-            orderSection.shouldHave(text(String.valueOf(sum)));
-        } else {
-            orderSection.shouldHave(text(HelperPage.priceRegex(String.valueOf(sum).replaceAll("\\.(\\d+)", ""))));
-        }
+        orderSection.shouldHave(text(HelperPage.formatCurrencySum(sum, currencyType)));
         return this;
     }
 }

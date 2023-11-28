@@ -3,6 +3,7 @@ package helpers;
 import com.codeborne.selenide.SelenideElement;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -145,5 +146,15 @@ public class HelperPage {
     public static boolean containsDecimalNumber(String input) {
         String pattern = "\\d+\\.\\d{2}$";
         return input.matches(pattern);
+    }
+
+    public static String formatCurrencySum(double sum, CurrencyType currencyType) {
+        String pattern = null;
+        switch (currencyType) {
+            case RUB, KZT -> pattern = "#,###";
+            case EUR, USD -> pattern = "#,##0.00";
+        }
+        DecimalFormat decimalFormat = new DecimalFormat(pattern);
+        return decimalFormat.format(sum).replaceAll(",", ".");
     }
 }
