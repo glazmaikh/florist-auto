@@ -93,6 +93,42 @@ public class ApiClient {
     }
 
     @SneakyThrows
+    private void getRandomFloristRuBouquetByCityID(boolean isAction) {
+        RequestSpecification httpRequest = given();
+        Response responseBouquet = httpRequest
+                .auth().basic("florist_api", "123")
+                .param("city", getCityId())
+                .param("showPrices", 1)
+                .param("includeIflorist", 1)
+                .get("api/bouquet");
+        ResponseBody bodyBouquet = responseBouquet.getBody();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        BouquetDataDto bouquetData = objectMapper.readValue(bodyBouquet.asString(), BouquetDataDto.class);
+        allBouquetsFromRequest = new ArrayList<>(bouquetData.getData().values());
+        bouquet = getRandomBouquetFloristRu(bouquetData.getData(), isAction);
+        bouquetList.add(bouquet);
+    }
+
+    @SneakyThrows
+    private void getRandomIFloristBouquetByCityID(boolean isAction) {
+        RequestSpecification httpRequest = given();
+        Response responseBouquet = httpRequest
+                .auth().basic("florist_api", "123")
+                .param("city", getCityId())
+                .param("showPrices", 1)
+                .param("includeIflorist", 1)
+                .get("api/bouquet");
+        ResponseBody bodyBouquet = responseBouquet.getBody();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        BouquetDataDto bouquetData = objectMapper.readValue(bodyBouquet.asString(), BouquetDataDto.class);
+        allBouquetsFromRequest = new ArrayList<>(bouquetData.getData().values());
+        bouquet = getBouquetIFloristList(bouquetData.getData(), isAction);
+        bouquetList.add(bouquet);
+    }
+
+    @SneakyThrows
     private void getRandomIFloristBouquetByCityID() {
         RequestSpecification httpRequest = given();
         Response responseBouquet = httpRequest
@@ -128,11 +164,37 @@ public class ApiClient {
         bouquetList.add(bouquet);
     }
 
+    @SneakyThrows
+    private void getRandomAllBouquetByCityID(boolean isAction) {
+        RequestSpecification httpRequest = given();
+        Response responseBouquet = httpRequest
+                .auth().basic("florist_api", "123")
+                .param("city", getCityId())
+                .param("showPrices", 1)
+                .param("includeIflorist", 1)
+                .get("api/bouquet");
+        ResponseBody bodyBouquet = responseBouquet.getBody();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        BouquetDataDto bouquetData = objectMapper.readValue(bodyBouquet.asString(), BouquetDataDto.class);
+        allBouquetsFromRequest = new ArrayList<>(bouquetData.getData().values());
+        bouquet = getRandomBouquet(bouquetData.getData(), isAction);
+        bouquetList.add(bouquet);
+    }
+
     public void initBouquet(BouquetType bouquetType) {
         switch (bouquetType) {
             case FLORIST_RU -> getRandomFloristRuBouquetByCityID();
             case IFLORIST -> getRandomIFloristBouquetByCityID();
             case ALL_BOUQUETS -> getRandomAllBouquetByCityID();
+        }
+    }
+
+    public void initBouquet(BouquetType bouquetType, boolean isAction) {
+        switch (bouquetType) {
+            case FLORIST_RU -> getRandomFloristRuBouquetByCityID(isAction);
+            case IFLORIST -> getRandomIFloristBouquetByCityID(isAction);
+            case ALL_BOUQUETS -> getRandomAllBouquetByCityID(isAction);
         }
     }
 
@@ -374,6 +436,15 @@ public class ApiClient {
         return getRandomBouquet(filteredMap);
     }
 
+    private BouquetDataItemDto getRandomBouquetFloristRu(Map<String, BouquetDataItemDto> bouquetMap, boolean isAction) {
+        Map<String, BouquetDataItemDto> filteredMap = bouquetMap.entrySet()
+                .stream()
+                .filter(e -> e.getKey().startsWith("6"))
+                .filter(e -> e.getValue().is_action() == isAction)
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        return getRandomBouquet(filteredMap);
+    }
+
     private ExtrasDataItemDto getRandomExtrasFromMap(Map<String, ExtrasDataItemDto> extrasMap) {
         List<ExtrasDataItemDto> values = new ArrayList<>(extrasMap.values());
         return values.get(new Random().nextInt(values.size()));
@@ -399,8 +470,24 @@ public class ApiClient {
         return getRandomBouquet(filteredMap);
     }
 
+    private BouquetDataItemDto getBouquetIFloristList(Map<String, BouquetDataItemDto> bouquetMap, boolean isAction) {
+        Map<String, BouquetDataItemDto> filteredMap = bouquetMap.entrySet()
+                .stream()
+                .filter(e -> e.getKey().startsWith("333"))
+                .filter(e -> e.getValue().is_action() == isAction)
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        return getRandomBouquet(filteredMap);
+    }
+
     private BouquetDataItemDto getRandomBouquet(Map<String, BouquetDataItemDto> map) {
         List<BouquetDataItemDto> values = new ArrayList<>(map.values());
+        return values.get(new Random().nextInt(values.size()));
+    }
+
+    private BouquetDataItemDto getRandomBouquet(Map<String, BouquetDataItemDto> map, boolean isAction) {
+        List<BouquetDataItemDto> values = map.values().stream()
+                .filter(e -> e.is_action() == isAction)
+                .toList();
         return values.get(new Random().nextInt(values.size()));
     }
 }
