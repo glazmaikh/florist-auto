@@ -123,8 +123,8 @@ public class HelperPage {
         return getRandomStringFromList(dates);
     }
 
-    public static boolean isOrderSectionContainsAllFromBouquets(SelenideElement orderList, List<String> names) {
-        return names.stream().allMatch(name -> orderList.getText().contains(name));
+    public static boolean isOrderSectionContainsAllFromBouquets(SelenideElement orderList, List<String> prices) {
+        return prices.stream().allMatch(name -> orderList.getText().contains(name));
     }
 
     public static String priceCurrencyFormat(CurrencyType currencyType, String price) {

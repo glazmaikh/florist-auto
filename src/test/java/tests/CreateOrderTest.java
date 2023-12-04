@@ -357,8 +357,8 @@ public class CreateOrderTest extends TestBase {
                 .assertBouquetName()
                 .assertDeliveryPrice(CurrencyType.RUB)
                 .assertBouquetPrice(CurrencyType.RUB)
-                .assertTotalPrice(CurrencyType.RUB)
                 .setPromoCode(promo, CurrencyType.RUB)
+                .assertTotalPrice(CurrencyType.RUB)
                 .fillCard(cardNumber, expireNumber, cvcNumber)
                 .pay()
                 .confirm();

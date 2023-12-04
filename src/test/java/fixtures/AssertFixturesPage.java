@@ -27,6 +27,7 @@ public class AssertFixturesPage {
                 .map(String::valueOf)
                 .map(e -> HelperPage.priceCurrencyFormat(currencyType, e))
                 .toList();
+        System.out.println(bouquetsPrices + " bouquetsPrices");
         assertTrue(HelperPage.isOrderSectionContainsAllFromBouquets(orderSection, bouquetsPrices),
                 "bouquets prices not equals");
     }
