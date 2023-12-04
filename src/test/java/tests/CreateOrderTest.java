@@ -422,6 +422,7 @@ public class CreateOrderTest extends TestBase {
 
         String bouquetId = String.valueOf(bouquetPage.getBouquetId());
         String bouquetName = bouquetPage.getBouquetName();
+        System.out.println(bouquetName + " bouquetName");
         String deliveryPrice = bouquetPage.getDeliveryPrice(CurrencyType.RUB);
 
         bouquetPage.openBouquetPage(baseUrl)
