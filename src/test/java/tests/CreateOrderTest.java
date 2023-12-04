@@ -336,6 +336,8 @@ public class CreateOrderTest extends TestBase {
                 //.setCurrency(CurrencyType.KZT)
                 .setRandomBouquet(BouquetType.ALL_BOUQUETS, CurrencyType.RUB, false);
 
+        System.out.println(bouquetPage.getBouquetName() + " bouquetName");
+
         bouquetPage.openBouquetPage(baseUrl)
                 .setFirstVariation()
                 .assertBouquetName()
@@ -376,6 +378,8 @@ public class CreateOrderTest extends TestBase {
                 .setDeliveryCity()
                 .setCurrency(currency)
                 .setRandomBouquet(BouquetType.FLORIST_RU, currency);
+
+        System.out.println(bouquetPage.getBouquetName() + " bouquetName");
 
         bouquetPage.openBouquetPage(baseUrl)
                 .setFirstVariation()
