@@ -7,6 +7,7 @@ import helpers.CurrencyType;
 import helpers.HelperPage;
 
 import java.time.Duration;
+import java.time.LocalTime;
 
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Condition.textCaseSensitive;
@@ -29,6 +30,7 @@ public class SuccessPage {
         String totalDataPrice = HelperPage.priceCurrencyFormat(currencyType, apiClient.getOrderTotalPrice(currencyType));
         String orderCreatedDate = HelperPage.formatCreatedDate(apiClient.getOrderCreatedAt());
 
+        System.out.println(LocalTime.now() + " LocalTime.now()");
         System.out.println(orderCreatedDate + " orderCreatedDate");
 
         orderSection.shouldHave(text(orderId));
