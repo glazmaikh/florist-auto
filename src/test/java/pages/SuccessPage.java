@@ -7,6 +7,7 @@ import helpers.CurrencyType;
 import helpers.HelperPage;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalTime;
 
 import static com.codeborne.selenide.Condition.text;
@@ -31,6 +32,7 @@ public class SuccessPage {
         String orderCreatedDate = HelperPage.formatCreatedDate(apiClient.getOrderCreatedAt());
 
         System.out.println(LocalTime.now() + " LocalTime.now()");
+        System.out.println(LocalDate.now() + " LocalDate.now()");
         System.out.println(orderCreatedDate + " orderCreatedDate");
 
         orderSection.shouldHave(text(orderId));
