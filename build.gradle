@@ -48,6 +48,7 @@ dependencies {
 
 test {
     systemProperties(System.getProperties())
+    systemProperty 'user.timezone', 'UTC+6'
     systemProperty "javax.net.ssl.trustStore", "none"
 
     useJUnitPlatform()
