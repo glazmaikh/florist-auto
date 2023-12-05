@@ -32,6 +32,7 @@ public class PaymentPage {
     private final SelenideElement promoCodeAppliedPopup = $x("//span[text()='Промокод применен']");
     private final SelenideElement promoCodeAppliedArea = $("._3aKs9p4n");
     private final SelenideElement promoCodeAppliedButton = $x("//span[text()='Применить']");
+    private final SelenideElement paymentError = $x("//*[contains(text(), 'Платеж не прошел')]");
     private final ApiClient apiClient;
     private AssertFixturesPage assertFixturesPage;
 
@@ -94,7 +95,16 @@ public class PaymentPage {
     }
 
     public PaymentPage pay() {
-        submitButton.click();
+        boolean success = false;
+        while (!success) {
+            submitButton.click();
+            if (paymentError.is(visible)) {
+                System.out.println("Ассист не отработал с первого раза. PaymentError");
+                submitButton.click();
+            } else {
+                success = true;
+            }
+        }
         return this;
     }
 
