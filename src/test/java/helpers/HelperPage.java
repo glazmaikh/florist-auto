@@ -138,6 +138,9 @@ public class HelperPage {
                             .replace(",", ".");
             case KZT, RUB -> {
                 int intValue = Integer.parseInt(cleanedPrice.split("\\.")[0]);
+                System.out.println(intValue + "HelperPage priceCurrencyFormat intValue");
+                System.out.println(String.valueOf(intValue).replaceAll("(\\d)(?=(\\d{3})+$)", "$1 ") + " " + currencyType.getSymbol() +
+                        " HelperPage priceCurrencyFormat yield");
                 yield String.valueOf(intValue).replaceAll("(\\d)(?=(\\d{3})+$)", "$1 ") + " " + currencyType.getSymbol();
             }
         };

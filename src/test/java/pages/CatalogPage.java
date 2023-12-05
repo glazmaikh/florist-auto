@@ -149,7 +149,17 @@ public class CatalogPage {
     public CatalogPage closeCookiePopUp() {
         cookiePopUpCross.shouldBe(visible, Duration.ofSeconds(15));
         cookiePopUp.shouldBe(visible, Duration.ofSeconds(15));
-        cookiePopUpCrossArea.shouldBe(visible, Duration.ofSeconds(15)).click();
+
+        boolean cookiePopUpClosed = false;
+        while (!cookiePopUpClosed) {
+            cookiePopUpCrossArea.shouldBe(visible, Duration.ofSeconds(15)).click();
+            if (cookiePopUp.is(visible)) {
+                System.out.println("Попап куки не закрылся с 1 раза");
+                cookiePopUpCrossArea.shouldBe(visible, Duration.ofSeconds(15)).click();
+            } else {
+                cookiePopUpClosed = true;
+            }
+        }
         cookiePopUp.shouldNotBe(visible, Duration.ofSeconds(15));
         return this;
     }

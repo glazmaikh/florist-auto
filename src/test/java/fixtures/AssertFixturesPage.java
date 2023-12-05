@@ -31,7 +31,6 @@ public class AssertFixturesPage {
                 .toList();
         System.out.println(bouquetsPrices + " bouquetsPrices list");
         System.out.println(orderSection.getText() + " orderSection.getText()");
-        System.out.println(orderSection.getOwnText() + " orderSection.getOwnText()");
         assertTrue(HelperPage.isOrderSectionContainsAllFromBouquets(orderSection, bouquetsPrices),
                 "bouquets prices not equals");
     }
