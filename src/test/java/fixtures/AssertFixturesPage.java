@@ -24,10 +24,12 @@ public class AssertFixturesPage {
 
     public void performAssertBouquetPriceList(SelenideElement orderSection, CurrencyType currencyType) {
         List<String> bouquetsPrices = apiClient.getBouquetPriceList(currencyType).stream()
+                .peek(e -> System.out.println(e + " beforeToStr+Regex from api"))
                 .map(String::valueOf)
                 .map(e -> HelperPage.priceCurrencyFormat(currencyType, e))
+                .peek(e -> System.out.println(e + " afterToStr+Regex from api"))
                 .toList();
-        System.out.println(bouquetsPrices + " bouquetsPrices");
+        System.out.println(bouquetsPrices + " bouquetsPrices list");
         assertTrue(HelperPage.isOrderSectionContainsAllFromBouquets(orderSection, bouquetsPrices),
                 "bouquets prices not equals");
     }
