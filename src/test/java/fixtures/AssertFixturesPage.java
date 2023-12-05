@@ -30,6 +30,7 @@ public class AssertFixturesPage {
                 .peek(e -> System.out.println(e + " afterToStr+Regex from api"))
                 .toList();
         System.out.println(bouquetsPrices + " bouquetsPrices list");
+        System.out.println(orderSection + " orderSection");
         assertTrue(HelperPage.isOrderSectionContainsAllFromBouquets(orderSection, bouquetsPrices),
                 "bouquets prices not equals");
     }
