@@ -8,8 +8,9 @@ import java.util.Map;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public @Data class PriceItemDto {
+    public String id;
     public String name;
     public Map<String, Double> price;
     @JsonProperty("date_price")
-    private DatePrice datePrice;
+    private Map<String, DatePrice> datePrice;
 }
