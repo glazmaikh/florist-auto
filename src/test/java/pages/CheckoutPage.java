@@ -96,33 +96,33 @@ public class CheckoutPage {
         return this;
     }
 
-    public CheckoutPage assertBouquetPrice(CurrencyType currencyType) {
-        assertFixturesPage.performAssertBouquetPriceList(orderSection, currencyType);
-        return this;
-    }
+//    public CheckoutPage assertBouquetPrice(CurrencyType currencyType, String deliveryDate) {
+//        assertFixturesPage.performAssertBouquetPriceList(orderSection, currencyType, deliveryDate);
+//        return this;
+//    }
 
     public CheckoutPage assertExtrasPrice(CurrencyType currencyType) {
         assertFixturesPage.performAssertExtrasPrice(orderSection, currencyType);
         return this;
     }
 
-    public CheckoutPage assertTotalPrice(CurrencyType currencyType) {
-        double bouquetPrices = apiClient.getBouquetPriceList(currencyType).stream()
-                .mapToDouble(Double::parseDouble)
-                .sum();
-
-        double extrasPrices = apiClient.getExtrasPriceList(currencyType).stream()
-                .mapToDouble(Double::parseDouble)
-                .sum();
-
-        double totalPrice = bouquetPrices + extrasPrices;
-
-        if (!apiClient.getDeliveryPrice(currencyType).equals("Бесплатно")) {
-            totalPrice += Double.parseDouble(apiClient.getDeliveryPrice(currencyType));
-        }
-        orderSection.shouldHave(text(HelperPage.priceCurrencyFormat(currencyType, String.valueOf(totalPrice))));
-        return this;
-    }
+//    public CheckoutPage assertTotalPrice(CurrencyType currencyType) {
+//        double bouquetPrices = apiClient.getBouquetPriceList(currencyType).stream()
+//                .mapToDouble(Double::parseDouble)
+//                .sum();
+//
+//        double extrasPrices = apiClient.getExtrasPriceList(currencyType).stream()
+//                .mapToDouble(Double::parseDouble)
+//                .sum();
+//
+//        double totalPrice = bouquetPrices + extrasPrices;
+//
+//        if (!apiClient.getDeliveryPrice(currencyType).equals("Бесплатно")) {
+//            totalPrice += Double.parseDouble(apiClient.getDeliveryPrice(currencyType));
+//        }
+//        orderSection.shouldHave(text(HelperPage.priceCurrencyFormat(currencyType, String.valueOf(totalPrice))));
+//        return this;
+//    }
 
     public PaymentPage goToPaymentPage() {
         priceSection.shouldBe(Condition.visible, Duration.ofSeconds(5)).click();

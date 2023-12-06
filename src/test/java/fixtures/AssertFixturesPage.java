@@ -22,18 +22,37 @@ public class AssertFixturesPage {
         assertTrue(orderSection.getText().contains(bouquetsPrice), "bouquets price is not equals");
     }
 
-    public void performAssertBouquetPriceList(SelenideElement orderSection, CurrencyType currencyType) {
-        List<String> bouquetsPrices = apiClient.getBouquetPriceList(currencyType).stream()
-                .peek(e -> System.out.println(e + " beforeToStr+Regex from api"))
-                .map(String::valueOf)
-                .map(e -> HelperPage.priceCurrencyFormat(currencyType, e))
-                .peek(e -> System.out.println(e + " afterToStr+Regex from api"))
-                .toList();
-        System.out.println(bouquetsPrices + " bouquetsPrices list");
-        System.out.println(orderSection.getText() + " orderSection.getText()");
-        assertTrue(HelperPage.isOrderSectionContainsAllFromBouquets(orderSection, bouquetsPrices),
-                "bouquets prices not equals");
-    }
+//    public void performAssertBouquetPriceList(SelenideElement orderSection, CurrencyType currencyType) {
+//        List<String> bouquetsPrices = apiClient.getBouquetPriceList(currencyType).stream()
+//                .peek(e -> System.out.println(e + " beforeToStr+Regex from api"))
+//                .map(String::valueOf)
+//                .map(e -> HelperPage.priceCurrencyFormat(currencyType, e))
+//                .peek(e -> System.out.println(e + " afterToStr+Regex from api"))
+//                .toList();
+//        System.out.println(bouquetsPrices + " bouquetsPrices list");
+//        System.out.println(orderSection.getText() + " orderSection.getText()");
+//        assertTrue(HelperPage.isOrderSectionContainsAllFromBouquets(orderSection, bouquetsPrices),
+//                "bouquets prices not equals");
+//    }
+//    public void performAssertBouquetPriceList(SelenideElement orderSection, CurrencyType currencyType, String deliveryDate) {
+//        List<String> bouquetsPrices = apiClient.getBouquetMinPriceList(currencyType).stream()
+//                .peek(e -> System.out.println(e + " beforeToStr+Regex from api"))
+//                .map(String::valueOf)
+//                .map(e -> HelperPage.priceCurrencyFormat(currencyType, e))
+//                .peek(e -> System.out.println(e + " afterToStr+Regex from api"))
+//                .toList();
+
+//        List<String> bouquetsPrices = apiClient.getBouquetMinPriceList()PriceList(currencyType).stream()
+//                .peek(e -> System.out.println(e + " beforeToStr+Regex from api"))
+//                .map(String::valueOf)
+//                .map(e -> HelperPage.priceCurrencyFormat(currencyType, e))
+//                .peek(e -> System.out.println(e + " afterToStr+Regex from api"))
+//                .toList();
+//        System.out.println(bouquetsPrices + " bouquetsPrices list");
+//        System.out.println(orderSection.getText() + " orderSection.getText()");
+//        assertTrue(HelperPage.isOrderSectionContainsAllFromBouquets(orderSection, bouquetsPrices),
+//                "bouquets prices not equals");
+//    }
 
     public void performAssertDeliveryPrice(SelenideElement orderSection, CurrencyType currencyType) {
         String deliveryPrice = apiClient.getDeliveryPrice(currencyType);

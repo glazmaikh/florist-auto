@@ -29,11 +29,12 @@ public @Data class BouquetDataItemDto {
     public boolean express_delivery;
     public String img;
     public String description;
+    //public List<PriceItemDto> prices;
     private Map<String, PriceItemDto> prices;
     public MinDatePrice min_date_price;
     public String salon_name;
 
-    public List<PriceItemDto> getPriceList() {
-        return new ArrayList<>(prices.values());
-    }
+//    public List<PriceItemDto> getPrices() {
+//        return prices;
+//    }
 }

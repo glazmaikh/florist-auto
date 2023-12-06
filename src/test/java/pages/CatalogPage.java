@@ -118,6 +118,13 @@ public class CatalogPage {
         return new BouquetPage(apiClient, new AssertFixturesPage(apiClient));
     }
 
+    public BouquetPage setRandomBouquetTEST(BouquetType bouquetType, CurrencyType currencyType) {
+        apiClient.initBouquetTEST(bouquetType);
+
+
+        return new BouquetPage(apiClient, new AssertFixturesPage(apiClient));
+    }
+
     public BouquetPage setRandomBouquet(BouquetType bouquetType, CurrencyType currencyType, boolean isActive) {
         apiClient.initBouquet(bouquetType, isActive);
         bouquetLoader.shouldNotBe(visible, Duration.ofSeconds(30));
@@ -154,7 +161,7 @@ public class CatalogPage {
         while (!cookiePopUpClosed) {
             cookiePopUpCrossArea.shouldBe(visible, Duration.ofSeconds(15)).click();
             if (cookiePopUp.is(visible)) {
-                System.out.println("Попап куки не закрылся с 1 раза");
+                System.out.println("Попап кук не закрылся с 1 раза");
                 cookiePopUpCrossArea.shouldBe(visible, Duration.ofSeconds(15)).click();
             } else {
                 cookiePopUpClosed = true;

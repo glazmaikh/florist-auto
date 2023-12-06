@@ -7,9 +7,14 @@ import lombok.Data;
 import java.util.Map;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public @Data class PriceItemDto {
-    public String name;
-    public Map<String, Double> price;
-    @JsonProperty("date_price")
-    private DatePrice datePrice;
+public @Data class DatePrice {
+//    private int RUB;
+//    private double USD;
+//    private double EUR;
+//    private int KZT;
+    @JsonProperty("1")
+    public Price price1;
+
+    @JsonProperty("2")
+    public Price price2;
 }
