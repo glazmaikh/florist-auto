@@ -101,10 +101,15 @@ public class CheckoutPage {
 //        return this;
 //    }
 
-    public CheckoutPage assertExtrasPrice(CurrencyType currencyType) {
-        assertFixturesPage.performAssertExtrasPrice(orderSection, currencyType);
+        public CheckoutPage assertBouquetPriceTEST(CurrencyType currencyType, String deliveryDate) {
+        assertFixturesPage.performAssertBouquetPriceListTEST(orderSection, currencyType, deliveryDate);
         return this;
     }
+
+//    public CheckoutPage assertExtrasPrice(CurrencyType currencyType) {
+//        assertFixturesPage.performAssertExtrasPrice(orderSection, currencyType);
+//        return this;
+//    }
 
 //    public CheckoutPage assertTotalPrice(CurrencyType currencyType) {
 //        double bouquetPrices = apiClient.getBouquetPriceList(currencyType).stream()

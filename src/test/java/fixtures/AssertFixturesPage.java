@@ -5,6 +5,8 @@ import helpers.ApiClient;
 import helpers.CurrencyType;
 import helpers.HelperPage;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static com.codeborne.selenide.Condition.text;
@@ -22,6 +24,13 @@ public class AssertFixturesPage {
         assertTrue(orderSection.getText().contains(bouquetsPrice), "bouquets price is not equals");
     }
 
+    public void performAssertBouquetPriceListTEST(SelenideElement orderSection, CurrencyType currencyType, String deliveryDate) {
+        List<String> bouquetsPrices = apiClient.getBouquetPriceListTEST(currencyType, deliveryDate).stream()
+                .map(String::valueOf)
+                .map(e -> HelperPage.priceCurrencyFormat(currencyType, e))
+                .toList();
+    }
+
 //    public void performAssertBouquetPriceList(SelenideElement orderSection, CurrencyType currencyType) {
 //        List<String> bouquetsPrices = apiClient.getBouquetPriceList(currencyType).stream()
 //                .peek(e -> System.out.println(e + " beforeToStr+Regex from api"))
@@ -34,13 +43,6 @@ public class AssertFixturesPage {
 //        assertTrue(HelperPage.isOrderSectionContainsAllFromBouquets(orderSection, bouquetsPrices),
 //                "bouquets prices not equals");
 //    }
-//    public void performAssertBouquetPriceList(SelenideElement orderSection, CurrencyType currencyType, String deliveryDate) {
-//        List<String> bouquetsPrices = apiClient.getBouquetMinPriceList(currencyType).stream()
-//                .peek(e -> System.out.println(e + " beforeToStr+Regex from api"))
-//                .map(String::valueOf)
-//                .map(e -> HelperPage.priceCurrencyFormat(currencyType, e))
-//                .peek(e -> System.out.println(e + " afterToStr+Regex from api"))
-//                .toList();
 
 //        List<String> bouquetsPrices = apiClient.getBouquetMinPriceList()PriceList(currencyType).stream()
 //                .peek(e -> System.out.println(e + " beforeToStr+Regex from api"))
