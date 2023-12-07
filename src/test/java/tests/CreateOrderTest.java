@@ -424,30 +424,30 @@ public class CreateOrderTest extends TestBase {
                 //.setCurrency(CurrencyType.KZT)
                 .setRandomBouquetTEST(BouquetType.ALL_BOUQUETS, CurrencyType.RUB);
 
-//        String bouquetId = String.valueOf(bouquetPage.getBouquetId());
-//        String bouquetName = bouquetPage.getBouquetName();
-//        System.out.println(bouquetName + " bouquetName");
-//        String deliveryPrice = bouquetPage.getDeliveryPrice(CurrencyType.RUB);
-//
-//        bouquetPage.openBouquetPage(baseUrl)
-//                .setFirstVariation()
-//                .assertBouquetName();
-//
-//        String bouquetPrice = bouquetPage.assertBouquetPrice(CurrencyType.RUB);
-//
-//        bouquetPage.assertDeliveryPrice(CurrencyType.RUB)
-//                .assertTotalPrice(CurrencyType.RUB)
-//                .addToCard(baseUrl);
-//
-//        checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, recipientName, phone, address)
-//                .setRandomDeliveryDate();
-//
-//        String deliveryTimeFrom = checkoutPage.setRandomDeliveryTime();
-//        String deliveryDate = checkoutPage.getDeliveryDate();
-//
-//        checkoutPage.assertBouquetName()
-//                .assertDeliveryPrice(CurrencyType.RUB)
-//                .assertBouquetPriceTEST(CurrencyType.RUB, deliveryDate);
+        String bouquetId = String.valueOf(bouquetPage.getBouquetId());
+        String bouquetName = bouquetPage.getBouquetName();
+        System.out.println(bouquetName + " bouquetName");
+        String deliveryPrice = bouquetPage.getDeliveryPrice(CurrencyType.RUB);
+
+        bouquetPage.openBouquetPage(baseUrl)
+                .setFirstVariation()
+                .assertBouquetName();
+
+        String bouquetPrice = bouquetPage.assertBouquetMinPrice(CurrencyType.RUB);
+
+        bouquetPage.assertDeliveryPrice(CurrencyType.RUB)
+                .assertTotalMinPrice(CurrencyType.RUB)
+                .addToCard(baseUrl);
+
+        checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, recipientName, phone, address)
+                .setRandomDeliveryDate();
+
+        String deliveryTimeFrom = checkoutPage.setRandomDeliveryTime();
+        String deliveryDate = checkoutPage.getDeliveryDate();
+
+        checkoutPage.assertBouquetName()
+                .assertDeliveryPrice(CurrencyType.RUB)
+                .assertBouquetPriceTEST(CurrencyType.RUB, deliveryDate);
 //                .assertTotalPrice(CurrencyType.RUB)
 //                .goToPaymentPage();
 //

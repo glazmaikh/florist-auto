@@ -19,8 +19,8 @@ public class AssertFixturesPage {
         this.apiClient = apiClient;
     }
 
-    public void performAssertBouquetPrice(SelenideElement orderSection, CurrencyType currencyType) {
-        String bouquetsPrice = HelperPage.priceCurrencyFormat(currencyType, apiClient.getBouquetPrice(currencyType));
+    public void performAssertBouquetMinPrice(SelenideElement orderSection, CurrencyType currencyType) {
+        String bouquetsPrice = HelperPage.priceCurrencyFormat(currencyType, apiClient.getBouquetMinPrice(currencyType));
         assertTrue(orderSection.getText().contains(bouquetsPrice), "bouquets price is not equals");
     }
 
@@ -29,6 +29,9 @@ public class AssertFixturesPage {
                 .map(String::valueOf)
                 .map(e -> HelperPage.priceCurrencyFormat(currencyType, e))
                 .toList();
+
+                assertTrue(HelperPage.isOrderSectionContainsAllFromBouquets(orderSection, bouquetsPrices),
+                "bouquets prices not equals");
     }
 
 //    public void performAssertBouquetPriceList(SelenideElement orderSection, CurrencyType currencyType) {

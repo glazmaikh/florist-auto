@@ -263,12 +263,12 @@ public class ApiClient {
         return bouquet.getName();
     }
 
-    public String getBouquetPrice(CurrencyType currencyType) {
+    public String getBouquetMinPrice(CurrencyType currencyType) {
         DecimalFormat decimalFormat = new DecimalFormat("0.00");
         return switch (currencyType) {
-            case EUR -> decimalFormat.format(bouquet.getMin_price().getEur()).replace(",",".");
+            case EUR -> decimalFormat.format(bouquet.getMin_price().getEur()).replace(",", ".");
             case KZT -> String.valueOf(bouquet.getMin_price().getKzt());
-            case USD -> decimalFormat.format(bouquet.getMin_price().getUsd()).replace(",",".");
+            case USD -> decimalFormat.format(bouquet.getMin_price().getUsd()).replace(",", ".");
             case RUB -> String.valueOf(bouquet.getMin_price().getRub());
         };
     }
@@ -279,26 +279,47 @@ public class ApiClient {
     }
 
     public List<String> getBouquetPriceListTEST(CurrencyType currencyType, String deliveryDate) {
-//        PriceItemDto targetItem;
-//        if (bouquet.getPrices().size() == 1) {
-//            targetItem = bouquet.getPrices().values().iterator().next();
-//            System.out.println("Найден единственный обьект: " + targetItem);
-//        } else {
-//            for (PriceItemDto itemDto : bouquet.getPrices().values()) {
-//                if (itemDto.getName())
-//            }
-//        }
-
         LocalDate inputDate = LocalDate.parse(deliveryDate);
         if (inputDate.isAfter(LocalDate.parse(inputDate.getYear() + "-02-09")) &&
                 inputDate.isBefore(LocalDate.parse(inputDate.getYear() + "-02-15"))) {
-            System.out.println("23 февраля");
+            return switch (currencyType) {
+                case EUR -> pricesFirstVariations.stream()
+                        .map(e -> e.getDatePrice().get("0").getEur())
+                        .map(String::valueOf)
+                        .collect(Collectors.toList());
+                case KZT -> pricesFirstVariations.stream()
+                        .map(e -> e.getDatePrice().get("0").getKzt())
+                        .map(String::valueOf)
+                        .collect(Collectors.toList());
+                case USD -> pricesFirstVariations.stream()
+                        .map(e -> e.getDatePrice().get("0").getUsd())
+                        .map(String::valueOf)
+                        .collect(Collectors.toList());
+                case RUB -> pricesFirstVariations.stream()
+                        .map(e -> e.getDatePrice().get("0").getRub())
+                        .map(String::valueOf)
+                        .collect(Collectors.toList());
+            };
         } else if (inputDate.isAfter(LocalDate.parse(inputDate.getYear() + "-02-29")) &&
                 inputDate.isBefore(LocalDate.parse(inputDate.getYear() + "-03-11"))) {
-//            return switch (currencyType) {
-//                case EUR -> bouquetList.stream()
-//                        .map(e -> e.)
-//            }
+            return switch (currencyType) {
+                case EUR -> pricesFirstVariations.stream()
+                        .map(e -> e.getDatePrice().get("1").getEur())
+                        .map(String::valueOf)
+                        .collect(Collectors.toList());
+                case KZT -> pricesFirstVariations.stream()
+                        .map(e -> e.getDatePrice().get("1").getKzt())
+                        .map(String::valueOf)
+                        .collect(Collectors.toList());
+                case USD -> pricesFirstVariations.stream()
+                        .map(e -> e.getDatePrice().get("1").getUsd())
+                        .map(String::valueOf)
+                        .collect(Collectors.toList());
+                case RUB -> pricesFirstVariations.stream()
+                        .map(e -> e.getDatePrice().get("1").getRub())
+                        .map(String::valueOf)
+                        .collect(Collectors.toList());
+            };
         } else {
             return switch (currencyType) {
                 case EUR -> bouquetList.stream()
@@ -319,25 +340,6 @@ public class ApiClient {
                         .collect(Collectors.toList());
             };
         }
-
-        return switch (currencyType) {
-            case EUR -> bouquetList.stream()
-                    .map(e -> e.getMin_price().getEur())
-                    .map(String::valueOf)
-                    .collect(Collectors.toList());
-            case KZT -> bouquetList.stream()
-                    .map(e -> e.getMin_price().getKzt())
-                    .map(String::valueOf)
-                    .collect(Collectors.toList());
-            case USD -> bouquetList.stream()
-                    .map(e -> e.getMin_price().getUsd())
-                    .map(String::valueOf)
-                    .collect(Collectors.toList());
-            case RUB -> bouquetList.stream()
-                    .map(e -> e.getMin_price().getRub())
-                    .map(String::valueOf)
-                    .collect(Collectors.toList());
-        };
     }
 
 //    public List<String> getBouquetPriceList(CurrencyType currencyType) {
@@ -392,8 +394,9 @@ public class ApiClient {
     public String getPriceExtrasFirstVariation(CurrencyType currencyType) {
         DecimalFormat decimalFormat = new DecimalFormat("0.00");
         return switch (currencyType) {
-            case EUR, USD -> decimalFormat.format(extrasPrice.getPrice().get(currencyType.name())).replace(",",".");
-            case KZT, RUB -> String.valueOf(extrasPrice.getPrice().get(currencyType.name())).replaceAll("(\\d+)\\.\\d+", "$1");
+            case EUR, USD -> decimalFormat.format(extrasPrice.getPrice().get(currencyType.name())).replace(",", ".");
+            case KZT, RUB ->
+                    String.valueOf(extrasPrice.getPrice().get(currencyType.name())).replaceAll("(\\d+)\\.\\d+", "$1");
         };
     }
 
@@ -423,8 +426,9 @@ public class ApiClient {
     public String getDeliveryPrice(CurrencyType currencyType) {
         DecimalFormat decimalFormat = new DecimalFormat("0.00");
         return switch (currencyType) {
-            case EUR, USD -> decimalFormat.format(data.getDelivery().get(currencyType.name())).replace(",",".");
-            case KZT, RUB -> String.valueOf(data.getDelivery().get(currencyType.name())).replaceAll("(\\d+)\\.\\d+", "$1");
+            case EUR, USD -> decimalFormat.format(data.getDelivery().get(currencyType.name())).replace(",", ".");
+            case KZT, RUB ->
+                    String.valueOf(data.getDelivery().get(currencyType.name())).replaceAll("(\\d+)\\.\\d+", "$1");
         };
     }
 
