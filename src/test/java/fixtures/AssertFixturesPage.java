@@ -24,7 +24,7 @@ public class AssertFixturesPage {
         assertTrue(orderSection.getText().contains(bouquetsPrice), "bouquets price is not equals");
     }
 
-    public void performAssertBouquetPriceListTEST(SelenideElement orderSection, CurrencyType currencyType, String deliveryDate) {
+    public void performAssertBouquetPriceListHighSeason(SelenideElement orderSection, CurrencyType currencyType, String deliveryDate) {
         List<String> bouquetsPrices = apiClient.getBouquetPriceListTEST(currencyType, deliveryDate).stream()
                 .map(String::valueOf)
                 .map(e -> HelperPage.priceCurrencyFormat(currencyType, e))

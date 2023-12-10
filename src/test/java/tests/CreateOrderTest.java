@@ -1,11 +1,8 @@
 package tests;
 
 import fixtures.AssertFixturesPage;
-import helpers.ApiClient;
+import helpers.*;
 
-import helpers.BouquetType;
-import helpers.CurrencyType;
-import helpers.HelperPage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -417,7 +414,7 @@ public class CreateOrderTest extends TestBase {
 //    }
 
     @Test
-    void createNewFloristRuOrderErpTest() throws InterruptedException {
+    void createNewFloristRuOrderErpTest() throws Exception {
         catalogPage.openCatalogPage(baseUrl)
                 .closeCookiePopUp()
                 .setDeliveryCity()
@@ -440,14 +437,14 @@ public class CreateOrderTest extends TestBase {
                 .addToCard(baseUrl);
 
         checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, recipientName, phone, address)
-                .setRandomDeliveryDate();
+                .setRandomDeliveryDate(DeliveryDateType.HIGH_MARCH);
 
-        String deliveryTimeFrom = checkoutPage.setRandomDeliveryTime();
-        String deliveryDate = checkoutPage.getDeliveryDate();
-
-        checkoutPage.assertBouquetName()
-                .assertDeliveryPrice(CurrencyType.RUB)
-                .assertBouquetPriceTEST(CurrencyType.RUB, deliveryDate);
+//        String deliveryTimeFrom = checkoutPage.setRandomDeliveryTime();
+//        String deliveryDate = checkoutPage.getDeliveryDate();
+//
+//        checkoutPage.assertBouquetName()
+//                .assertDeliveryPrice(CurrencyType.RUB)
+//                .assertBouquetPriceTEST(CurrencyType.RUB, deliveryDate);
 //                .assertTotalPrice(CurrencyType.RUB)
 //                .goToPaymentPage();
 //

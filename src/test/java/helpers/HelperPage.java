@@ -6,6 +6,7 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.Year;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -53,7 +54,15 @@ public class HelperPage {
         return date.format(outputFormatter);
     }
 
-    public static String getRandomStringFromList(List<String> list) {
+    public static String getRandomStringFromList(List<LocalDate> list) {
+        if (list.isEmpty()) {
+            throw new RuntimeException("Нет доступных дат");
+        }
+        return list.get(new Random().nextInt(list.size())).toString();
+    }
+
+    public static String getRandomStringFromListTEST(List<String> list) {
+
         return list.get(new Random().nextInt(list.size()));
     }
 
@@ -87,21 +96,70 @@ public class HelperPage {
         return formattedDate + ", " + formattedTime;
     }
 
-    public static String getRandomDeliveryDayWithoutDisabled(List<String> disabledDaysList) {
+    public static String getRandomLowDeliveryDay(List<LocalDate> disabledDaysList) throws Exception {
         LocalDate currentDate = LocalDate.now();
         LocalDate afterDate = currentDate.plusMonths(2);
-
-        List<String> dateList = new ArrayList<>();
+        List<LocalDate> dateList = new ArrayList<>();
         DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         while (currentDate.isBefore(afterDate)) {
-            dateList.add(dateFormat.format(currentDate));
+            boolean isLeapYear = Year.of(currentDate.getYear()).isLeap();
+
+            boolean lowDate = !(currentDate.getMonthValue() == 2 && currentDate.getDayOfMonth() >= 10 &&
+                    currentDate.getDayOfMonth() <= 14) &&
+                    !(currentDate.getMonthValue() == 3 && currentDate.getDayOfMonth() <= 10) &&
+                    !(isLeapYear && currentDate.getMonthValue() == 2 && currentDate.getDayOfMonth() == 29);
+
+            if (lowDate) {
+                dateList.add(LocalDate.parse(dateFormat.format(currentDate)));
+            }
             currentDate = currentDate.plusDays(1);
         }
-
         dateList.removeAll(disabledDaysList);
         return getRandomStringFromList(dateList);
     }
+
+    public static String getRandomHighFebruaryDeliveryDay(List<LocalDate> disabledDaysList) {
+        LocalDate currentDate = LocalDate.now();
+        LocalDate afterDate = currentDate.plusMonths(2);
+        List<LocalDate> dateList = new ArrayList<>();
+        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        while (currentDate.isBefore(afterDate)) {
+            boolean highFebruaryDate = currentDate.getMonthValue() == 2 &&
+                    currentDate.getDayOfMonth() >= 10 && currentDate.getDayOfMonth() <= 14;
+
+            if (highFebruaryDate) {
+                dateList.add(LocalDate.parse(dateFormat.format(currentDate)));
+            }
+            currentDate = currentDate.plusDays(1);
+        }
+        dateList.removeAll(disabledDaysList);
+        return getRandomStringFromList(dateList);
+    }
+
+    public static String getRandomHighMarchDeliveryDay(List<LocalDate> disabledDaysList) {
+        LocalDate currentDate = LocalDate.now();
+        LocalDate afterDate = currentDate.plusMonths(2);
+        List<LocalDate> dateList = new ArrayList<>();
+        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        while (currentDate.isBefore(afterDate)) {
+            boolean isLeapYear = Year.of(currentDate.getYear()).isLeap();
+
+            boolean includeDate = (isLeapYear && currentDate.getMonthValue() == 2 &&
+                    currentDate.getDayOfMonth() == 29) ||
+                    (!isLeapYear && currentDate.getMonthValue() == 3 && currentDate.getDayOfMonth() <= 10);
+
+            if (includeDate) {
+                dateList.add(LocalDate.parse(dateFormat.format(currentDate)));
+            }
+            currentDate = currentDate.plusDays(1);
+        }
+        dateList.removeAll(disabledDaysList);
+        return getRandomStringFromList(dateList);
+    }
+
 
     public static LocalTime doubleToTime(double value) {
         int hours = (int) value;
@@ -110,16 +168,16 @@ public class HelperPage {
     }
 
     public static String getRandomTimeInterval(LocalTime dateFrom, LocalTime dateTo) {
-        List<String> dates = new ArrayList<>();
+        List<LocalDate> dates = new ArrayList<>();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
-        dates.add(dateFrom.format(formatter));
+        dates.add(LocalDate.parse(dateFrom.format(formatter)));
 
         LocalTime current = dateFrom;
         while (current.isBefore(dateTo) || current.equals(dateTo)) {
-            dates.add(current.format(formatter));
+            dates.add(LocalDate.parse(current.format(formatter)));
             current = current.plusMinutes(15);
         }
-        dates.add(dateTo.format(formatter));
+        dates.add(LocalDate.parse(dateTo.format(formatter)));
         return getRandomStringFromList(dates);
     }
 
@@ -134,8 +192,8 @@ public class HelperPage {
         return switch (currencyType) {
             case EUR, USD -> cleanedPrice.equals("0.00") || cleanedPrice.equals("0.0") ? "0.00" :
                     currencyType.getSymbol() +
-                    decimalFormat.format(Double.parseDouble(cleanedPrice.replaceAll("(\\d)(?=(\\d{3})+$)", "$1")))
-                            .replace(",", ".");
+                            decimalFormat.format(Double.parseDouble(cleanedPrice.replaceAll("(\\d)(?=(\\d{3})+$)", "$1")))
+                                    .replace(",", ".");
             case KZT, RUB -> {
                 int intValue = Integer.parseInt(cleanedPrice.split("\\.")[0]);
                 System.out.println(intValue + "HelperPage priceCurrencyFormat intValue");

@@ -1,6 +1,7 @@
 package helpers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import io.restassured.response.ResponseBody;
@@ -479,7 +480,7 @@ public class ApiClient {
 
     // Получение списка недоступных дней для доставки
     @SneakyThrows
-    public List<String> getDisabledDeliveryDaysList() {
+    public List<LocalDate> getDisabledDeliveryDaysList() {
         RequestSpecification httpRequest = given();
         Response responseDisabledData = httpRequest
                 .auth().basic("florist_api", "123")
@@ -489,6 +490,7 @@ public class ApiClient {
         ResponseBody responseBody = responseDisabledData.getBody();
 
         ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
         DisabledDeliveryDateResponse disabledDate = objectMapper.readValue(responseBody.asString(), DisabledDeliveryDateResponse.class);
         return new ArrayList<>(disabledDate.getData().getDisabled_dates().values());
     }

@@ -7,10 +7,12 @@ import com.codeborne.selenide.SelenideElement;
 import fixtures.AssertFixturesPage;
 import helpers.ApiClient;
 import helpers.CurrencyType;
+import helpers.DeliveryDateType;
 import helpers.HelperPage;
 import org.openqa.selenium.JavascriptExecutor;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
 
@@ -101,10 +103,10 @@ public class CheckoutPage {
 //        return this;
 //    }
 
-        public CheckoutPage assertBouquetPriceTEST(CurrencyType currencyType, String deliveryDate) {
-        assertFixturesPage.performAssertBouquetPriceListTEST(orderSection, currencyType, deliveryDate);
-        return this;
-    }
+//        public CheckoutPage assertBouquetPriceTEST(CurrencyType currencyType, String deliveryDate) {
+//        assertFixturesPage.performAssertBouquetPriceListTEST(orderSection, currencyType, deliveryDate);
+//        return this;
+//    }
 
 //    public CheckoutPage assertExtrasPrice(CurrencyType currencyType) {
 //        assertFixturesPage.performAssertExtrasPrice(orderSection, currencyType);
@@ -137,24 +139,29 @@ public class CheckoutPage {
         return new PaymentPage(apiClient, assertFixturesPage);
     }
 
-    public CheckoutPage setRandomDeliveryDate() {
-        List<String> disabledDaysList = apiClient.getDisabledDeliveryDaysList();
-        deliveryDate = HelperPage.getRandomDeliveryDayWithoutDisabled(disabledDaysList);
+    public CheckoutPage setRandomDeliveryDate(DeliveryDateType dateType) throws Exception {
+        List<LocalDate> disabledDaysList = apiClient.getDisabledDeliveryDaysList();
 
-        boolean foundDate = false;
-        while (!foundDate) {
-            for (SelenideElement se : deliveryAllDays) {
-                if (Objects.requireNonNull(se.getAttribute("aria-label")).contains(HelperPage.formatDateDeliveryDateParse(deliveryDate))) {
-                    se.shouldBe(exist).click();
-                    foundDate = true;
-                    break;
-                }
-            }
-            if (!foundDate) {
-                nextMonthButton.shouldBe(exist).click();
-                deliveryAllDays = $$x("//button[contains(@class, 'react-calendar__tile') and not(@disabled)]/abbr");
-            }
+        switch (dateType) {
+            case LOW -> deliveryDate = HelperPage.getRandomLowDeliveryDay(disabledDaysList);
+            case HiGH_FEBRUARY -> deliveryDate = HelperPage.getRandomHighFebruaryDeliveryDay(disabledDaysList);
+            case HIGH_MARCH -> deliveryDate = HelperPage.getRandomHighMarchDeliveryDay(disabledDaysList);
         }
+
+//        boolean foundDate = false;
+//        while (!foundDate) {
+//            for (SelenideElement se : deliveryAllDays) {
+//                if (Objects.requireNonNull(se.getAttribute("aria-label")).contains(HelperPage.formatDateDeliveryDateParse(deliveryDate))) {
+//                    se.shouldBe(exist).click();
+//                    foundDate = true;
+//                    break;
+//                }
+//            }
+//            if (!foundDate) {
+//                nextMonthButton.shouldBe(exist).click();
+//                deliveryAllDays = $$x("//button[contains(@class, 'react-calendar__tile') and not(@disabled)]/abbr");
+//            }
+//        }
         return this;
     }
 

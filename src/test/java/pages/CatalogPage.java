@@ -94,7 +94,7 @@ public class CatalogPage {
         apiClient.initBouquet(bouquetType);
         bouquetLoader.shouldNotBe(visible, Duration.ofSeconds(30));
         String bouquetName = apiClient.getBouquetName();
-        String bouquetPrice = String.valueOf(apiClient.getBouquetPrice(currencyType));
+        String bouquetPrice = String.valueOf(apiClient.getBouquetMinPrice(currencyType));
         int page = 1;
 
         boolean foundBouquet = false;
@@ -122,7 +122,7 @@ public class CatalogPage {
         apiClient.initBouquetTEST(bouquetType);
         bouquetLoader.shouldNotBe(visible, Duration.ofSeconds(30));
         String bouquetName = apiClient.getBouquetName();
-        String bouquetPrice = String.valueOf(apiClient.getBouquetPrice(currencyType));
+        String bouquetPrice = String.valueOf(apiClient.getBouquetMinPrice(currencyType));
         int page = 1;
 
         boolean foundBouquet = false;
@@ -150,7 +150,7 @@ public class CatalogPage {
         apiClient.initBouquet(bouquetType, isActive);
         bouquetLoader.shouldNotBe(visible, Duration.ofSeconds(30));
         String bouquetName = apiClient.getBouquetName();
-        String bouquetPrice = String.valueOf(apiClient.getBouquetPrice(currencyType));
+        String bouquetPrice = String.valueOf(apiClient.getBouquetMinPrice(currencyType));
         int page = 1;
 
         boolean foundBouquet = false;
