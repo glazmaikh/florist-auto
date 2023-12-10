@@ -437,7 +437,7 @@ public class CreateOrderTest extends TestBase {
                 .addToCard(baseUrl);
 
         checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, recipientName, phone, address)
-                .setRandomDeliveryDate(DeliveryDateType.HIGH_MARCH);
+                .setRandomDeliveryDate(DeliveryDateType.LOW);
 
 //        String deliveryTimeFrom = checkoutPage.setRandomDeliveryTime();
 //        String deliveryDate = checkoutPage.getDeliveryDate();

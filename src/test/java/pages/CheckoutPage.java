@@ -148,20 +148,20 @@ public class CheckoutPage {
             case HIGH_MARCH -> deliveryDate = HelperPage.getRandomHighMarchDeliveryDay(disabledDaysList);
         }
 
-//        boolean foundDate = false;
-//        while (!foundDate) {
-//            for (SelenideElement se : deliveryAllDays) {
-//                if (Objects.requireNonNull(se.getAttribute("aria-label")).contains(HelperPage.formatDateDeliveryDateParse(deliveryDate))) {
-//                    se.shouldBe(exist).click();
-//                    foundDate = true;
-//                    break;
-//                }
-//            }
-//            if (!foundDate) {
-//                nextMonthButton.shouldBe(exist).click();
-//                deliveryAllDays = $$x("//button[contains(@class, 'react-calendar__tile') and not(@disabled)]/abbr");
-//            }
-//        }
+        boolean foundDate = false;
+        while (!foundDate) {
+            for (SelenideElement se : deliveryAllDays) {
+                if (Objects.requireNonNull(se.getAttribute("aria-label")).contains(HelperPage.formatDateDeliveryDateParse(deliveryDate))) {
+                    se.shouldBe(exist).click();
+                    foundDate = true;
+                    break;
+                }
+            }
+            if (!foundDate) {
+                nextMonthButton.shouldBe(exist).click();
+                deliveryAllDays = $$x("//button[contains(@class, 'react-calendar__tile') and not(@disabled)]/abbr");
+            }
+        }
         return this;
     }
 
