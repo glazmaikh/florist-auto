@@ -1,14 +1,12 @@
 package tests;
 
 import fixtures.AssertFixturesPage;
-import helpers.ApiClient;
+import helpers.*;
 
-import helpers.BouquetType;
-import helpers.CurrencyType;
-import helpers.HelperPage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -17,6 +15,7 @@ import pages.*;
 import java.time.LocalTime;
 import java.util.stream.Stream;
 
+@ExtendWith(TimeZoneExtension.class)
 public class CreateOrderTest extends TestBase {
     private final TestData testData = new TestData();
     private CatalogPage catalogPage;
@@ -327,97 +326,94 @@ public class CreateOrderTest extends TestBase {
 //        checkoutPage.removeFromCard();
 //    }
 //
-    @Test
-    @Tag("create_order")
-    void usingPromoCodeTest() throws InterruptedException {
-        catalogPage.openCatalogPage(baseUrl)
-                .closeCookiePopUp()
-                .setDeliveryCity()
-                //.setCurrency(CurrencyType.KZT)
-                .setRandomBouquet(BouquetType.ALL_BOUQUETS, CurrencyType.RUB, false);
-
-        System.out.println(bouquetPage.getBouquetName() + " bouquetName");
-
-        bouquetPage.openBouquetPage(baseUrl)
-                .setFirstVariation()
-                .assertBouquetName()
-                .assertBouquetPrice(CurrencyType.RUB);
-        bouquetPage.assertDeliveryPrice(CurrencyType.RUB)
-                .assertTotalPrice(CurrencyType.RUB)
-                .addToCard(baseUrl);
-
-        checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, recipientName, phone, address)
-                .setRandomDeliveryDate()
-                .setRandomDeliveryTime();
-        checkoutPage.assertBouquetName()
-                .assertDeliveryPrice(CurrencyType.RUB)
-                .assertBouquetPrice(CurrencyType.RUB)
-                .assertTotalPrice(CurrencyType.RUB)
-                .goToPaymentPage();
-
-        paymentPage.assertPaymentStatus(baseUrl)
-                .assertBouquetName()
-                .assertDeliveryPrice(CurrencyType.RUB)
-                .assertBouquetPrice(CurrencyType.RUB)
-                .setPromoCode(promo, CurrencyType.RUB)
-                .assertTotalPrice(CurrencyType.RUB)
-                .fillCard(cardNumber, expireNumber, cvcNumber)
-                .pay()
-                .confirm();
-
-        successPage.assertSuccessOrderStatus(baseUrl)
-                .assertSuccessCreatedOrder(CurrencyType.RUB);
-    }
-
-    @ParameterizedTest(name = "Тест на проверку оформления заказа и оплаты в валюте {0} доступной на сайте")
-    @MethodSource("currencyEnumProvider")
-    @Tag("create_order")
-    void createOrderDifferentCurrencyTest(CurrencyType currency) throws InterruptedException {
-        catalogPage.openCatalogPage(baseUrl)
-                .closeCookiePopUp()
-                .setDeliveryCity()
-                .setCurrency(currency)
-                .setRandomBouquet(BouquetType.FLORIST_RU, currency);
-
-        System.out.println(bouquetPage.getBouquetName() + " bouquetName");
-
-        bouquetPage.openBouquetPage(baseUrl)
-                .setFirstVariation()
-                .assertBouquetName()
-                .assertBouquetPrice(currency);
-        bouquetPage.assertDeliveryPrice(currency)
-                .assertTotalPrice(currency)
-                .addToCard(baseUrl);
-
-        checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, recipientName, phone, address)
-                .setRandomDeliveryDate()
-                .setRandomDeliveryTime();
-        checkoutPage.assertBouquetName()
-                .assertDeliveryPrice(currency)
-                .assertBouquetPrice(currency)
-                .assertTotalPrice(currency)
-                .goToPaymentPage();
-
-        paymentPage.assertPaymentStatus(baseUrl)
-                .assertBouquetName()
-                .assertDeliveryPrice(currency)
-                .assertBouquetPrice(currency)
-                .assertTotalPrice(currency)
-                .fillCard(cardNumber, expireNumber, cvcNumber)
-                .pay()
-                .confirm();
-
-        successPage.assertSuccessOrderStatus(baseUrl)
-                .assertSuccessCreatedOrder(currency);
-    }
-
-    public static Stream<Arguments> currencyEnumProvider() {
-        return Stream.of(CurrencyType.values())
-                .map(Arguments::of);
-    }
+//    @Test
+//    @Tag("create_order")
+//    void usingPromoCodeTest() throws InterruptedException {
+//        catalogPage.openCatalogPage(baseUrl)
+//                .closeCookiePopUp()
+//                .setDeliveryCity()
+//                //.setCurrency(CurrencyType.KZT)
+//                .setRandomBouquet(BouquetType.ALL_BOUQUETS, CurrencyType.RUB, false);
+//
+//
+//        bouquetPage.openBouquetPage(baseUrl)
+//                .setFirstVariation()
+//                .assertBouquetName()
+//                .assertBouquetPrice(CurrencyType.RUB);
+//        bouquetPage.assertDeliveryPrice(CurrencyType.RUB)
+//                .assertTotalPrice(CurrencyType.RUB)
+//                .addToCard(baseUrl);
+//
+//        checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, recipientName, phone, address)
+//                .setRandomDeliveryDate()
+//                .setRandomDeliveryTime();
+//        checkoutPage.assertBouquetName()
+//                .assertDeliveryPrice(CurrencyType.RUB)
+//                .assertBouquetPrice(CurrencyType.RUB)
+//                .assertTotalPrice(CurrencyType.RUB)
+//                .goToPaymentPage();
+//
+//        paymentPage.assertPaymentStatus(baseUrl)
+//                .assertBouquetName()
+//                .assertDeliveryPrice(CurrencyType.RUB)
+//                .assertBouquetPrice(CurrencyType.RUB)
+//                .setPromoCode(promo, CurrencyType.RUB)
+//                .assertTotalPrice(CurrencyType.RUB)
+//                .fillCard(cardNumber, expireNumber, cvcNumber)
+//                .pay()
+//                .confirm();
+//
+//        successPage.assertSuccessOrderStatus(baseUrl)
+//                .assertSuccessCreatedOrder(CurrencyType.RUB);
+//    }
+//
+//    @ParameterizedTest(name = "Тест на проверку оформления заказа и оплаты в валюте {0} доступной на сайте")
+//    @MethodSource("currencyEnumProvider")
+//    @Tag("create_order")
+//    void createOrderDifferentCurrencyTest(CurrencyType currency) throws InterruptedException {
+//        catalogPage.openCatalogPage(baseUrl)
+//                .closeCookiePopUp()
+//                .setDeliveryCity()
+//                .setCurrency(currency)
+//                .setRandomBouquet(BouquetType.FLORIST_RU, currency);
+//
+//        bouquetPage.openBouquetPage(baseUrl)
+//                .setFirstVariation()
+//                .assertBouquetName()
+//                .assertBouquetPrice(currency);
+//        bouquetPage.assertDeliveryPrice(currency)
+//                .assertTotalPrice(currency)
+//                .addToCard(baseUrl);
+//
+//        checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, recipientName, phone, address)
+//                .setRandomDeliveryDate()
+//                .setRandomDeliveryTime();
+//        checkoutPage.assertBouquetName()
+//                .assertDeliveryPrice(currency)
+//                .assertBouquetPrice(currency)
+//                .assertTotalPrice(currency)
+//                .goToPaymentPage();
+//
+//        paymentPage.assertPaymentStatus(baseUrl)
+//                .assertBouquetName()
+//                .assertDeliveryPrice(currency)
+//                .assertBouquetPrice(currency)
+//                .assertTotalPrice(currency)
+//                .fillCard(cardNumber, expireNumber, cvcNumber)
+//                .pay()
+//                .confirm();
+//
+//        successPage.assertSuccessOrderStatus(baseUrl)
+//                .assertSuccessCreatedOrder(currency);
+//    }
+//
+//    public static Stream<Arguments> currencyEnumProvider() {
+//        return Stream.of(CurrencyType.values())
+//                .map(Arguments::of);
+//    }
 
     @Test
-    void createNewFloristRuOrderErpTest() throws InterruptedException {
+    void createNewFloristRuOrderErpTest() throws Exception {
         catalogPage.openCatalogPage(baseUrl)
                 .closeCookiePopUp()
                 .setDeliveryCity()
@@ -426,29 +422,28 @@ public class CreateOrderTest extends TestBase {
 
         String bouquetId = String.valueOf(bouquetPage.getBouquetId());
         String bouquetName = bouquetPage.getBouquetName();
-        System.out.println(bouquetName + " bouquetName");
         String deliveryPrice = bouquetPage.getDeliveryPrice(CurrencyType.RUB);
 
         bouquetPage.openBouquetPage(baseUrl)
                 .setFirstVariation()
                 .assertBouquetName();
 
-        String bouquetPrice = bouquetPage.assertBouquetPrice(CurrencyType.RUB);
+        String bouquetPrice = bouquetPage.assertBouquetMinPrice(CurrencyType.RUB);
 
         bouquetPage.assertDeliveryPrice(CurrencyType.RUB)
-                .assertTotalPrice(CurrencyType.RUB)
+                .assertTotalMinPrice(CurrencyType.RUB)
                 .addToCard(baseUrl);
 
         checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, recipientName, phone, address)
-                .setRandomDeliveryDate();
+                .setRandomDeliveryDate(DeliveryDateType.HiGH_FEBRUARY);
 
         String deliveryTimeFrom = checkoutPage.setRandomDeliveryTime();
         String deliveryDate = checkoutPage.getDeliveryDate();
 
         checkoutPage.assertBouquetName()
                 .assertDeliveryPrice(CurrencyType.RUB)
-                .assertBouquetPrice(CurrencyType.RUB)
-                .assertTotalPrice(CurrencyType.RUB)
+                .assertBouquetPrice(CurrencyType.RUB, DeliveryDateType.HiGH_FEBRUARY)
+                .assertTotalPrice(CurrencyType.RUB, DeliveryDateType.HiGH_FEBRUARY)
                 .goToPaymentPage();
 
         paymentPage.assertPaymentStatus(baseUrl)

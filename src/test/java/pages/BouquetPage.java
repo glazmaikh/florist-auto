@@ -54,9 +54,9 @@ public class BouquetPage extends AssertFixturesPage {
         return this;
     }
 
-    public String assertBouquetPrice(CurrencyType currencyType) {
-        assertFixturesPage.performAssertBouquetPrice(bouquetSection, currencyType);
-        return apiClient.getBouquetPrice(currencyType);
+    public String assertBouquetMinPrice(CurrencyType currencyType) {
+        assertFixturesPage.performAssertBouquetMinPrice(bouquetSection, currencyType);
+        return apiClient.getBouquetMinPrice(currencyType);
     }
 
     public BouquetPage assertDeliveryPrice(CurrencyType currencyType) {
@@ -101,8 +101,8 @@ public class BouquetPage extends AssertFixturesPage {
         return this;
     }
 
-    public BouquetPage assertTotalPrice(CurrencyType currencyType) {
-        String bouquetFirstVariationPrice = apiClient.getBouquetPrice(currencyType);
+    public BouquetPage assertTotalMinPrice(CurrencyType currencyType) {
+        String bouquetFirstVariationPrice = apiClient.getBouquetMinPrice(currencyType);
         String deliveryPrice = apiClient.getDeliveryPrice(currencyType);
         double totalPrice = Double.parseDouble(bouquetFirstVariationPrice) + Double.parseDouble(deliveryPrice);
 

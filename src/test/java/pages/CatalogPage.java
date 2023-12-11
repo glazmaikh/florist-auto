@@ -94,7 +94,7 @@ public class CatalogPage {
         apiClient.initBouquet(bouquetType);
         bouquetLoader.shouldNotBe(visible, Duration.ofSeconds(30));
         String bouquetName = apiClient.getBouquetName();
-        String bouquetPrice = String.valueOf(apiClient.getBouquetPrice(currencyType));
+        String bouquetPrice = String.valueOf(apiClient.getBouquetMinPrice(currencyType));
         int page = 1;
 
         boolean foundBouquet = false;
@@ -122,7 +122,7 @@ public class CatalogPage {
         apiClient.initBouquet(bouquetType, isActive);
         bouquetLoader.shouldNotBe(visible, Duration.ofSeconds(30));
         String bouquetName = apiClient.getBouquetName();
-        String bouquetPrice = String.valueOf(apiClient.getBouquetPrice(currencyType));
+        String bouquetPrice = String.valueOf(apiClient.getBouquetMinPrice(currencyType));
         int page = 1;
 
         boolean foundBouquet = false;
@@ -154,7 +154,7 @@ public class CatalogPage {
         while (!cookiePopUpClosed) {
             cookiePopUpCrossArea.shouldBe(visible, Duration.ofSeconds(15)).click();
             if (cookiePopUp.is(visible)) {
-                System.out.println("Попап куки не закрылся с 1 раза");
+                System.out.println("Попап кук не закрылся с 1 раза");
                 cookiePopUpCrossArea.shouldBe(visible, Duration.ofSeconds(15)).click();
             } else {
                 cookiePopUpClosed = true;

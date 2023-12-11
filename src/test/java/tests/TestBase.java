@@ -36,9 +36,9 @@ public class TestBase {
 
     @BeforeAll
     static void setUp() throws IOException {
-        String testEnv = System.getProperty("TEST_ENV");
-        String propertiesFilePath = "src/test/resources/" + testEnv + ".properties";
-        new Properties().load(new FileInputStream(propertiesFilePath));
+//        String testEnv = System.getProperty("TEST_ENV");
+//        String propertiesFilePath = "src/test/resources/" + testEnv + ".properties";
+//        new Properties().load(new FileInputStream(propertiesFilePath));
 
         BaseConfig config = ConfigFactory.create(BaseConfig.class, System.getProperties());
         baseUrl = config.getBaseUrl();
@@ -50,8 +50,8 @@ public class TestBase {
         password = config.getPassword();
 
         //System.setProperty("webdriver.chrome.driver", "C://webdrivers/chromedriver119.exe");
-        Configuration.baseUrl = System.getProperty("base_url", "https://www." + testEnv + ".florist.local/");
-        //Configuration.baseUrl = System.getProperty("base_url", "https://www.test.florist.local/");
+        //Configuration.baseUrl = System.getProperty("base_url", "https://www." + testEnv + ".florist.local/");
+        Configuration.baseUrl = System.getProperty("base_url", "https://www.test.florist.local/");
         Configuration.browser = System.getProperty("browser", "chrome");
         RestAssured.baseURI = baseUrl;
         //Configuration.holdBrowserOpen = true;
@@ -68,7 +68,7 @@ public class TestBase {
 
     @BeforeEach
     void addListener() {
-        //TimeZone.setDefault(TimeZone.getTimeZone("Pacific/Moscow"));
+        TimeZone.setDefault(TimeZone.getTimeZone("Europe/Samara"));
         SelenideLogger.addListener("AllureSelenide", new AllureSelenide());
     }
 

@@ -7,10 +7,12 @@ import com.codeborne.selenide.SelenideElement;
 import fixtures.AssertFixturesPage;
 import helpers.ApiClient;
 import helpers.CurrencyType;
+import helpers.DeliveryDateType;
 import helpers.HelperPage;
 import org.openqa.selenium.JavascriptExecutor;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
 
@@ -96,8 +98,8 @@ public class CheckoutPage {
         return this;
     }
 
-    public CheckoutPage assertBouquetPrice(CurrencyType currencyType) {
-        assertFixturesPage.performAssertBouquetPriceList(orderSection, currencyType);
+        public CheckoutPage assertBouquetPrice(CurrencyType currencyType, DeliveryDateType deliveryDateType) {
+        assertFixturesPage.performAssertBouquetPriceList(orderSection, currencyType, deliveryDateType);
         return this;
     }
 
@@ -106,8 +108,8 @@ public class CheckoutPage {
         return this;
     }
 
-    public CheckoutPage assertTotalPrice(CurrencyType currencyType) {
-        double bouquetPrices = apiClient.getBouquetPriceList(currencyType).stream()
+    public CheckoutPage assertTotalPrice(CurrencyType currencyType, DeliveryDateType deliveryDateType) {
+        double bouquetPrices = apiClient.getBouquetPriceList(currencyType, deliveryDateType).stream()
                 .mapToDouble(Double::parseDouble)
                 .sum();
 
@@ -116,7 +118,6 @@ public class CheckoutPage {
                 .sum();
 
         double totalPrice = bouquetPrices + extrasPrices;
-
         if (!apiClient.getDeliveryPrice(currencyType).equals("Бесплатно")) {
             totalPrice += Double.parseDouble(apiClient.getDeliveryPrice(currencyType));
         }
@@ -132,9 +133,14 @@ public class CheckoutPage {
         return new PaymentPage(apiClient, assertFixturesPage);
     }
 
-    public CheckoutPage setRandomDeliveryDate() {
-        List<String> disabledDaysList = apiClient.getDisabledDeliveryDaysList();
-        deliveryDate = HelperPage.getRandomDeliveryDayWithoutDisabled(disabledDaysList);
+    public CheckoutPage setRandomDeliveryDate(DeliveryDateType dateType) throws Exception {
+        List<LocalDate> disabledDaysList = apiClient.getDisabledDeliveryDaysList();
+
+        switch (dateType) {
+            case LOW -> deliveryDate = HelperPage.getRandomLowDeliveryDay(disabledDaysList);
+            case HiGH_FEBRUARY -> deliveryDate = HelperPage.getRandomHighFebruaryDeliveryDay(disabledDaysList);
+            case HIGH_MARCH -> deliveryDate = HelperPage.getRandomHighMarchDeliveryDay(disabledDaysList);
+        }
 
         boolean foundDate = false;
         while (!foundDate) {
@@ -157,7 +163,7 @@ public class CheckoutPage {
         apiClient.getDeliveryDateInterval(deliveryDate);
         LocalTime timeFrom = HelperPage.doubleToTime(apiClient.getDeliveryTimeFrom());
         LocalTime timeTo = HelperPage.doubleToTime(apiClient.getDeliveryTimeTo());
-        String time = HelperPage.getRandomTimeInterval(timeFrom, timeTo.minusHours(2));
+        String time = String.valueOf(HelperPage.getRandomTimeInterval(timeFrom, timeTo.minusHours(2)));
 
         timeFromInput.shouldBe(exist).click();
         timeDropped.shouldBe(exist);

@@ -1,18 +1,20 @@
 package models.bouquet;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import helpers.CurrencyType;
 import lombok.Data;
 
-public @Data class MinPrice {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public @Data class DatePrice {
     @JsonProperty("RUB")
-    public int rub;
+    private int rub;
     @JsonProperty("USD")
-    public double usd;
+    private double usd;
     @JsonProperty("EUR")
-    public double eur;
+    private double eur;
     @JsonProperty("KZT")
-    public int kzt;
+    private int kzt;
 
     public double getEur() {
         return eur;

@@ -6,12 +6,12 @@ import lombok.Data;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public @Data class Price {
-    @JsonProperty("USD")
-    public double uSD;
-    @JsonProperty("EUR")
-    public double eUR;
-    @JsonProperty("KZT")
-    public int kZT;
     @JsonProperty("RUB")
-    public int rUB;
+    private int rub;
+    @JsonProperty("USD")
+    private double usd;
+    @JsonProperty("EUR")
+    private double eur;
+    @JsonProperty("KZT")
+    private int kzt;
 }

@@ -1,11 +1,9 @@
 package models.bouquet;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import helpers.CurrencyType;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -30,10 +28,15 @@ public @Data class BouquetDataItemDto {
     public String img;
     public String description;
     private Map<String, PriceItemDto> prices;
-    public MinDatePrice min_date_price;
+    @JsonProperty("min_date_price")
+    public Map<String, Map<String, Double>> minDatePrice;
     public String salon_name;
 
-    public List<PriceItemDto> getPriceList() {
-        return new ArrayList<>(prices.values());
+    public MinPrice getMin_price() {
+        return min_price;
     }
+
+//    public List<PriceItemDto> getPrices() {
+//        return prices;
+//    }
 }
