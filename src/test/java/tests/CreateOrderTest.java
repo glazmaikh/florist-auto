@@ -6,6 +6,7 @@ import helpers.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -14,6 +15,7 @@ import pages.*;
 import java.time.LocalTime;
 import java.util.stream.Stream;
 
+@ExtendWith(TimeZoneExtension.class)
 public class CreateOrderTest extends TestBase {
     private final TestData testData = new TestData();
     private CatalogPage catalogPage;
@@ -333,7 +335,6 @@ public class CreateOrderTest extends TestBase {
 //                //.setCurrency(CurrencyType.KZT)
 //                .setRandomBouquet(BouquetType.ALL_BOUQUETS, CurrencyType.RUB, false);
 //
-//        System.out.println(bouquetPage.getBouquetName() + " bouquetName");
 //
 //        bouquetPage.openBouquetPage(baseUrl)
 //                .setFirstVariation()
@@ -376,8 +377,6 @@ public class CreateOrderTest extends TestBase {
 //                .setCurrency(currency)
 //                .setRandomBouquet(BouquetType.FLORIST_RU, currency);
 //
-//        System.out.println(bouquetPage.getBouquetName() + " bouquetName");
-//
 //        bouquetPage.openBouquetPage(baseUrl)
 //                .setFirstVariation()
 //                .assertBouquetName()
@@ -419,11 +418,10 @@ public class CreateOrderTest extends TestBase {
                 .closeCookiePopUp()
                 .setDeliveryCity()
                 //.setCurrency(CurrencyType.KZT)
-                .setRandomBouquetTEST(BouquetType.ALL_BOUQUETS, CurrencyType.RUB);
+                .setRandomBouquet(BouquetType.ALL_BOUQUETS, CurrencyType.RUB);
 
         String bouquetId = String.valueOf(bouquetPage.getBouquetId());
         String bouquetName = bouquetPage.getBouquetName();
-        System.out.println(bouquetName + " bouquetName");
         String deliveryPrice = bouquetPage.getDeliveryPrice(CurrencyType.RUB);
 
         bouquetPage.openBouquetPage(baseUrl)
@@ -437,37 +435,37 @@ public class CreateOrderTest extends TestBase {
                 .addToCard(baseUrl);
 
         checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, recipientName, phone, address)
-                .setRandomDeliveryDate(DeliveryDateType.LOW);
+                .setRandomDeliveryDate(DeliveryDateType.HiGH_FEBRUARY);
 
-//        String deliveryTimeFrom = checkoutPage.setRandomDeliveryTime();
-//        String deliveryDate = checkoutPage.getDeliveryDate();
-//
-//        checkoutPage.assertBouquetName()
-//                .assertDeliveryPrice(CurrencyType.RUB)
-//                .assertBouquetPriceTEST(CurrencyType.RUB, deliveryDate);
-//                .assertTotalPrice(CurrencyType.RUB)
-//                .goToPaymentPage();
-//
-//        paymentPage.assertPaymentStatus(baseUrl)
-//                .assertBouquetName()
-//                .assertDeliveryPrice(CurrencyType.RUB)
-//                .assertBouquetPrice(CurrencyType.RUB);
-//
-//        String orderId = HelperPage.getOrderNumber();
-//        String totalPrice = paymentPage.getTotalPrice(CurrencyType.RUB);
-//
-//        paymentPage.assertTotalPrice(CurrencyType.RUB)
-//                .fillCard(cardNumber, expireNumber, cvcNumber)
-//                .pay()
-//                .confirm();
-//
-//        successPage.assertSuccessOrderStatus(baseUrl)
-//                .assertSuccessCreatedOrder(CurrencyType.RUB);
-//
-//        orderERPPage.openOrder(baseUrl, orderId)
-//                .assertBouquetInfo(orderId, bouquetId, bouquetName, bouquetPrice)
-//                .assertPrices(deliveryPrice, totalPrice, deliveryDate)
-//                .assertPaymentCompletedChecked()
-//                .assertRecipientInfo(recipientName, address, phone, deliveryTimeFrom);
+        String deliveryTimeFrom = checkoutPage.setRandomDeliveryTime();
+        String deliveryDate = checkoutPage.getDeliveryDate();
+
+        checkoutPage.assertBouquetName()
+                .assertDeliveryPrice(CurrencyType.RUB)
+                .assertBouquetPrice(CurrencyType.RUB, DeliveryDateType.HiGH_FEBRUARY)
+                .assertTotalPrice(CurrencyType.RUB, DeliveryDateType.HiGH_FEBRUARY)
+                .goToPaymentPage();
+
+        paymentPage.assertPaymentStatus(baseUrl)
+                .assertBouquetName()
+                .assertDeliveryPrice(CurrencyType.RUB)
+                .assertBouquetPrice(CurrencyType.RUB);
+
+        String orderId = HelperPage.getOrderNumber();
+        String totalPrice = paymentPage.getTotalPrice(CurrencyType.RUB);
+
+        paymentPage.assertTotalPrice(CurrencyType.RUB)
+                .fillCard(cardNumber, expireNumber, cvcNumber)
+                .pay()
+                .confirm();
+
+        successPage.assertSuccessOrderStatus(baseUrl)
+                .assertSuccessCreatedOrder(CurrencyType.RUB);
+
+        orderERPPage.openOrder(baseUrl, orderId)
+                .assertBouquetInfo(orderId, bouquetId, bouquetName, bouquetPrice)
+                .assertPrices(deliveryPrice, totalPrice, deliveryDate)
+                .assertPaymentCompletedChecked()
+                .assertRecipientInfo(recipientName, address, phone, deliveryTimeFrom);
     }
 }

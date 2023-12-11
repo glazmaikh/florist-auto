@@ -32,6 +32,10 @@ public @Data class BouquetDataItemDto {
     public Map<String, Map<String, Double>> minDatePrice;
     public String salon_name;
 
+    public MinPrice getMin_price() {
+        return min_price;
+    }
+
 //    public List<PriceItemDto> getPrices() {
 //        return prices;
 //    }

@@ -98,38 +98,32 @@ public class CheckoutPage {
         return this;
     }
 
-//    public CheckoutPage assertBouquetPrice(CurrencyType currencyType, String deliveryDate) {
-//        assertFixturesPage.performAssertBouquetPriceList(orderSection, currencyType, deliveryDate);
-//        return this;
-//    }
+        public CheckoutPage assertBouquetPrice(CurrencyType currencyType, DeliveryDateType deliveryDateType) {
+        assertFixturesPage.performAssertBouquetPriceList(orderSection, currencyType, deliveryDateType);
+        return this;
+    }
 
-//        public CheckoutPage assertBouquetPriceTEST(CurrencyType currencyType, String deliveryDate) {
-//        assertFixturesPage.performAssertBouquetPriceListTEST(orderSection, currencyType, deliveryDate);
-//        return this;
-//    }
+    public CheckoutPage assertExtrasPrice(CurrencyType currencyType) {
+        assertFixturesPage.performAssertExtrasPrice(orderSection, currencyType);
+        return this;
+    }
 
-//    public CheckoutPage assertExtrasPrice(CurrencyType currencyType) {
-//        assertFixturesPage.performAssertExtrasPrice(orderSection, currencyType);
-//        return this;
-//    }
+    public CheckoutPage assertTotalPrice(CurrencyType currencyType, DeliveryDateType deliveryDateType) {
+        double bouquetPrices = apiClient.getBouquetPriceList(currencyType, deliveryDateType).stream()
+                .mapToDouble(Double::parseDouble)
+                .sum();
 
-//    public CheckoutPage assertTotalPrice(CurrencyType currencyType) {
-//        double bouquetPrices = apiClient.getBouquetPriceList(currencyType).stream()
-//                .mapToDouble(Double::parseDouble)
-//                .sum();
-//
-//        double extrasPrices = apiClient.getExtrasPriceList(currencyType).stream()
-//                .mapToDouble(Double::parseDouble)
-//                .sum();
-//
-//        double totalPrice = bouquetPrices + extrasPrices;
-//
-//        if (!apiClient.getDeliveryPrice(currencyType).equals("Бесплатно")) {
-//            totalPrice += Double.parseDouble(apiClient.getDeliveryPrice(currencyType));
-//        }
-//        orderSection.shouldHave(text(HelperPage.priceCurrencyFormat(currencyType, String.valueOf(totalPrice))));
-//        return this;
-//    }
+        double extrasPrices = apiClient.getExtrasPriceList(currencyType).stream()
+                .mapToDouble(Double::parseDouble)
+                .sum();
+
+        double totalPrice = bouquetPrices + extrasPrices;
+        if (!apiClient.getDeliveryPrice(currencyType).equals("Бесплатно")) {
+            totalPrice += Double.parseDouble(apiClient.getDeliveryPrice(currencyType));
+        }
+        orderSection.shouldHave(text(HelperPage.priceCurrencyFormat(currencyType, String.valueOf(totalPrice))));
+        return this;
+    }
 
     public PaymentPage goToPaymentPage() {
         priceSection.shouldBe(Condition.visible, Duration.ofSeconds(5)).click();
@@ -169,7 +163,7 @@ public class CheckoutPage {
         apiClient.getDeliveryDateInterval(deliveryDate);
         LocalTime timeFrom = HelperPage.doubleToTime(apiClient.getDeliveryTimeFrom());
         LocalTime timeTo = HelperPage.doubleToTime(apiClient.getDeliveryTimeTo());
-        String time = HelperPage.getRandomTimeInterval(timeFrom, timeTo.minusHours(2));
+        String time = String.valueOf(HelperPage.getRandomTimeInterval(timeFrom, timeTo.minusHours(2)));
 
         timeFromInput.shouldBe(exist).click();
         timeDropped.shouldBe(exist);

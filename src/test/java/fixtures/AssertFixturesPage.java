@@ -3,6 +3,7 @@ package fixtures;
 import com.codeborne.selenide.SelenideElement;
 import helpers.ApiClient;
 import helpers.CurrencyType;
+import helpers.DeliveryDateType;
 import helpers.HelperPage;
 
 import java.time.LocalDate;
@@ -24,13 +25,14 @@ public class AssertFixturesPage {
         assertTrue(orderSection.getText().contains(bouquetsPrice), "bouquets price is not equals");
     }
 
-    public void performAssertBouquetPriceListHighSeason(SelenideElement orderSection, CurrencyType currencyType, String deliveryDate) {
-        List<String> bouquetsPrices = apiClient.getBouquetPriceListTEST(currencyType, deliveryDate).stream()
+    public void performAssertBouquetPriceList(SelenideElement orderSection, CurrencyType currencyType, DeliveryDateType deliveryDateType) {
+        List<String> bouquetsPrices = apiClient.getBouquetPriceList(currencyType, deliveryDateType).stream()
                 .map(String::valueOf)
                 .map(e -> HelperPage.priceCurrencyFormat(currencyType, e))
                 .toList();
 
-                assertTrue(HelperPage.isOrderSectionContainsAllFromBouquets(orderSection, bouquetsPrices),
+        System.out.println(bouquetsPrices + " bouquetsPrices list");
+        assertTrue(HelperPage.isOrderSectionContainsAllFromBouquets(orderSection, bouquetsPrices),
                 "bouquets prices not equals");
     }
 

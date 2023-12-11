@@ -22,8 +22,10 @@ import models.order.OrderData;
 import models.register.User;
 import models.register.UserWrapper;
 
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +46,7 @@ public class ApiClient {
     private DeliveryTime deliveryTime;
     private final List<BouquetDataItemDto> bouquetList = new ArrayList<>();
     private List<BouquetDataItemDto> allBouquetsFromRequest = new ArrayList<>();
-    private List<PriceItemDto> pricesFirstVariations = new ArrayList<>();
+    private final List<PriceItemDto> pricesFirstVariations = new ArrayList<>();
 
     // Получение обьекта города Астрахань
     @SneakyThrows
@@ -76,38 +78,19 @@ public class ApiClient {
     }
 
     // получение рандомного букета floristRu/Iflorist по ID города
-    @SneakyThrows
-    private void getRandomFloristRuBouquetByCityID() {
-        RequestSpecification httpRequest = given();
-        Response responseBouquet = httpRequest
-                .auth().basic("florist_api", "123")
-                .param("city", getCityId())
-                .param("showPrices", 1)
-                .param("includeIflorist", 1)
-                .get("api/bouquet");
-        ResponseBody bodyBouquet = responseBouquet.getBody();
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        BouquetDataDto bouquetData = objectMapper.readValue(bodyBouquet.asString(), BouquetDataDto.class);
-        allBouquetsFromRequest = new ArrayList<>(bouquetData.getData().values());
-        bouquet = getRandomBouquetFloristRu(bouquetData.getData());
-        bouquetList.add(bouquet);
-    }
-
     private PriceItemDto getFirstVariation(Map<String, PriceItemDto> prices) {
         List<PriceItemDto> values = new ArrayList<>(prices.values());
         return values.get(0);
     }
 
     @SneakyThrows
-    private void getRandomFloristBouquetTEST() {
+    private void getRandomFloristBouquet() {
         RequestSpecification httpRequest = given();
         Response responseBouquet = httpRequest
                 .auth().basic("florist_api", "123")
                 .param("city", getCityId())
                 .param("showPrices", 1)
                 .param("includeIflorist", 1)
-                //.param("ids", 606212)
                 .get("api/bouquet");
         ResponseBody bodyBouquet = responseBouquet.getBody();
 
@@ -116,27 +99,7 @@ public class ApiClient {
         allBouquetsFromRequest = new ArrayList<>(bouquetData.getData().values());
         bouquet = getRandomBouquetFloristRu(bouquetData.getData());
         bouquetList.add(bouquet);
-
         pricesFirstVariations.add(getFirstVariation(bouquet.getPrices()));
-
-        System.out.println(pricesFirstVariations);
-        for (PriceItemDto p : pricesFirstVariations) {
-            System.out.println(p.getDatePrice().get("1").getEur());
-        }
-
-//        List<PriceItemDto> priceItemDtoList = bouquetData.getPricesList();
-//        System.out.println(priceItemDtoList.get(0).getPrice().get("USD") + " !!!");
-//        System.out.println(priceItemDtoList.get(0).getDatePrice().get("1").getUsd() + " !!!");
-        //System.out.println(bouquet.getPrices().get(0).getDatePrice().getPrice1().getEur());
-
-//        if (bouquet.getPrices().size() == 1) {
-//            PriceItemDto targetItem = bouquet.getPrices().values().iterator().next();
-//            System.out.println("Найден единственный обьект: " + targetItem);
-//        } else {
-//            for (PriceItemDto itemDto : bouquet.getPrices().values()) {
-//                System.out.println("Обьект: " + itemDto);
-//            }
-//        }
     }
 
     @SneakyThrows
@@ -176,42 +139,6 @@ public class ApiClient {
     }
 
     @SneakyThrows
-    private void getRandomIFloristBouquetByCityID() {
-        RequestSpecification httpRequest = given();
-        Response responseBouquet = httpRequest
-                .auth().basic("florist_api", "123")
-                .param("city", getCityId())
-                .param("showPrices", 1)
-                .param("includeIflorist", 1)
-                .get("api/bouquet");
-        ResponseBody bodyBouquet = responseBouquet.getBody();
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        BouquetDataDto bouquetData = objectMapper.readValue(bodyBouquet.asString(), BouquetDataDto.class);
-        allBouquetsFromRequest = new ArrayList<>(bouquetData.getData().values());
-        bouquet = getBouquetIFloristList(bouquetData.getData());
-        bouquetList.add(bouquet);
-    }
-
-    @SneakyThrows
-    private void getRandomAllBouquetByCityID() {
-        RequestSpecification httpRequest = given();
-        Response responseBouquet = httpRequest
-                .auth().basic("florist_api", "123")
-                .param("city", getCityId())
-                .param("showPrices", 1)
-                .param("includeIflorist", 1)
-                .get("api/bouquet");
-        ResponseBody bodyBouquet = responseBouquet.getBody();
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        BouquetDataDto bouquetData = objectMapper.readValue(bodyBouquet.asString(), BouquetDataDto.class);
-        allBouquetsFromRequest = new ArrayList<>(bouquetData.getData().values());
-        bouquet = getRandomBouquet(bouquetData.getData());
-        bouquetList.add(bouquet);
-    }
-
-    @SneakyThrows
     private void getRandomAllBouquetByCityID(boolean isAction) {
         RequestSpecification httpRequest = given();
         Response responseBouquet = httpRequest
@@ -231,23 +158,13 @@ public class ApiClient {
 
     public void initBouquet(BouquetType bouquetType) {
         switch (bouquetType) {
-            case FLORIST_RU -> getRandomFloristRuBouquetByCityID();
-            case IFLORIST -> getRandomIFloristBouquetByCityID();
-            case ALL_BOUQUETS -> getRandomAllBouquetByCityID();
-        }
-    }
-
-    public void initBouquetTEST(BouquetType bouquetType) {
-        switch (bouquetType) {
-            case ALL_BOUQUETS -> getRandomFloristBouquetTEST();
+            case FLORIST_RU, IFLORIST, ALL_BOUQUETS -> getRandomFloristBouquet();
         }
     }
 
     public void initBouquet(BouquetType bouquetType, boolean isAction) {
         switch (bouquetType) {
-            case FLORIST_RU -> getRandomFloristRuBouquetByCityID(isAction);
-            case IFLORIST -> getRandomIFloristBouquetByCityID(isAction);
-            case ALL_BOUQUETS -> getRandomAllBouquetByCityID(isAction);
+            case FLORIST_RU, IFLORIST, ALL_BOUQUETS -> getRandomFloristRuBouquetByCityID(isAction);
         }
     }
 
@@ -279,90 +196,26 @@ public class ApiClient {
                 .map(BouquetDataItemDto::getName).toList();
     }
 
-    public List<String> getBouquetPriceListTEST(CurrencyType currencyType, String deliveryDate) {
-        LocalDate inputDate = LocalDate.parse(deliveryDate);
-        if (inputDate.isAfter(LocalDate.parse(inputDate.getYear() + "-02-09")) &&
-                inputDate.isBefore(LocalDate.parse(inputDate.getYear() + "-02-15"))) {
-            return switch (currencyType) {
-                case EUR -> pricesFirstVariations.stream()
-                        .map(e -> e.getDatePrice().get("0").getEur())
+    public List<String> getBouquetPriceList(CurrencyType currencyType, DeliveryDateType deliveryDateType) {
+        return switch (currencyType) {
+            case EUR, KZT, USD, RUB -> {
+                List<Double> prices = switch (deliveryDateType) {
+                    case HiGH_FEBRUARY -> pricesFirstVariations.stream()
+                            .map(e -> e.getDatePrice().get("1").getCurrency(currencyType))
+                            .collect(Collectors.toList());
+                    case HIGH_MARCH -> pricesFirstVariations.stream()
+                            .map(e -> e.getDatePrice().get("2").getCurrency(currencyType))
+                            .collect(Collectors.toList());
+                    case LOW -> bouquetList.stream()
+                            .map(e -> e.getMin_price().getCurrency(currencyType))
+                            .collect(Collectors.toList());
+                };
+                yield prices.stream()
                         .map(String::valueOf)
                         .collect(Collectors.toList());
-                case KZT -> pricesFirstVariations.stream()
-                        .map(e -> e.getDatePrice().get("0").getKzt())
-                        .map(String::valueOf)
-                        .collect(Collectors.toList());
-                case USD -> pricesFirstVariations.stream()
-                        .map(e -> e.getDatePrice().get("0").getUsd())
-                        .map(String::valueOf)
-                        .collect(Collectors.toList());
-                case RUB -> pricesFirstVariations.stream()
-                        .map(e -> e.getDatePrice().get("0").getRub())
-                        .map(String::valueOf)
-                        .collect(Collectors.toList());
-            };
-        } else if (inputDate.isAfter(LocalDate.parse(inputDate.getYear() + "-02-29")) &&
-                inputDate.isBefore(LocalDate.parse(inputDate.getYear() + "-03-11"))) {
-            return switch (currencyType) {
-                case EUR -> pricesFirstVariations.stream()
-                        .map(e -> e.getDatePrice().get("1").getEur())
-                        .map(String::valueOf)
-                        .collect(Collectors.toList());
-                case KZT -> pricesFirstVariations.stream()
-                        .map(e -> e.getDatePrice().get("1").getKzt())
-                        .map(String::valueOf)
-                        .collect(Collectors.toList());
-                case USD -> pricesFirstVariations.stream()
-                        .map(e -> e.getDatePrice().get("1").getUsd())
-                        .map(String::valueOf)
-                        .collect(Collectors.toList());
-                case RUB -> pricesFirstVariations.stream()
-                        .map(e -> e.getDatePrice().get("1").getRub())
-                        .map(String::valueOf)
-                        .collect(Collectors.toList());
-            };
-        } else {
-            return switch (currencyType) {
-                case EUR -> bouquetList.stream()
-                        .map(e -> e.getMin_price().getEur())
-                        .map(String::valueOf)
-                        .collect(Collectors.toList());
-                case KZT -> bouquetList.stream()
-                        .map(e -> e.getMin_price().getKzt())
-                        .map(String::valueOf)
-                        .collect(Collectors.toList());
-                case USD -> bouquetList.stream()
-                        .map(e -> e.getMin_price().getUsd())
-                        .map(String::valueOf)
-                        .collect(Collectors.toList());
-                case RUB -> bouquetList.stream()
-                        .map(e -> e.getMin_price().getRub())
-                        .map(String::valueOf)
-                        .collect(Collectors.toList());
-            };
-        }
+            }
+        };
     }
-
-//    public List<String> getBouquetPriceList(CurrencyType currencyType) {
-//        return switch (currencyType) {
-//            case EUR -> bouquetList.stream()
-//                    .map(e -> e.getPrices().ge)
-//                    .map(String::valueOf)
-//                    .collect(Collectors.toList());
-//            case KZT -> bouquetList.stream()
-//                    .map(e -> e.getMin_price().getKzt())
-//                    .map(String::valueOf)
-//                    .collect(Collectors.toList());
-//            case USD -> bouquetList.stream()
-//                    .map(e -> e.getMin_price().getUsd())
-//                    .map(String::valueOf)
-//                    .collect(Collectors.toList());
-//            case RUB -> bouquetList.stream()
-//                    .map(e -> e.getMin_price().getRub())
-//                    .map(String::valueOf)
-//                    .collect(Collectors.toList());
-//        };
-//    }
 
     public void initExtras() {
         getRandomExtras();
@@ -556,7 +409,8 @@ public class ApiClient {
         return getRandomBouquet(filteredMap);
     }
 
-    private BouquetDataItemDto getRandomBouquetFloristRu(Map<String, BouquetDataItemDto> bouquetMap, boolean isAction) {
+    private BouquetDataItemDto getRandomBouquetFloristRu(Map<String, BouquetDataItemDto> bouquetMap,
+                                                         boolean isAction) {
         Map<String, BouquetDataItemDto> filteredMap = bouquetMap.entrySet()
                 .stream()
                 .filter(e -> e.getKey().startsWith("6"))
@@ -590,7 +444,8 @@ public class ApiClient {
         return getRandomBouquet(filteredMap);
     }
 
-    private BouquetDataItemDto getBouquetIFloristList(Map<String, BouquetDataItemDto> bouquetMap, boolean isAction) {
+    private BouquetDataItemDto getBouquetIFloristList(Map<String, BouquetDataItemDto> bouquetMap,
+                                                      boolean isAction) {
         Map<String, BouquetDataItemDto> filteredMap = bouquetMap.entrySet()
                 .stream()
                 .filter(e -> e.getKey().startsWith("333"))

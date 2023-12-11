@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Map;
 
 @JsonIgnoreProperties(ignoreUnknown = true)

@@ -3,7 +3,6 @@ package helpers;
 import com.codeborne.selenide.SelenideElement;
 
 import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Year;
@@ -61,8 +60,7 @@ public class HelperPage {
         return list.get(new Random().nextInt(list.size())).toString();
     }
 
-    public static String getRandomStringFromListTEST(List<String> list) {
-
+    public static LocalTime getRandomStringFromListTEST(List<LocalTime> list) {
         return list.get(new Random().nextInt(list.size()));
     }
 
@@ -167,18 +165,18 @@ public class HelperPage {
         return LocalTime.of(hours, minutes);
     }
 
-    public static String getRandomTimeInterval(LocalTime dateFrom, LocalTime dateTo) {
-        List<LocalDate> dates = new ArrayList<>();
+    public static LocalTime getRandomTimeInterval(LocalTime dateFrom, LocalTime dateTo) {
+        List<LocalTime> dates = new ArrayList<>();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
-        dates.add(LocalDate.parse(dateFrom.format(formatter)));
+        dates.add(LocalTime.parse(dateFrom.format(formatter)));
 
         LocalTime current = dateFrom;
         while (current.isBefore(dateTo) || current.equals(dateTo)) {
-            dates.add(LocalDate.parse(current.format(formatter)));
+            dates.add(LocalTime.parse(current.format(formatter)));
             current = current.plusMinutes(15);
         }
-        dates.add(LocalDate.parse(dateTo.format(formatter)));
-        return getRandomStringFromList(dates);
+        dates.add(LocalTime.parse(dateTo.format(formatter)));
+        return getRandomStringFromListTEST(dates);
     }
 
     public static boolean isOrderSectionContainsAllFromBouquets(SelenideElement orderList, List<String> prices) {
@@ -196,9 +194,6 @@ public class HelperPage {
                                     .replace(",", ".");
             case KZT, RUB -> {
                 int intValue = Integer.parseInt(cleanedPrice.split("\\.")[0]);
-                System.out.println(intValue + "HelperPage priceCurrencyFormat intValue");
-                System.out.println(String.valueOf(intValue).replaceAll("(\\d)(?=(\\d{3})+$)", "$1 ") + " " + currencyType.getSymbol() +
-                        " HelperPage priceCurrencyFormat yield");
                 yield String.valueOf(intValue).replaceAll("(\\d)(?=(\\d{3})+$)", "$1 ") + " " + currencyType.getSymbol();
             }
         };
