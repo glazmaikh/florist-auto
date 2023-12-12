@@ -435,15 +435,15 @@ public class CreateOrderTest extends TestBase {
                 .addToCard(baseUrl);
 
         checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, recipientName, phone, address)
-                .setRandomDeliveryDate(DeliveryDateType.HiGH_FEBRUARY);
+                .setRandomDeliveryDate(DeliveryDateType.LOW);
 
         String deliveryTimeFrom = checkoutPage.setRandomDeliveryTime();
         String deliveryDate = checkoutPage.getDeliveryDate();
 
         checkoutPage.assertBouquetName()
                 .assertDeliveryPrice(CurrencyType.RUB)
-                .assertBouquetPrice(CurrencyType.RUB, DeliveryDateType.HiGH_FEBRUARY)
-                .assertTotalPrice(CurrencyType.RUB, DeliveryDateType.HiGH_FEBRUARY)
+                .assertBouquetPrice(CurrencyType.RUB, DeliveryDateType.LOW)
+                .assertTotalPrice(CurrencyType.RUB, DeliveryDateType.LOW)
                 .goToPaymentPage();
 
         paymentPage.assertPaymentStatus(baseUrl)
