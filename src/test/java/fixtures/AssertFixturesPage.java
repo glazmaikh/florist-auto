@@ -31,7 +31,7 @@ public class AssertFixturesPage {
                 .map(e -> HelperPage.priceCurrencyFormat(currencyType, e))
                 .toList();
 
-        System.out.println(bouquetsPrices + " bouquetsPrices list");
+        System.out.println(bouquetsPrices + " цена выбранного товара по deliveryDateType, уже после преобразования");
         assertTrue(HelperPage.isOrderSectionContainsAllFromBouquets(orderSection, bouquetsPrices),
                 "bouquets prices not equals");
     }

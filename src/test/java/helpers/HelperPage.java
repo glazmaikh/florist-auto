@@ -180,7 +180,7 @@ public class HelperPage {
     }
 
     public static boolean isOrderSectionContainsAllFromBouquets(SelenideElement orderList, List<String> prices) {
-        System.out.println(orderList.getText() + " isOrderSectionContainsAllFromBouquets orderList.getText()");
+        System.out.println(orderList.getText() + " текст внутри блока на странице");
         return prices.stream().allMatch(name -> orderList.getText().contains(name));
     }
 

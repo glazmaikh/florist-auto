@@ -142,7 +142,7 @@ public class CheckoutPage {
             case HIGH_MARCH -> deliveryDate = HelperPage.getRandomHighMarchDeliveryDay(disabledDaysList);
         }
 
-        System.out.println(deliveryDate + " setRandomDeliveryDate() deliveryDate");
+        System.out.println(deliveryDate + " выбраный рандомный день");
 
         boolean foundDate = false;
         while (!foundDate) {
