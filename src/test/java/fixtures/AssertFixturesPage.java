@@ -31,32 +31,23 @@ public class AssertFixturesPage {
                 .map(e -> HelperPage.priceCurrencyFormat(currencyType, e))
                 .toList();
 
-        System.out.println(bouquetsPrices + " цена выбранного товара по deliveryDateType, уже после преобразования");
         assertTrue(HelperPage.isOrderSectionContainsAllFromBouquets(orderSection, bouquetsPrices),
                 "bouquets prices not equals");
     }
 
 //    public void performAssertBouquetPriceList(SelenideElement orderSection, CurrencyType currencyType) {
 //        List<String> bouquetsPrices = apiClient.getBouquetPriceList(currencyType).stream()
-//                .peek(e -> System.out.println(e + " beforeToStr+Regex from api"))
 //                .map(String::valueOf)
 //                .map(e -> HelperPage.priceCurrencyFormat(currencyType, e))
-//                .peek(e -> System.out.println(e + " afterToStr+Regex from api"))
 //                .toList();
-//        System.out.println(bouquetsPrices + " bouquetsPrices list");
-//        System.out.println(orderSection.getText() + " orderSection.getText()");
 //        assertTrue(HelperPage.isOrderSectionContainsAllFromBouquets(orderSection, bouquetsPrices),
 //                "bouquets prices not equals");
 //    }
 
 //        List<String> bouquetsPrices = apiClient.getBouquetMinPriceList()PriceList(currencyType).stream()
-//                .peek(e -> System.out.println(e + " beforeToStr+Regex from api"))
 //                .map(String::valueOf)
 //                .map(e -> HelperPage.priceCurrencyFormat(currencyType, e))
-//                .peek(e -> System.out.println(e + " afterToStr+Regex from api"))
 //                .toList();
-//        System.out.println(bouquetsPrices + " bouquetsPrices list");
-//        System.out.println(orderSection.getText() + " orderSection.getText()");
 //        assertTrue(HelperPage.isOrderSectionContainsAllFromBouquets(orderSection, bouquetsPrices),
 //                "bouquets prices not equals");
 //    }
