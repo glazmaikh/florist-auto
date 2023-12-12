@@ -210,7 +210,6 @@ public class ApiClient {
                             .map(e -> e.getMin_price().getCurrency(currencyType))
                             .collect(Collectors.toList());
                 };
-                System.out.println(prices + " цена выбранного товара по deliveryDateType");
                 yield prices.stream()
                         .map(String::valueOf)
                         .collect(Collectors.toList());
