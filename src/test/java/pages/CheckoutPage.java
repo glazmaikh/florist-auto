@@ -133,14 +133,16 @@ public class CheckoutPage {
         return new PaymentPage(apiClient, assertFixturesPage);
     }
 
-    public CheckoutPage setRandomDeliveryDate(DeliveryDateType dateType) throws Exception {
+    public CheckoutPage setRandomDeliveryDate(DeliveryDateType deliveryDateType) throws Exception {
         List<LocalDate> disabledDaysList = apiClient.getDisabledDeliveryDaysList();
 
-        switch (dateType) {
+        switch (deliveryDateType) {
             case LOW -> deliveryDate = HelperPage.getRandomLowDeliveryDay(disabledDaysList);
             case HiGH_FEBRUARY -> deliveryDate = HelperPage.getRandomHighFebruaryDeliveryDay(disabledDaysList);
             case HIGH_MARCH -> deliveryDate = HelperPage.getRandomHighMarchDeliveryDay(disabledDaysList);
         }
+
+        System.out.println(deliveryDate + " setRandomDeliveryDate() deliveryDate");
 
         boolean foundDate = false;
         while (!foundDate) {

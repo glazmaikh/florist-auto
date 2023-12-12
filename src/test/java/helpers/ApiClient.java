@@ -211,7 +211,6 @@ public class ApiClient {
                             .collect(Collectors.toList());
                 };
                 System.out.println(prices + " getBouquetPriceList prices");
-                System.out.println(prices.stream().toList() + " getBouquetPriceList prices.stream().toList()");
                 yield prices.stream()
                         .map(String::valueOf)
                         .collect(Collectors.toList());
