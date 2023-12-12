@@ -210,6 +210,8 @@ public class ApiClient {
                             .map(e -> e.getMin_price().getCurrency(currencyType))
                             .collect(Collectors.toList());
                 };
+                System.out.println(prices + " getBouquetPriceList prices");
+                System.out.println(prices.stream().toList() + " getBouquetPriceList prices.stream().toList()");
                 yield prices.stream()
                         .map(String::valueOf)
                         .collect(Collectors.toList());
