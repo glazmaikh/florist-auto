@@ -31,10 +31,6 @@ public class SuccessPage {
         String totalDataPrice = HelperPage.priceCurrencyFormat(currencyType, apiClient.getOrderTotalPrice(currencyType));
         String orderCreatedDate = HelperPage.formatCreatedDate(apiClient.getOrderCreatedAt());
 
-        System.out.println(LocalTime.now() + " LocalTime.now()");
-        System.out.println(LocalDate.now() + " LocalDate.now()");
-        System.out.println(orderCreatedDate + " orderCreatedDate");
-
         orderSection.shouldHave(text(orderId));
         orderSection.shouldHave(text(totalDataPrice));
         orderSection.shouldHave(text(orderCreatedDate));

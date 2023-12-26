@@ -28,6 +28,7 @@ public class CheckoutPage {
     private final SelenideElement nameInput = $(byName("recipientName"));
     private final SelenideElement phoneInput = $(byName("recipientPhone"));
     private final SelenideElement addressDaDataInput = $(byName("recipientAddressSource"));
+    private final SelenideElement addressDroppedValue = $x("//span[text()='Выберите вариант или продолжите ввод']/following::div[1]");
     private final SelenideElement addressInput = $(byName("recipientAddress"));
     private final SelenideElement deliveryDateInput = $(byName("deliveryDateSource"));
     private ElementsCollection deliveryAllDays = $$x("//button[contains(@class, 'react-calendar__tile') and not(@disabled)]/abbr");
@@ -63,10 +64,11 @@ public class CheckoutPage {
 
         try {
             addressDaDataInput.shouldBe(exist).val(address);
+            addressDroppedValue.click();
         } catch (AssertionError e) {
-            addressInput.shouldNotBe(hidden).val(address);
+            addressInput.shouldBe(exist).val(address);
+            addressDroppedValue.click();
         }
-
         deliveryDateInput.click();
         return this;
     }
@@ -80,8 +82,10 @@ public class CheckoutPage {
 
         try {
             addressDaDataInput.shouldBe(exist).val(address);
+            addressDroppedValue.click();
         } catch (AssertionError e) {
-            addressInput.shouldNotBe(hidden).val(address);
+            addressInput.shouldBe(exist).val(address);
+            addressDroppedValue.click();
         }
         deliveryDateInput.click();
         return this;
