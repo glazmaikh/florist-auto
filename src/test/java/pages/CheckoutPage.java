@@ -146,8 +146,6 @@ public class CheckoutPage {
             case HIGH_MARCH -> deliveryDate = HelperPage.getRandomHighMarchDeliveryDay(disabledDaysList);
         }
 
-        System.out.println(deliveryDate + " выбраный рандомный день");
-
         boolean foundDate = false;
         while (!foundDate) {
             for (SelenideElement se : deliveryAllDays) {
@@ -182,10 +180,27 @@ public class CheckoutPage {
         header.scrollTo().shouldHave(textCaseSensitive("Заказ оформлен"));
         createdOrderText.shouldHave(text(String.valueOf(apiClient.getOrderId())));
         createdOrderText.shouldHave(text(HelperPage.regexMaxPaidDate(apiClient.getMaxPaidDate())));
-        assertTrue(apiClient.getOrderStatus().contains("Ожидает оплаты"));
-
+        //assertTrue(apiClient.getOrderStatus().contains("Ожидает оплаты"));
+        assertTrue(getWaitPaidOrderStatus(), "Таймаут. Не получил статус 'Ожидает оплаты' за 30 сек.");
         returnToPayButton.shouldBe(exist).click();
         return new PaymentPage(apiClient, assertFixturesPage);
+    }
+
+    private boolean getWaitPaidOrderStatus() {
+        long startTime = System.currentTimeMillis();
+        long timeoutInMilliseconds = 30000;
+        boolean orderPaid = false;
+
+        while (System.currentTimeMillis() - startTime < timeoutInMilliseconds) {
+            String orderStatus = apiClient.getOrderStatus();
+            if (orderStatus.contains("Ожидает оплаты")) {
+                orderPaid = true;
+                break;
+            } else {
+                Selenide.sleep(5000);
+            }
+        }
+        return orderPaid;
     }
 
     public CheckoutPage removeFromCard() {
