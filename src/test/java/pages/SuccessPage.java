@@ -5,17 +5,13 @@ import com.codeborne.selenide.SelenideElement;
 import helpers.ApiClient;
 import helpers.CurrencyType;
 import helpers.HelperPage;
-import io.restassured.response.Response;
 
 import java.time.Duration;
-import java.time.LocalDate;
-import java.time.LocalTime;
 
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Condition.textCaseSensitive;
 import static com.codeborne.selenide.Selenide.*;
 import static com.codeborne.selenide.WebDriverConditions.url;
-import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class SuccessPage {
@@ -43,7 +39,6 @@ public class SuccessPage {
         header.shouldHave(textCaseSensitive("Спасибо за заказ"), Duration.ofSeconds(20));
         apiClient.getOrderData();
         webdriver().shouldHave(url(baseUrl + apiClient.getCitySlug() + "/order/payment/" + HelperPage.getOrderNumber() + "/success/" + HelperPage.getOrderAccessKey()), Duration.ofSeconds(20));
-        //assertTrue(apiClient.getOrderStatus().contains("Оплачен"), "order has not been paid");
         assertTrue(getPaidOrderStatus(), "Таймаут. Не получил статус 'Заказ оплачен' за 30 сек.");
         return this;
     }
