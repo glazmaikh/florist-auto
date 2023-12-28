@@ -4,6 +4,7 @@ import com.codeborne.selenide.SelenideElement;
 import fixtures.AssertFixturesPage;
 import helpers.ApiClient;
 import helpers.CurrencyType;
+import helpers.DeliveryDateType;
 import helpers.HelperPage;
 import lombok.SneakyThrows;
 
@@ -64,8 +65,8 @@ public class PaymentPage {
         return this;
     }
 
-    public PaymentPage assertBouquetPrice(CurrencyType currencyType) {
-        //assertFixturesPage.performAssertBouquetPriceList(orderSection, currencyType);
+    public PaymentPage assertBouquetPrice(CurrencyType currencyType, DeliveryDateType deliveryDateType) {
+        assertFixturesPage.performAssertBouquetPriceList(orderSection, currencyType, deliveryDateType);
         return this;
     }
 

@@ -102,7 +102,7 @@ public class CheckoutPage {
         return this;
     }
 
-        public CheckoutPage assertBouquetPrice(CurrencyType currencyType, DeliveryDateType deliveryDateType) {
+    public CheckoutPage assertBouquetPrice(CurrencyType currencyType, DeliveryDateType deliveryDateType) {
         assertFixturesPage.performAssertBouquetPriceList(orderSection, currencyType, deliveryDateType);
         return this;
     }

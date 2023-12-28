@@ -3,8 +3,10 @@ package pages;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import helpers.ApiClient;
+import helpers.HelperPage;
 
 import java.time.Duration;
+import java.util.List;
 
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.*;
@@ -28,6 +30,17 @@ public class OrderERPPage {
         String url = "https://s_orlovskiy:SdfrFr5548@" + baseUrl + "dbnew/db/purchase.php?id=" + orderId;
         Selenide.executeJavaScript("window.open('" + url + "')");
         Selenide.switchTo().window(1);
+        return this;
+    }
+
+    public OrderERPPage assertBouquetInfo(String orderId, List<String> bouquetIds, List<String> bouquetNames, List<String> bouquetPrices) {
+        orderSection.shouldHave(attribute("value", orderId));
+        HelperPage.isOrderSectionContainsAllFromBouquets(bouquetSection, bouquetIds);
+        HelperPage.isOrderSectionContainsAllFromBouquets(bouquetSection, bouquetNames);
+        HelperPage.isOrderSectionContainsAllFromBouquets(bouquetSection, bouquetPrices);
+//        bouquetSection.shouldHave(text(bouquetId));
+//        bouquetSection.shouldHave(text(bouquetName));
+//        bouquetSection.shouldHave(text(bouquetPrice));
         return this;
     }
 
