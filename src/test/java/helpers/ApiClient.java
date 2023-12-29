@@ -328,6 +328,14 @@ public class ApiClient {
         return orderData.getData().getRecipient_name();
     }
 
+    public String getRecipientAddress() {
+        return orderData.getData().getRecipient_address();
+    }
+
+    public String getRecipientPhone() {
+        return orderData.getData().getRecipient_phone();
+    }
+
     public String getMaxPaidDate() {
         return orderData.getData().getMax_paid_date();
     }
@@ -356,7 +364,6 @@ public class ApiClient {
 
     public List<String> getBouquetPrices(CurrencyType currencyType) {
         List<String> bouquetPrices = new ArrayList<>();
-
         for (Map.Entry<String, CartItem> entry : orderData.getData().getCart().entrySet()) {
             CartItem cartItem = entry.getValue();
             if (cartItem != null && !"delivery".equals(cartItem.getType())) {
@@ -369,6 +376,25 @@ public class ApiClient {
             }
         }
         return bouquetPrices;
+    }
+
+    public String getDeliveryPrices(CurrencyType currencyType) {
+        for (Map.Entry<String, CartItem> entry : orderData.getData().getCart().entrySet()) {
+            CartItem cartItem = entry.getValue();
+            if (cartItem != null && "delivery".equals(cartItem.getType())) {
+                return switch (currencyType) {
+                    case EUR -> String.valueOf(Math.round(cartItem.getPrice().getEur()));
+                    case KZT -> String.valueOf(cartItem.getPrice().getKzt());
+                    case USD -> String.valueOf(Math.round(cartItem.getPrice().getUsd()));
+                    case RUB -> String.valueOf(cartItem.getPrice().getRub());
+                };
+            }
+        }
+        return "Delivery price not found";
+    }
+
+    public String getDeliveryDate() {
+        return orderData.getData().getDelivery_date();
     }
 
     // Получение списка недоступных дней для доставки

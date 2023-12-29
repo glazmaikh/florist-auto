@@ -42,13 +42,10 @@ public class OrderERPPage {
         return this;
     }
 
-    public OrderERPPage assertPrices(String deliveryPrice, String totalPrice, String deliveryDate) {
-        System.out.println(deliveryPrice + " deliveryPrice");
-        System.out.println(totalPrice + " totalPrice");
-        System.out.println(deliveryDate + " deliveryDate");
-//        bouquetSection.shouldHave(text(deliveryPrice));
-        bouquetSection.shouldHave(text(totalPrice));
-        bouquetSection.shouldHave(text(deliveryDate));
+    public OrderERPPage assertPrices(CurrencyType currencyType, String totalPrice) {
+        bouquetSection.shouldHave(text(apiClient.getDeliveryPrices(currencyType)));
+        recipientSection.shouldHave(text(totalPrice));
+        bouquetSection.shouldHave(text(apiClient.getDeliveryDate()));
         return this;
     }
 
@@ -57,10 +54,10 @@ public class OrderERPPage {
         return this;
     }
 
-    public OrderERPPage assertRecipientInfo(String recipientName, String address, String phone, String deliveryTimeFrom) {
-        recipientSection.shouldHave(text(recipientName));
-        assertTrue(addressSection.getText().contains(address));
-        recipientSection.shouldHave(text(phone));
+    public OrderERPPage assertRecipientInfo(String deliveryTimeFrom) {
+        recipientSection.shouldHave(text(apiClient.getRecipientName()));
+        assertTrue(addressSection.getText().contains(apiClient.getRecipientAddress()));
+        recipientSection.shouldHave(text(apiClient.getRecipientPhone()));
         deliveryTimeSection.shouldHave(text(deliveryTimeFrom.replaceAll("^0", "")));
         return this;
     }
