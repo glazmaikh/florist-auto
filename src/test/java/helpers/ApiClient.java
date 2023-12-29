@@ -18,6 +18,7 @@ import models.disabledDelivery.DisabledDeliveryDateResponse;
 import models.extras.ExtrasDataDto;
 import models.extras.ExtrasDataItemDto;
 import models.extras.ExtrasPrice;
+import models.order.CartItem;
 import models.order.OrderData;
 import models.register.User;
 import models.register.UserWrapper;
@@ -301,7 +302,7 @@ public class ApiClient {
         orderData = objectMapper.readValue(orderBody.asString(), OrderData.class);
     }
 
-    // методы для взаимодействия с обьектом OrderData о заказе из ERP
+    // методы для взаимодействия с обьектом OrderData в заказе ERP
     public int getOrderId() {
         return orderData.getData().getId();
     }
@@ -329,6 +330,45 @@ public class ApiClient {
 
     public String getMaxPaidDate() {
         return orderData.getData().getMax_paid_date();
+    }
+
+    public List<String> getBouquetIds() {
+        List<String> bouquetIds = new ArrayList<>();
+        for (Map.Entry<String, CartItem> entry : orderData.getData().getCart().entrySet()) {
+            CartItem cartItem = entry.getValue();
+            if (cartItem != null && !cartItem.getType().equals("delivery")) {
+                bouquetIds.add(cartItem.getItem_id());
+            }
+        }
+        return bouquetIds;
+    }
+
+    public List<String> getBouquetNames() {
+        List<String> bouquetNames = new ArrayList<>();
+        for (Map.Entry<String, CartItem> entry : orderData.getData().getCart().entrySet()) {
+            CartItem cartItem = entry.getValue();
+            if (cartItem != null && !cartItem.getType().equals("delivery")) {
+                bouquetNames.add(cartItem.getName());
+            }
+        }
+        return bouquetNames;
+    }
+
+    public List<String> getBouquetPrices(CurrencyType currencyType) {
+        List<String> bouquetPrices = new ArrayList<>();
+
+        for (Map.Entry<String, CartItem> entry : orderData.getData().getCart().entrySet()) {
+            CartItem cartItem = entry.getValue();
+            if (cartItem != null && !"delivery".equals(cartItem.getType())) {
+                switch (currencyType) {
+                    case EUR -> bouquetPrices.add(String.valueOf(Math.round(cartItem.getPrice().getEur())));
+                    case KZT -> bouquetPrices.add(String.valueOf(cartItem.getPrice().getKzt()));
+                    case USD -> bouquetPrices.add(String.valueOf(Math.round(cartItem.getPrice().getUsd())));
+                    case RUB -> bouquetPrices.add(String.valueOf(cartItem.getPrice().getRub()));
+                }
+            }
+        }
+        return bouquetPrices;
     }
 
     // Получение списка недоступных дней для доставки

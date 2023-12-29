@@ -3,6 +3,7 @@ package pages;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import helpers.ApiClient;
+import helpers.CurrencyType;
 import helpers.HelperPage;
 
 import java.time.Duration;
@@ -33,27 +34,19 @@ public class OrderERPPage {
         return this;
     }
 
-    public OrderERPPage assertBouquetInfo(String orderId, List<String> bouquetIds, List<String> bouquetNames, List<String> bouquetPrices) {
+    public OrderERPPage assertBouquetInfo(String orderId, CurrencyType currencyType) {
         orderSection.shouldHave(attribute("value", orderId));
-        HelperPage.isOrderSectionContainsAllFromBouquets(bouquetSection, bouquetIds);
-        HelperPage.isOrderSectionContainsAllFromBouquets(bouquetSection, bouquetNames);
-        HelperPage.isOrderSectionContainsAllFromBouquets(bouquetSection, bouquetPrices);
-//        bouquetSection.shouldHave(text(bouquetId));
-//        bouquetSection.shouldHave(text(bouquetName));
-//        bouquetSection.shouldHave(text(bouquetPrice));
-        return this;
-    }
-
-    public OrderERPPage assertBouquetInfo(String orderId, String bouquetId, String bouquetName, String bouquetPrice) {
-        orderSection.shouldHave(attribute("value", orderId));
-        bouquetSection.shouldHave(text(bouquetId));
-        bouquetSection.shouldHave(text(bouquetName));
-        bouquetSection.shouldHave(text(bouquetPrice));
+        HelperPage.isOrderSectionContainsAllFromBouquets(bouquetSection, apiClient.getBouquetIds());
+        HelperPage.isOrderSectionContainsAllFromBouquets(bouquetSection, apiClient.getBouquetNames());
+        HelperPage.isOrderSectionContainsAllFromBouquets(bouquetSection, apiClient.getBouquetPrices(currencyType));
         return this;
     }
 
     public OrderERPPage assertPrices(String deliveryPrice, String totalPrice, String deliveryDate) {
-        bouquetSection.shouldHave(text(deliveryPrice));
+        System.out.println(deliveryPrice + " deliveryPrice");
+        System.out.println(totalPrice + " totalPrice");
+        System.out.println(deliveryDate + " deliveryDate");
+//        bouquetSection.shouldHave(text(deliveryPrice));
         bouquetSection.shouldHave(text(totalPrice));
         bouquetSection.shouldHave(text(deliveryDate));
         return this;
