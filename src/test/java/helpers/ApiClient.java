@@ -25,6 +25,7 @@ import models.register.UserWrapper;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -308,12 +309,16 @@ public class ApiClient {
     }
 
     public String getOrderTotalPrice(CurrencyType currencyType) {
-        return switch (currencyType) {
-            case EUR -> String.valueOf(orderData.getData().getTotal().getEUR());
-            case KZT -> String.valueOf(orderData.getData().getTotal().getKZT());
-            case USD -> String.valueOf(orderData.getData().getTotal().getUSD());
-            case RUB -> String.valueOf(orderData.getData().getTotal().getRUB());
+        double total = switch (currencyType) {
+            case EUR -> orderData.getData().getTotal().getEUR();
+            case KZT -> orderData.getData().getTotal().getKZT();
+            case USD -> orderData.getData().getTotal().getUSD();
+            case RUB -> orderData.getData().getTotal().getRUB();
         };
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+        symbols.setDecimalSeparator('.');
+        DecimalFormat roundedTotal = new DecimalFormat("#.##", symbols);
+        return roundedTotal.format(total);
     }
 
     public String getOrderStatus() {
