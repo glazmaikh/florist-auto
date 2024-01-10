@@ -70,8 +70,8 @@ public class PaymentPage {
         return this;
     }
 
-    public PaymentPage assertExtrasPrice(CurrencyType currencyType) {
-        assertFixturesPage.performAssertExtrasPrice(orderSection, currencyType);
+    public PaymentPage assertExtrasPrice(CurrencyType currencyType, DeliveryDateType deliveryDateType) {
+        assertFixturesPage.performAssertExtrasPrice(orderSection, currencyType, deliveryDateType);
         return this;
     }
 
