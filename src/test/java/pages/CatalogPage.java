@@ -74,7 +74,7 @@ public class CatalogPage {
         return new AccountOrderPage(apiClient);
     }
 
-    public CatalogPage setDeliveryCity() throws InterruptedException {
+    public CatalogPage setDeliveryCity() {
         deliveryCity.shouldBe(visible).click();
         deliveryCityModal.shouldBe(visible);
 

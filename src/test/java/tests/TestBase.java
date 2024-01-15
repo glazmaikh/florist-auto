@@ -6,24 +6,17 @@ import com.codeborne.selenide.logevents.SelenideLogger;
 import config.BaseConfig;
 import helpers.Attach;
 import io.qameta.allure.selenide.AllureSelenide;
-import io.qameta.allure.selenide.LogType;
 import io.restassured.RestAssured;
 import org.aeonbits.owner.ConfigFactory;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.openqa.selenium.logging.LoggingPreferences;
-import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.time.*;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.logging.Level;
 
 public class TestBase {
     public static String baseUrl;
