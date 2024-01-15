@@ -12,9 +12,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import pages.*;
 
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.Stream;
 
 @ExtendWith(TimeZoneExtension.class)
@@ -40,9 +37,9 @@ public class CreateOrderTest extends TestBase {
         password = testData.getPassword();
 
         ApiClient apiClient = new ApiClient();
-
         AssertFixturesPage assertFixturesPage = new AssertFixturesPage(apiClient);
-        catalogPage = new CatalogPage(apiClient);
+
+        catalogPage = new CatalogPage(apiClient, assertFixturesPage);
         bouquetPage = new BouquetPage(apiClient, assertFixturesPage);
         checkoutPage = new CheckoutPage(apiClient, assertFixturesPage);
         paymentPage = new PaymentPage(apiClient, assertFixturesPage);
@@ -51,7 +48,7 @@ public class CreateOrderTest extends TestBase {
         orderERPPage = new OrderERPPage(apiClient);
     }
 
-    //    @Test
+//    @Test
 //    @Tag("create_order")
 //    void createNewFloristRuOrderTest() {
 //        catalogPage.openCatalogPage(baseUrl)
@@ -172,54 +169,61 @@ public class CreateOrderTest extends TestBase {
 //                .assertSuccessCreatedOrder(CurrencyType.RUB);
 //    }
 //
-//    @Test
-//    @Tag("create_order")
-//    void createNewOrderAnAuthUserTest() {
-//        catalogPage.apiRegisterUser(yourName, yourEmail, yourPhone, password)
-//                .openCatalogPage(baseUrl)
-//                .closeCookiePopUp()
-//                .openAuthModal()
-//                .fillAuthForm(yourEmail, password);
-//
-//        accountOrderPage.assertAuth(baseUrl, yourName);
-//
-//        catalogPage.openCatalogPage(baseUrl)
-//                .setDeliveryCity()
-//                .setRandomBouquet(BouquetType.ALL_BOUQUETS, CurrencyType.RUB);
-//
-//        bouquetPage.openBouquetPage(baseUrl)
-//                .setFirstVariation()
-//                .assertBouquetName()
-//                .assertBouquetPrice(CurrencyType.RUB);
-//        bouquetPage.assertDeliveryPrice(CurrencyType.RUB)
-//                .assertTotalPrice(CurrencyType.RUB)
-//                .addToCard(baseUrl);
-//
-//        checkoutPage.simpleFillForm(recipientName, phone, address)
-//                .getRandomDeliveryDate()
-//                .getRandomDeliveryTime()
-//                .assertBouquetName()
-//                .assertDeliveryPrice(CurrencyType.RUB)
-//                .assertBouquetPrice(CurrencyType.RUB)
-//                .assertTotalPrice(CurrencyType.RUB)
-//                .goToPaymentPage();
-//
-//        paymentPage.assertPaymentStatus(baseUrl)
-//                .assertBouquetName()
-//                .assertDeliveryPrice(CurrencyType.RUB)
-//                .assertBouquetPrice(CurrencyType.RUB)
-//                .assertTotalPrice(CurrencyType.RUB)
-//                .fillCard(cardNumber, expireNumber, cvcNumber)
-//                .pay()
-//                .confirm();
-//
-//        successPage.assertSuccessOrderStatus(baseUrl)
-//                .assertSuccessCreatedOrder(CurrencyType.RUB);
-//
-//        catalogPage.openAccountOrderPage();
-//        accountOrderPage.assertCreatedOrderFromAuthUser(baseUrl, yourName);
-//    }
-//
+    @Test
+    @Tag("create_order")
+    void createNewOrderAnAuthUserTest() throws Exception {
+        catalogPage.apiRegisterUser(yourName, yourEmail, yourPhone, password)
+                .openCatalogPage(baseUrl)
+                .closeCookiePopUp()
+                .openAuthModal()
+                .fillAuthForm(yourEmail, password);
+
+        accountOrderPage.assertAuth(baseUrl, yourName);
+
+        catalogPage.openCatalogPage(baseUrl)
+                .setDeliveryCity()
+                .setRandomBouquet(BouquetType.FLORIST_RU, CurrencyType.RUB);
+
+        bouquetPage.openBouquetPage(baseUrl)
+                .setFirstVariation()
+                .assertBouquetName()
+                .assertDeliveryPrice(CurrencyType.RUB)
+                .assertTotalMinPrice(CurrencyType.RUB)
+                .addToCard(baseUrl);
+
+        checkoutPage.simpleFillForm(recipientName, phone, address)
+                .setRandomDeliveryDate(DeliveryDateType.LOW);
+
+        checkoutPage.assertBouquetName()
+                .assertDeliveryPrice(CurrencyType.RUB)
+                .assertBouquetPrice(CurrencyType.RUB, DeliveryDateType.LOW)
+                .assertTotalPrice(CurrencyType.RUB, DeliveryDateType.LOW)
+                .goToPaymentPage();
+
+        paymentPage.assertPaymentStatus(baseUrl)
+                .assertBouquetName()
+                .assertDeliveryPrice(CurrencyType.RUB)
+                .assertBouquetPrice(CurrencyType.RUB, DeliveryDateType.LOW)
+                .assertTotalPrice(CurrencyType.RUB);
+
+        paymentPage.fillCard(cardNumber, expireNumber, cvcNumber)
+                .pay()
+                .confirm();
+
+        successPage.assertSuccessOrderStatus(baseUrl)
+                .assertSuccessCreatedOrder(CurrencyType.RUB);
+
+        catalogPage.openAccountOrderPage();
+
+        accountOrderPage.assertCreatedOrderExist(baseUrl)
+                .assertBouquetName()
+                .assertBouquetPrice(CurrencyType.RUB)
+                .assertDeliveryDate()
+                .assertRecipientData(recipientName, phone, address)
+                .assertDeliveryPrice(CurrencyType.RUB)
+                .assertTotalPrice(CurrencyType.RUB);
+    }
+
     @Test
     @Tag("create_order")
     void createNewOrderWithExtrasTest() throws Exception {
