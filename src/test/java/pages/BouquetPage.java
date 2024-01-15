@@ -9,13 +9,10 @@ import helpers.CurrencyType;
 import helpers.HelperPage;
 
 import java.time.Duration;
-import java.util.Calendar;
-import java.util.TimeZone;
 
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.*;
 import static com.codeborne.selenide.WebDriverConditions.url;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BouquetPage extends AssertFixturesPage {
