@@ -22,6 +22,7 @@ import static tests.TestBase.baseUrl;
 
 public class CatalogPage {
     private final ApiClient apiClient;
+    private AssertFixturesPage assertFixturesPage;
     private final SelenideElement cookiePopUpCross = $x("(.//*[normalize-space(text()) and normalize-space(.)='Флорист.ру — международная доставка цветов и букетов'])[1]/following::*[name()='svg'][3]");
     private final SelenideElement cookiePopUp = $(".bco1zbf0");
     private final SelenideElement cookiePopUpCrossArea = $(".lkfJru7k");
@@ -59,8 +60,9 @@ public class CatalogPage {
     private final SelenideElement setEurPrice = $(byText("€ Евро"));
     private final SelenideElement setUsdPrice = $(byText("$ Доллар США"));
 
-    public CatalogPage(ApiClient apiClient) {
+    public CatalogPage(ApiClient apiClient, AssertFixturesPage assertFixturesPage) {
         this.apiClient = apiClient;
+        this.assertFixturesPage = assertFixturesPage;
     }
 
     public CatalogPage openCatalogPage(String baseUrl) {
@@ -73,7 +75,7 @@ public class CatalogPage {
         return new AccountOrderPage(apiClient);
     }
 
-    public CatalogPage setDeliveryCity() {
+    public CatalogPage setDeliveryCity() throws InterruptedException {
         deliveryCity.shouldBe(visible).click();
         deliveryCityModal.shouldBe(visible);
 

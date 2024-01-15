@@ -14,8 +14,9 @@ public @Data class ExtrasDataItemDto {
     private String id;
     private String img;
     private int is_action;
+    //private MinPrice min_price;
     private Map<String, Double> min_price;
     private String name;
     private String preview;
-    private Map<String, ExtrasPrice> prices;
+    private Map<String, ExtrasPriceItemDto> prices;
 }
