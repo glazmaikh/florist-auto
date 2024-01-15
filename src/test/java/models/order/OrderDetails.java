@@ -38,8 +38,7 @@ public @Data class OrderDetails {
     private String message;
     private String additional;
     private boolean inform;
-    //private Map<String, Item> cart;
-    private Map<String, CartItem> cart;
+    private Map<String, Item> cart;
     private Map<String, Object> coupon;
     private Map<String, Object> partner_photo;
     private int unread_comments;
