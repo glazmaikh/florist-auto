@@ -22,7 +22,6 @@ import static tests.TestBase.baseUrl;
 
 public class CatalogPage {
     private final ApiClient apiClient;
-    private AssertFixturesPage assertFixturesPage;
     private final SelenideElement cookiePopUpCross = $x("(.//*[normalize-space(text()) and normalize-space(.)='Флорист.ру — международная доставка цветов и букетов'])[1]/following::*[name()='svg'][3]");
     private final SelenideElement cookiePopUp = $(".bco1zbf0");
     private final SelenideElement cookiePopUpCrossArea = $(".lkfJru7k");
