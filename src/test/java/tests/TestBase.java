@@ -68,7 +68,7 @@ public class TestBase {
 
     @BeforeEach
     void addListener() {
-        TimeZone.setDefault(TimeZone.getTimeZone("Europe/Samara"));
+        TimeZone.setDefault(TimeZone.getTimeZone("Europe/Moscow"));
         SelenideLogger.addListener("AllureSelenide", new AllureSelenide());
     }
 

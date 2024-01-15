@@ -35,8 +35,4 @@ public @Data class BouquetDataItemDto {
     public MinPrice getMin_price() {
         return min_price;
     }
-
-//    public List<PriceItemDto> getPrices() {
-//        return prices;
-//    }
 }

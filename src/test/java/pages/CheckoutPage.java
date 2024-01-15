@@ -107,8 +107,8 @@ public class CheckoutPage {
         return this;
     }
 
-    public CheckoutPage assertExtrasPrice(CurrencyType currencyType) {
-        assertFixturesPage.performAssertExtrasPrice(orderSection, currencyType);
+    public CheckoutPage assertExtrasPrice(CurrencyType currencyType, DeliveryDateType deliveryDateType) {
+        assertFixturesPage.performAssertExtrasPrice(orderSection, currencyType, deliveryDateType);
         return this;
     }
 
@@ -117,7 +117,7 @@ public class CheckoutPage {
                 .mapToDouble(Double::parseDouble)
                 .sum();
 
-        double extrasPrices = apiClient.getExtrasPriceList(currencyType).stream()
+        double extrasPrices = apiClient.getExtrasPriceList(currencyType, deliveryDateType).stream()
                 .mapToDouble(Double::parseDouble)
                 .sum();
 

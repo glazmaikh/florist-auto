@@ -1,5 +1,6 @@
 package fixtures;
 
+import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import helpers.ApiClient;
 import helpers.CurrencyType;
@@ -60,8 +61,8 @@ public class AssertFixturesPage {
         }
     }
 
-    public void performAssertExtrasPrice(SelenideElement orderSection, CurrencyType currencyType) {
-        List<String> extrasPrices = apiClient.getExtrasPriceList(currencyType).stream()
+    public void performAssertExtrasPrice(SelenideElement orderSection, CurrencyType currencyType, DeliveryDateType deliveryDateType) {
+        List<String> extrasPrices = apiClient.getExtrasPriceList(currencyType, deliveryDateType).stream()
                 .map(e -> HelperPage.priceCurrencyFormat(currencyType, e))
                 .toList();
         assertTrue(HelperPage.isOrderSectionContainsAllFromBouquets(orderSection, extrasPrices),

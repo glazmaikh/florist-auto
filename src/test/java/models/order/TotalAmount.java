@@ -7,11 +7,11 @@ import lombok.Data;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public @Data class TotalAmount {
     @JsonProperty("RUB")
-    public int rUB;
+    public double rUB;
     @JsonProperty("USD")
     public double uSD;
     @JsonProperty("EUR")
     public double eUR;
     @JsonProperty("KZT")
-    public int kZT;
+    public double kZT;
 }
