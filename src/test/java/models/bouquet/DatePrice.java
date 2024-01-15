@@ -42,3 +42,4 @@ public @Data class DatePrice {
         };
     }
 }
+

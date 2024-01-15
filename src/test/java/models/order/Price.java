@@ -5,13 +5,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public @Data class TotalAmount {
+public @Data class Price {
     @JsonProperty("RUB")
-    public double rUB;
+    private int rub;
     @JsonProperty("USD")
-    public double uSD;
+    private double usd;
     @JsonProperty("EUR")
-    public double eUR;
+    private double eur;
     @JsonProperty("KZT")
-    public double kZT;
+    private int kzt;
 }

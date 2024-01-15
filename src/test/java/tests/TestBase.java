@@ -29,9 +29,9 @@ public class TestBase {
 
     @BeforeAll
     static void setUp() throws IOException {
-//        String testEnv = System.getProperty("TEST_ENV");
-//        String propertiesFilePath = "src/test/resources/" + testEnv + ".properties";
-//        new Properties().load(new FileInputStream(propertiesFilePath));
+        String testEnv = System.getProperty("TEST_ENV");
+        String propertiesFilePath = "src/test/resources/" + testEnv + ".properties";
+        new Properties().load(new FileInputStream(propertiesFilePath));
 
         BaseConfig config = ConfigFactory.create(BaseConfig.class, System.getProperties());
         baseUrl = config.getBaseUrl();
@@ -61,7 +61,7 @@ public class TestBase {
 
     @BeforeEach
     void addListener() {
-        TimeZone.setDefault(TimeZone.getTimeZone("Europe/Samara"));
+        TimeZone.setDefault(TimeZone.getTimeZone("Europe/Moscow"));
         SelenideLogger.addListener("AllureSelenide", new AllureSelenide());
     }
 
