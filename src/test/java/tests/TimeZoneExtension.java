@@ -9,7 +9,7 @@ import java.util.TimeZone;
 public class TimeZoneExtension implements BeforeTestExecutionCallback {
     @Override
     public void beforeTestExecution(ExtensionContext context) throws Exception {
-        TimeZone.setDefault(TimeZone.getTimeZone("Europe/Moscow"));
+        TimeZone.setDefault(TimeZone.getTimeZone("Europe/Samara"));
     }
 
     @RegisterExtension
