@@ -372,7 +372,12 @@ public class CreateOrderTest extends TestBase {
                 .closeCookiePopUp()
                 .setDeliveryCity()
                 //.setCurrency(CurrencyType.KZT)
-                .setRandomBouquet(BouquetType.FLORIST_RU, CurrencyType.RUB);
+                .setRandomBouquet(BouquetType.ALL_BOUQUETS, CurrencyType.RUB);
+
+        String bouquetId = String.valueOf(bouquetPage.getBouquetId());
+        String bouquetName = bouquetPage.getBouquetName();
+        String deliveryPrice = bouquetPage.getDeliveryPrice(CurrencyType.RUB);
+        String bouquetPrice = bouquetPage.assertBouquetMinPrice(CurrencyType.RUB);
 
         bouquetPage.openBouquetPage(baseUrl)
                 .setFirstVariation()
@@ -385,6 +390,7 @@ public class CreateOrderTest extends TestBase {
                 .setRandomDeliveryDate(DeliveryDateType.LOW);
 
         String deliveryTimeFrom = checkoutPage.setRandomDeliveryTime();
+        String deliveryDate = checkoutPage.getDeliveryDate();
 
         checkoutPage.assertBouquetName()
                 .assertDeliveryPrice(CurrencyType.RUB)
@@ -409,20 +415,29 @@ public class CreateOrderTest extends TestBase {
                 .assertSuccessCreatedOrder(CurrencyType.RUB);
 
         orderERPPage.openOrder(baseUrl, orderId)
-                .assertBouquetInfo(orderId, CurrencyType.RUB)
-                .assertPrices(CurrencyType.RUB, totalPrice)
+                .assertBouquetInfo(orderId, bouquetId, bouquetName, bouquetPrice)
+                .assertPrices(deliveryPrice, totalPrice, deliveryDate)
                 .assertPaymentCompletedChecked()
-                .assertRecipientInfo(deliveryTimeFrom);
+                .assertRecipientInfo(recipientName, address, phone, deliveryTimeFrom);
     }
 
     @Test
     @Tag("create_order")
     void createNewOrderWith2BouquetsTest() throws Exception {
+        List<String> bouquetListId = new ArrayList<>();
+        List<String> bouquetListName = new ArrayList<>();
+        List<String> bouquetListPrice = new ArrayList<>();
+
         catalogPage.openCatalogPage(baseUrl)
                 .closeCookiePopUp()
                 .setDeliveryCity()
-                //.setCurrency(CurrencyType.RUB)
-                .setRandomBouquet(BouquetType.FLORIST_RU, CurrencyType.RUB);
+                //.setCurrency(CurrencyType.KZT)
+                .setRandomBouquet(BouquetType.ALL_BOUQUETS, CurrencyType.RUB);
+
+        bouquetListId.add(String.valueOf(bouquetPage.getBouquetId()));
+        bouquetListName.add(bouquetPage.getBouquetName());
+        bouquetListPrice.add(bouquetPage.assertBouquetMinPrice(CurrencyType.RUB));
+        String deliveryPrice = bouquetPage.getDeliveryPrice(CurrencyType.RUB);
 
         bouquetPage.openBouquetPage(baseUrl)
                 .setFirstVariation()
@@ -433,6 +448,10 @@ public class CreateOrderTest extends TestBase {
 
         catalogPage.openCatalogPage(baseUrl)
                 .setRandomBouquet(BouquetType.FLORIST_RU, CurrencyType.RUB);
+
+        bouquetListId.add(String.valueOf(bouquetPage.getBouquetId()));
+        bouquetListName.add(bouquetPage.getBouquetName());
+        bouquetListPrice.add(bouquetPage.assertBouquetMinPrice(CurrencyType.RUB));
 
         bouquetPage.openBouquetPage(baseUrl)
                 .setFirstVariation()
@@ -445,6 +464,7 @@ public class CreateOrderTest extends TestBase {
                 .setRandomDeliveryDate(DeliveryDateType.LOW);
 
         String deliveryTimeFrom = checkoutPage.setRandomDeliveryTime();
+        String deliveryDate = checkoutPage.getDeliveryDate();
 
         checkoutPage.assertBouquetName()
                 .assertDeliveryPrice(CurrencyType.RUB)
@@ -469,9 +489,9 @@ public class CreateOrderTest extends TestBase {
                 .assertSuccessCreatedOrder(CurrencyType.RUB);
 
         orderERPPage.openOrder(baseUrl, orderId)
-                .assertBouquetInfo(orderId, CurrencyType.RUB)
-                .assertPrices(CurrencyType.RUB, totalPrice)
+                .assertBouquetInfo(orderId, bouquetListId, bouquetListName, bouquetListPrice)
+                .assertPrices(deliveryPrice, totalPrice, deliveryDate)
                 .assertPaymentCompletedChecked()
-                .assertRecipientInfo(deliveryTimeFrom);
+                .assertRecipientInfo(recipientName, address, phone, deliveryTimeFrom);
     }
 }
