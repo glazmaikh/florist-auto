@@ -41,7 +41,6 @@ public class CreateOrderTest extends TestBase {
 
         ApiClient apiClient = new ApiClient();
 
-        AssertFixturesPage assertFixturesPage = new AssertFixturesPage(apiClient);
         catalogPage = new CatalogPage(apiClient);
         bouquetPage = new BouquetPage(apiClient, assertFixturesPage);
         checkoutPage = new CheckoutPage(apiClient, assertFixturesPage);
@@ -476,4 +475,3 @@ public class CreateOrderTest extends TestBase {
                 .assertRecipientInfo(deliveryTimeFrom);
     }
 }
-
