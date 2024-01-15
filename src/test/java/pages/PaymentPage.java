@@ -120,7 +120,7 @@ public class PaymentPage {
 
     public CatalogPage backOnPrevious() {
         back();
-        return new CatalogPage(apiClient, assertFixturesPage);
+        return new CatalogPage(apiClient);
     }
 
     public PaymentPage setPromoCode(String promo, CurrencyType currencyType, DeliveryDateType deliveryDateType) {

@@ -60,9 +60,8 @@ public class CatalogPage {
     private final SelenideElement setEurPrice = $(byText("€ Евро"));
     private final SelenideElement setUsdPrice = $(byText("$ Доллар США"));
 
-    public CatalogPage(ApiClient apiClient, AssertFixturesPage assertFixturesPage) {
+    public CatalogPage(ApiClient apiClient) {
         this.apiClient = apiClient;
-        this.assertFixturesPage = assertFixturesPage;
     }
 
     public CatalogPage openCatalogPage(String baseUrl) {
