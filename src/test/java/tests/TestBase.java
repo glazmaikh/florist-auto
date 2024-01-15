@@ -18,6 +18,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
 
+import static io.restassured.RestAssured.baseURI;
+
 public class TestBase {
     public static String baseUrl;
     static String cardNumber;
@@ -29,6 +31,8 @@ public class TestBase {
 
     @BeforeAll
     static void setUp() throws IOException {
+        System.out.println(baseUrl + " baseUrl");
+
         String testEnv = System.getProperty("TEST_ENV");
         String propertiesFilePath = "src/test/resources/" + testEnv + ".properties";
 
@@ -37,6 +41,9 @@ public class TestBase {
 
         BaseConfig config = ConfigFactory.create(BaseConfig.class, System.getProperties());
         baseUrl = properties.getProperty("base_url", config.getBaseUrl());
+        System.out.println(baseUrl + " baseUrl");
+        baseURI = baseUrl;
+        System.out.println(RestAssured.baseURI + " RestAssured.baseURI");
         cardNumber = properties.getProperty("card_number", config.getCardNumber());
         expireNumber = properties.getProperty("expire_number", config.getExpireNumber());
         cvcNumber = properties.getProperty("cvc_number", config.getCvcNumber());
@@ -48,7 +55,6 @@ public class TestBase {
         //Configuration.baseUrl = System.getProperty("base_url", "https://www." + testEnv + ".florist.local/");
         //Configuration.baseUrl = System.getProperty("base_url", "https://www.test.florist.local/");
         Configuration.browser = System.getProperty("browser", "chrome");
-        RestAssured.baseURI = baseUrl;
         //Configuration.holdBrowserOpen = true;
         Configuration.remote = "http://10.201.0.139:4444/wd/hub";
 
