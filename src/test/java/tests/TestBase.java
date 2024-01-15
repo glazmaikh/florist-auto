@@ -31,16 +31,18 @@ public class TestBase {
     static void setUp() throws IOException {
         String testEnv = System.getProperty("TEST_ENV");
         String propertiesFilePath = "src/test/resources/" + testEnv + ".properties";
-        new Properties().load(new FileInputStream(propertiesFilePath));
+
+        Properties properties = new Properties();
+        properties.load(new FileInputStream(propertiesFilePath));
 
         BaseConfig config = ConfigFactory.create(BaseConfig.class, System.getProperties());
-        baseUrl = config.getBaseUrl();
-        cardNumber = config.getCardNumber();
-        expireNumber = config.getExpireNumber();
-        cvcNumber = config.getCvcNumber();
-        promo = config.getPromoCode();
-        login = config.getLogin();
-        password = config.getPassword();
+        baseUrl = properties.getProperty("base_url", config.getBaseUrl());
+        cardNumber = properties.getProperty("card_number", config.getCardNumber());
+        expireNumber = properties.getProperty("expire_number", config.getExpireNumber());
+        cvcNumber = properties.getProperty("cvc_number", config.getCvcNumber());
+        promo = properties.getProperty("promo_code", config.getPromoCode());
+        login = properties.getProperty("login", config.getLogin());
+        password = properties.getProperty("password", config.getPassword());
 
         //System.setProperty("webdriver.chrome.driver", "C://webdrivers/chromedriver119.exe");
         Configuration.baseUrl = System.getProperty("base_url", "https://www." + testEnv + ".florist.local/");
