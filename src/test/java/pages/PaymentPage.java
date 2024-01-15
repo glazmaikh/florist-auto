@@ -70,8 +70,8 @@ public class PaymentPage {
         return this;
     }
 
-    public PaymentPage assertExtrasPrice(CurrencyType currencyType, DeliveryDateType deliveryDateType) {
-        assertFixturesPage.performAssertExtrasPrice(orderSection, currencyType, deliveryDateType);
+    public PaymentPage assertExtrasPrice(CurrencyType currencyType) {
+        assertFixturesPage.performAssertExtrasPrice(orderSection, currencyType);
         return this;
     }
 
@@ -123,20 +123,20 @@ public class PaymentPage {
         return new CatalogPage(apiClient);
     }
 
-    public PaymentPage setPromoCode(String promo, CurrencyType currencyType, DeliveryDateType deliveryDateType) {
-        checkOnPromoCodeInput.shouldBe(exist).click();
-        promoCodeInput.shouldBe(exist).sendKeys(promo);
-        promoCodeAppliedButton.shouldBe(exist).click();
-        promoCodeAppliedPopup.shouldBe(visible);
-        promoCodeAppliedArea.shouldBe(visible);
-
-        double sum = apiClient.getBouquetPriceList(currencyType, deliveryDateType).stream()
-                .map(Double::valueOf)
-                .mapToDouble(price -> price * 0.1)
-                .sum();
-
-        orderSection.shouldHave(text("Скидка по промокоду"));
-        orderSection.shouldHave(text(HelperPage.formatCurrencySum(sum, currencyType)));
-        return this;
-    }
+//    public PaymentPage setPromoCode(String promo, CurrencyType currencyType) {
+//        checkOnPromoCodeInput.shouldBe(exist).click();
+//        promoCodeInput.shouldBe(exist).sendKeys(promo);
+//        promoCodeAppliedButton.shouldBe(exist).click();
+//        promoCodeAppliedPopup.shouldBe(visible);
+//        promoCodeAppliedArea.shouldBe(visible);
+//
+//        double sum = apiClient.getBouquetPriceList(currencyType).stream()
+//                .map(Double::valueOf)
+//                .mapToDouble(price -> price * 0.1)
+//                .sum();
+//
+//        orderSection.shouldHave(text("Скидка по промокоду"));
+//        orderSection.shouldHave(text(HelperPage.formatCurrencySum(sum, currencyType)));
+//        return this;
+//    }
 }

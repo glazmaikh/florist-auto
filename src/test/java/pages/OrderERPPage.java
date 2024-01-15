@@ -3,7 +3,6 @@ package pages;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import helpers.ApiClient;
-import helpers.CurrencyType;
 import helpers.HelperPage;
 
 import java.time.Duration;
@@ -34,18 +33,29 @@ public class OrderERPPage {
         return this;
     }
 
-    public OrderERPPage assertBouquetInfo(String orderId, CurrencyType currencyType) {
+    public OrderERPPage assertBouquetInfo(String orderId, List<String> bouquetIds, List<String> bouquetNames, List<String> bouquetPrices) {
         orderSection.shouldHave(attribute("value", orderId));
-        HelperPage.isOrderSectionContainsAllFromBouquets(bouquetSection, apiClient.getBouquetIds());
-        HelperPage.isOrderSectionContainsAllFromBouquets(bouquetSection, apiClient.getBouquetNames());
-        HelperPage.isOrderSectionContainsAllFromBouquets(bouquetSection, apiClient.getBouquetPrices(currencyType));
+        HelperPage.isOrderSectionContainsAllFromBouquets(bouquetSection, bouquetIds);
+        HelperPage.isOrderSectionContainsAllFromBouquets(bouquetSection, bouquetNames);
+        HelperPage.isOrderSectionContainsAllFromBouquets(bouquetSection, bouquetPrices);
+//        bouquetSection.shouldHave(text(bouquetId));
+//        bouquetSection.shouldHave(text(bouquetName));
+//        bouquetSection.shouldHave(text(bouquetPrice));
         return this;
     }
 
-    public OrderERPPage assertPrices(CurrencyType currencyType, String totalPrice) {
-        bouquetSection.shouldHave(text(apiClient.getDeliveryPrices(currencyType)));
-        recipientSection.shouldHave(text(totalPrice));
-        bouquetSection.shouldHave(text(apiClient.getDeliveryDate()));
+    public OrderERPPage assertBouquetInfo(String orderId, String bouquetId, String bouquetName, String bouquetPrice) {
+        orderSection.shouldHave(attribute("value", orderId));
+        bouquetSection.shouldHave(text(bouquetId));
+        bouquetSection.shouldHave(text(bouquetName));
+        bouquetSection.shouldHave(text(bouquetPrice));
+        return this;
+    }
+
+    public OrderERPPage assertPrices(String deliveryPrice, String totalPrice, String deliveryDate) {
+        bouquetSection.shouldHave(text(deliveryPrice));
+        bouquetSection.shouldHave(text(totalPrice));
+        bouquetSection.shouldHave(text(deliveryDate));
         return this;
     }
 
@@ -54,10 +64,10 @@ public class OrderERPPage {
         return this;
     }
 
-    public OrderERPPage assertRecipientInfo(String deliveryTimeFrom) {
-        recipientSection.shouldHave(text(apiClient.getRecipientName()));
-        assertTrue(addressSection.getText().contains(apiClient.getRecipientAddress()));
-        recipientSection.shouldHave(text(apiClient.getRecipientPhone()));
+    public OrderERPPage assertRecipientInfo(String recipientName, String address, String phone, String deliveryTimeFrom) {
+        recipientSection.shouldHave(text(recipientName));
+        assertTrue(addressSection.getText().contains(address));
+        recipientSection.shouldHave(text(phone));
         deliveryTimeSection.shouldHave(text(deliveryTimeFrom.replaceAll("^0", "")));
         return this;
     }
