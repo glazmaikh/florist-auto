@@ -44,7 +44,7 @@ public class CheckoutPage {
     private final ElementsCollection timeEarlyIntervals = $$x("//div[@class='_2zwatJ-h' and count(span) = 2]");
     private final SelenideElement timeFromInput = $x("//span[text()='Время доставки с']/parent::label");
     private final SelenideElement timeToInput = $x("//span[text()='До']/parent::label");
-    private final SelenideElement removeFromCard = $(byCssSelector("div.YVf8EOae > svg"));
+    private final SelenideElement removeFromCard = $("div.YVf8EOae > svg");
     private final ApiClient apiClient;
     private AssertFixturesPage assertFixturesPage;
     private String deliveryDate;
@@ -179,6 +179,7 @@ public class CheckoutPage {
     public PaymentPage assertOrderAndBackToPay() {
         header.scrollTo().shouldHave(textCaseSensitive("Заказ оформлен"));
         createdOrderText.shouldHave(text(String.valueOf(apiClient.getOrderId())));
+        System.out.println(HelperPage.regexMaxPaidDate(apiClient.getMaxPaidDate()) + " !!!!!");
         createdOrderText.shouldHave(text(HelperPage.regexMaxPaidDate(apiClient.getMaxPaidDate())));
         //assertTrue(apiClient.getOrderStatus().contains("Ожидает оплаты"));
         assertTrue(getWaitPaidOrderStatus(), "Таймаут. Не получил статус 'Ожидает оплаты' за 30 сек.");

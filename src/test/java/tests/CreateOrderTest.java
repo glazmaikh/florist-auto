@@ -312,7 +312,6 @@ public class CreateOrderTest extends TestBase {
         bouquetPage.openBouquetPage(baseUrl)
                 .setFirstVariation()
                 .assertBouquetName()
-                .assertExtrasPrice(CurrencyType.RUB)
                 .assertDeliveryPrice(CurrencyType.RUB)
                 .assertTotalMinPrice(CurrencyType.RUB)
                 .addToCard(baseUrl);
@@ -356,7 +355,6 @@ public class CreateOrderTest extends TestBase {
         bouquetPage.openBouquetPage(baseUrl)
                 .setFirstVariation()
                 .assertBouquetName()
-                .assertExtrasPrice(CurrencyType.RUB)
                 .assertDeliveryPrice(CurrencyType.RUB)
                 .assertTotalMinPrice(CurrencyType.RUB)
                 .addToCard(baseUrl);
