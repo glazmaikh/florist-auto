@@ -33,7 +33,6 @@ public class TestBase {
     static void setUp() throws IOException {
         String testEnv = System.getProperty("TEST_ENV");
         String propertiesFilePath = "src/test/resources/" + testEnv + ".properties";
-        //String propertiesFilePath = "src/test/resources/test.properties";
 
         Properties properties = new Properties();
         properties.load(new FileInputStream(propertiesFilePath));
