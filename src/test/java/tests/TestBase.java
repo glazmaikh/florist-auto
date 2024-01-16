@@ -31,8 +31,6 @@ public class TestBase {
 
     @BeforeAll
     static void setUp() throws IOException {
-        System.out.println(baseUrl + " baseUrl");
-
         String testEnv = System.getProperty("TEST_ENV");
         String propertiesFilePath = "src/test/resources/" + testEnv + ".properties";
 
