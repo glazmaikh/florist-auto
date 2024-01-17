@@ -9,11 +9,16 @@ import helpers.ApiClient;
 import helpers.CurrencyType;
 import helpers.DeliveryDateType;
 import helpers.HelperPage;
+import models.disabledDelivery.Data;
 import org.openqa.selenium.JavascriptExecutor;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import static com.codeborne.selenide.Condition.*;
@@ -179,8 +184,8 @@ public class CheckoutPage {
     public PaymentPage assertOrderAndBackToPay() {
         header.scrollTo().shouldHave(textCaseSensitive("Заказ оформлен"));
         createdOrderText.shouldHave(text(String.valueOf(apiClient.getOrderId())));
-        //createdOrderText.shouldHave(text(HelperPage.regexMaxPaidDate(apiClient.getMaxPaidDate())));
-        //assertTrue(apiClient.getOrderStatus().contains("Ожидает оплаты"));
+        createdOrderText.shouldHave(text(HelperPage.regexMaxPaidDate(apiClient.getMaxPaidDate())));
+        assertTrue(apiClient.getOrderStatus().contains("Ожидает оплаты"));
         assertTrue(getWaitPaidOrderStatus(), "Таймаут. Не получил статус 'Ожидает оплаты' за 30 сек.");
         returnToPayButton.shouldBe(exist).click();
         return new PaymentPage(apiClient, assertFixturesPage);

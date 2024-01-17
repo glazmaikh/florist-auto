@@ -4,6 +4,7 @@ import com.codeborne.selenide.SelenideElement;
 
 import java.text.DecimalFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Year;
 import java.time.format.DateTimeFormatter;
@@ -65,33 +66,11 @@ public class HelperPage {
     }
 
     public static String regexMaxPaidDate(String date) {
-        String[] parts = date.split(" ");
-        String datePart = parts[0];
-        String timePart = parts[1];
+        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy, HH:mm:ss");
 
-        String[] dateParts = datePart.split("-");
-        int year = Integer.parseInt(dateParts[0]);
-        int month = Integer.parseInt(dateParts[1]);
-        int day = Integer.parseInt(dateParts[2]);
-
-        String[] timeParts = timePart.split(":");
-        int hours = Integer.parseInt(timeParts[0]);
-        int minutes = Integer.parseInt(timeParts[1]);
-        int seconds = Integer.parseInt(timeParts[2]);
-
-        hours += 3;
-        if (hours >= 24) {
-            hours -= 24;
-            LocalDate originalDate = LocalDate.of(year, month, day);
-            LocalDate nextDay = originalDate.plusDays(1);
-            year = nextDay.getYear();
-            month = nextDay.getMonthValue();
-            day = nextDay.getDayOfMonth();
-        }
-
-        String formattedDate = String.format("%02d.%02d.%04d", day, month, year);
-        String formattedTime = String.format("%02d:%02d:%02d", hours, minutes, seconds);
-        return formattedDate + ", " + formattedTime;
+        LocalDateTime dateTime = LocalDateTime.parse(date, inputFormatter);
+        return dateTime.format(outputFormatter);
     }
 
     public static String getRandomLowDeliveryDay(List<LocalDate> disabledDaysList) throws Exception {
