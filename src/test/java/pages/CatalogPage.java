@@ -64,6 +64,8 @@ public class CatalogPage {
     private final SelenideElement addressInput = $(byName("recipientAddressSource"));
     private final ElementsCollection addressDroppedItems = $$("._3e9oSM9z");
     private final SelenideElement saveAddressButton = $x(".//button[@type='submit']");
+    private final SelenideElement addressAlert = $(".pfxmD-Os");
+    private final SelenideElement addressSuccessItem = $(".fr_DHwvM");
 
     public CatalogPage(ApiClient apiClient, AssertFixturesPage assertFixturesPage) {
         this.apiClient = apiClient;
@@ -314,7 +316,7 @@ public class CatalogPage {
         return this;
     }
 
-    public CatalogPage setAddress(String address) {
+    public CatalogPage setInputAddress(String address) {
         addressInput.shouldBe(exist).val(address);
 
         boolean wait = true;
@@ -332,12 +334,37 @@ public class CatalogPage {
         return this;
     }
 
-    public CatalogPage saveAddress() {
-        saveAddressButton.shouldBe(exist).click();
+    public CatalogPage setValidAddress(String address) {
+        setInputAddress(address);
+        addressSuccessItem.shouldBe(exist);
         return this;
     }
 
-    public String getCityName() {
-        return apiClient.getCityName();
+    public CatalogPage setValidShortAddress(String address) {
+        setInputAddress(address);
+        addressAlert.shouldBe(exist);
+        assertEquals("Укажите, пожалуйста, адрес с точностью до дома",
+                addressAlert.getText());
+        return this;
+    }
+
+    public CatalogPage setInvalidAddress(String address) {
+        addressInput.shouldBe(exist).val(address);
+
+        addressDroppedItems.shouldHave(size(1));
+        for (SelenideElement se : addressDroppedItems) {
+            if (se.getText().equals(address)) {
+                se.shouldBe(exist).click();
+            }
+        }
+        addressAlert.shouldBe(exist);
+        assertEquals("Выбранный адрес не найден в базе. Если вы уверены в его правильности, продолжите оформление.",
+                addressAlert.getText());
+        return this;
+    }
+
+    public CatalogPage saveAddress() {
+        saveAddressButton.shouldBe(exist).click();
+        return this;
     }
 }

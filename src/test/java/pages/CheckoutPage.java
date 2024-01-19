@@ -50,6 +50,8 @@ public class CheckoutPage {
     private final SelenideElement timeFromInput = $x("//span[text()='Время доставки с']/parent::label");
     private final SelenideElement timeToInput = $x("//span[text()='До']/parent::label");
     private final SelenideElement removeFromCard = $("div.YVf8EOae > svg");
+    private final SelenideElement addressSuccessItem = $(".fr_DHwvM");
+    private final SelenideElement addressAlert = $(".pfxmD-Os");
     private final ApiClient apiClient;
     private AssertFixturesPage assertFixturesPage;
     private String deliveryDate;
@@ -137,6 +139,30 @@ public class CheckoutPage {
     public CheckoutPage assertRecipientAddress(String address) {
         assertTrue(Objects.requireNonNull(addressDaDataInput.getValue()).contains(apiClient.getCityName()));
         assertTrue(Objects.requireNonNull(addressDaDataInput.getValue()).contains(address));
+        return this;
+    }
+
+    public CheckoutPage assertRecipientInvalidAddress(String address) {
+        assertTrue(Objects.requireNonNull(addressDaDataInput.getValue()).contains(address));
+        return this;
+    }
+
+    public CheckoutPage assertSuccessAddress() {
+        addressSuccessItem.shouldBe(exist);
+        return this;
+    }
+
+    public CheckoutPage assertShortAddress() {
+        addressAlert.shouldBe(exist);
+        assertEquals("Укажите, пожалуйста, адрес с точностью до дома",
+                addressAlert.getText());
+        return this;
+    }
+
+    public CheckoutPage assertAlertAddress() {
+        addressAlert.shouldBe(exist);
+        assertEquals("Выбранный адрес не найден в базе. Если вы уверены в его правильности, продолжите оформление.",
+                addressAlert.getText());
         return this;
     }
 
