@@ -9,6 +9,7 @@ import helpers.CurrencyType;
 import helpers.HelperPage;
 
 import java.time.Duration;
+import java.util.Objects;
 
 import static com.codeborne.selenide.CollectionCondition.*;
 import static com.codeborne.selenide.Condition.*;
@@ -59,6 +60,10 @@ public class CatalogPage {
     private final SelenideElement setRubPrice = $(byText("₽ Российский рубль"));
     private final SelenideElement setEurPrice = $(byText("€ Евро"));
     private final SelenideElement setUsdPrice = $(byText("$ Доллар США"));
+    private final SelenideElement addressButton = $(".UfnjhKsH");
+    private final SelenideElement addressInput = $(byName("recipientAddressSource"));
+    private final ElementsCollection addressDroppedItems = $$("._3e9oSM9z");
+    private final SelenideElement saveAddressButton = $x(".//button[@type='submit']");
 
     public CatalogPage(ApiClient apiClient, AssertFixturesPage assertFixturesPage) {
         this.apiClient = apiClient;
@@ -302,5 +307,37 @@ public class CatalogPage {
             //case RUB -> setRubPrice.shouldBe(exist).click();
         }
         return this;
+    }
+
+    public CatalogPage openAddressPopUp() {
+        addressButton.shouldBe(exist).click();
+        return this;
+    }
+
+    public CatalogPage setAddress(String address) {
+        addressInput.shouldBe(exist).val(address);
+
+        boolean wait = true;
+        while (wait) {
+            if (addressDroppedItems.size() == 3) {
+                for (SelenideElement se : addressDroppedItems) {
+                    if (se.getText().contains(address)) {
+                        se.shouldBe(exist).click();
+                        break;
+                    }
+                }
+                wait = false;
+            }
+        }
+        return this;
+    }
+
+    public CatalogPage saveAddress() {
+        saveAddressButton.shouldBe(exist).click();
+        return this;
+    }
+
+    public String getCityName() {
+        return apiClient.getCityName();
     }
 }

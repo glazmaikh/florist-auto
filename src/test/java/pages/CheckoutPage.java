@@ -134,6 +134,12 @@ public class CheckoutPage {
         return this;
     }
 
+    public CheckoutPage assertRecipientAddress(String address) {
+        assertTrue(Objects.requireNonNull(addressDaDataInput.getValue()).contains(apiClient.getCityName()));
+        assertTrue(Objects.requireNonNull(addressDaDataInput.getValue()).contains(address));
+        return this;
+    }
+
     public PaymentPage goToPaymentPage() {
         priceSection.shouldBe(Condition.visible, Duration.ofSeconds(5)).click();
         Selenide.Wait().until(webDriver -> {

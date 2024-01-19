@@ -6,7 +6,6 @@ import com.codeborne.selenide.logevents.SelenideLogger;
 import config.BaseConfig;
 import helpers.Attach;
 import io.qameta.allure.selenide.AllureSelenide;
-import io.restassured.RestAssured;
 import org.aeonbits.owner.ConfigFactory;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
