@@ -3,12 +3,11 @@ package pages;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import fixtures.AssertFixturesPage;
-import helpers.ApiClient;
-import helpers.BouquetType;
-import helpers.CurrencyType;
-import helpers.HelperPage;
+import helpers.*;
 
 import java.time.Duration;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
 
 import static com.codeborne.selenide.CollectionCondition.*;
@@ -66,6 +65,12 @@ public class CatalogPage {
     private final SelenideElement saveAddressButton = $x(".//button[@type='submit']");
     private final SelenideElement addressAlert = $(".pfxmD-Os");
     private final SelenideElement addressSuccessItem = $(".fr_DHwvM");
+    private final SelenideElement bouquetSection = $(".Vw192Qg9");
+    private final SelenideElement deliveryDayButton = $x(".//*[@class='_1KRc46hs']/ancestor::button");
+    private final SelenideElement deliverySelectedDay = $x(".//*[@class='_1KRc46hs']/following-sibling::span");
+    private ElementsCollection deliveryAllDays = $$x("//button[contains(@class, 'react-calendar__tile') and not(@disabled)]/abbr");
+    private final SelenideElement nextMonthButton = $(".react-calendar__navigation__next-button");
+    private String deliveryDate;
 
     public CatalogPage(ApiClient apiClient, AssertFixturesPage assertFixturesPage) {
         this.apiClient = apiClient;
@@ -77,12 +82,17 @@ public class CatalogPage {
         return this;
     }
 
+    public CatalogPage initBouquet(BouquetType bouquetType) {
+        apiClient.initBouquet(bouquetType);
+        return this;
+    }
+
     public AccountOrderPage openAccountOrderPage() {
         accountOrdersButton.shouldBe(exist).click();
         return new AccountOrderPage(apiClient);
     }
 
-    public CatalogPage setDeliveryCity() throws InterruptedException {
+    public CatalogPage setDeliveryCity() {
         deliveryCity.shouldBe(visible).click();
         deliveryCityModal.shouldBe(visible);
 
@@ -99,39 +109,18 @@ public class CatalogPage {
         return this;
     }
 
-    public BouquetPage setRandomBouquet(BouquetType bouquetType, CurrencyType currencyType) {
-        apiClient.initBouquet(bouquetType);
-        bouquetLoader.shouldNotBe(visible, Duration.ofSeconds(30));
-        String bouquetName = apiClient.getBouquetName();
-        String bouquetPrice = String.valueOf(apiClient.getBouquetMinPrice(currencyType));
-        int page = 1;
-
-        boolean foundBouquet = false;
-        while (!foundBouquet) {
-            bouquetList.shouldHave(sizeGreaterThanOrEqual(apiClient.getBouquetListReminder()));
-            for (SelenideElement se : bouquetList) {
-                if (se.getText().contains(bouquetName)) {
-                    assertTrue(se.$("._1KvrG3Aq").getText().contains(HelperPage.priceCurrencyFormat(currencyType, bouquetPrice)),
-                            "Incorrect bouquet price " + bouquetName);
-                    se.click();
-                    foundBouquet = true;
-                    break;
-                }
-            }
-            if (!foundBouquet) {
-                String nextPageUrl = baseUrl + "?page=" + (page + 1);
-                open(nextPageUrl);
-                page++;
-            }
-        }
-        return new BouquetPage(apiClient, new AssertFixturesPage(apiClient));
+    public CatalogPage assertDeliveryCity() {
+        String cityName = apiClient.getCityName();
+        deliveryCity.shouldBe(visible);
+        assertEquals(deliveryCity.getText(), cityName, "deliveryCity not equals on CatalogPage");
+        return this;
     }
 
-    public BouquetPage setRandomBouquet(BouquetType bouquetType, CurrencyType currencyType, boolean isActive) {
-        apiClient.initBouquet(bouquetType, isActive);
+    public CatalogPage setRandomBouquet(BouquetType bouquetType, CurrencyType currencyType, DeliveryDateType deliveryDateType) {
+        //apiClient.initBouquet(bouquetType);
         bouquetLoader.shouldNotBe(visible, Duration.ofSeconds(30));
         String bouquetName = apiClient.getBouquetName();
-        String bouquetPrice = String.valueOf(apiClient.getBouquetMinPrice(currencyType));
+        String bouquetPrice = apiClient.getBouquetPriceList(currencyType, deliveryDateType).toString();
         int page = 1;
 
         boolean foundBouquet = false;
@@ -152,7 +141,69 @@ public class CatalogPage {
                 page++;
             }
         }
-        return new BouquetPage(apiClient, new AssertFixturesPage(apiClient));
+        return this;
+    }
+
+    //isAction - show_sales_hit": true
+    public CatalogPage setRandomBouquet(BouquetType bouquetType, CurrencyType currencyType, DeliveryDateType deliveryDateType, boolean isAction) {
+        apiClient.initBouquet(bouquetType, isAction);
+        bouquetLoader.shouldNotBe(visible, Duration.ofSeconds(30));
+        String bouquetName = apiClient.getBouquetName();
+        String bouquetPrice = apiClient.getBouquetPriceList(currencyType, deliveryDateType).toString();
+        int page = 1;
+
+        boolean foundBouquet = false;
+        while (!foundBouquet) {
+            bouquetList.shouldHave(sizeGreaterThanOrEqual(apiClient.getBouquetListReminder()));
+            for (SelenideElement se : bouquetList) {
+                if (se.getText().contains(bouquetName)) {
+                    assertTrue(se.$("._1KvrG3Aq").getText().contains(HelperPage.priceCurrencyFormat(currencyType, bouquetPrice)),
+                            "Incorrect bouquet price " + bouquetName);
+                    se.click();
+                    foundBouquet = true;
+                    break;
+                }
+            }
+            if (!foundBouquet) {
+                String nextPageUrl = baseUrl + "?page=" + (page + 1);
+                open(nextPageUrl);
+                page++;
+            }
+        }
+        return this;
+    }
+
+    public String setRandomDeliveryDate(DeliveryDateType deliveryDateType) throws Exception {
+        List<LocalDate> disabledDaysList = apiClient.getDisabledDeliveryDaysList();
+
+        switch (deliveryDateType) {
+            case LOW -> deliveryDate = HelperPage.getRandomLowDeliveryDay(disabledDaysList);
+            case HiGH_FEBRUARY -> deliveryDate = HelperPage.getRandomHighFebruaryDeliveryDay(disabledDaysList);
+            case HIGH_MARCH -> deliveryDate = HelperPage.getRandomHighMarchDeliveryDay(disabledDaysList);
+        }
+
+        deliveryDayButton.shouldBe(exist).click();
+        boolean foundDate = false;
+        while (!foundDate) {
+            for (SelenideElement se : deliveryAllDays) {
+                if (Objects.requireNonNull(se.getAttribute("aria-label")).contains(HelperPage.formatDateDeliveryDateParse(deliveryDate))) {
+                    se.shouldBe(exist).click();
+                    foundDate = true;
+                    break;
+                }
+            }
+            if (!foundDate) {
+                nextMonthButton.shouldBe(exist).click();
+                deliveryAllDays = $$x("//button[contains(@class, 'react-calendar__tile') and not(@disabled)]/abbr");
+            }
+        }
+        return deliveryDate;
+    }
+
+    public CatalogPage assertDeliveryDate(String deliveryDate) {
+        deliveryDayButton.shouldBe(visible);
+        assertEquals(HelperPage.formatDateDeliveryDateParseToSite(deliveryDate), deliverySelectedDay.getText());
+        return this;
     }
 
     public CatalogPage closeCookiePopUp() {

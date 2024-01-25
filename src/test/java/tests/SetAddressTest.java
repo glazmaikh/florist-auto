@@ -4,6 +4,7 @@ import fixtures.AssertFixturesPage;
 import helpers.ApiClient;
 import helpers.BouquetType;
 import helpers.CurrencyType;
+import helpers.DeliveryDateType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -39,7 +40,7 @@ public class SetAddressTest extends TestBase {
         catalogPage.openAddressPopUp()
                 .setValidAddress(address)
                 .saveAddress()
-                .setRandomBouquet(BouquetType.FLORIST_RU, CurrencyType.RUB);
+                .setRandomBouquet(BouquetType.FLORIST_RU, CurrencyType.RUB, DeliveryDateType.LOW);
 
         bouquetPage.openBouquetPage(baseUrl)
                 .setFirstVariation()
@@ -59,7 +60,7 @@ public class SetAddressTest extends TestBase {
         catalogPage.openAddressPopUp()
                 .setValidShortAddress(address)
                 .saveAddress()
-                .setRandomBouquet(BouquetType.FLORIST_RU, CurrencyType.RUB);
+                .setRandomBouquet(BouquetType.FLORIST_RU, CurrencyType.RUB, DeliveryDateType.LOW);
 
         bouquetPage.openBouquetPage(baseUrl)
                 .setFirstVariation()
@@ -79,7 +80,7 @@ public class SetAddressTest extends TestBase {
         catalogPage.openAddressPopUp()
                 .setInvalidAddress(address)
                 .saveAddress()
-                .setRandomBouquet(BouquetType.FLORIST_RU, CurrencyType.RUB);
+                .setRandomBouquet(BouquetType.FLORIST_RU, CurrencyType.RUB, DeliveryDateType.LOW);
 
         bouquetPage.openBouquetPage(baseUrl)
                 .setFirstVariation()
