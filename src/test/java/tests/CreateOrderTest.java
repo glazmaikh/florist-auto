@@ -51,7 +51,8 @@ public class CreateOrderTest extends TestBase {
     @Test
     @Tag("create_order")
     void createNewOrderWithExtrasTest() throws Exception {
-        catalogPage.openCatalogPage(baseUrl)
+        catalogPage.initBouquet(BouquetType.FLORIST_RU)
+                .openCatalogPage(baseUrl)
                 .closeCookiePopUp()
                 .setDeliveryCity()
                 .setRandomBouquet(BouquetType.FLORIST_RU, CurrencyType.RUB, DeliveryDateType.LOW);
@@ -92,7 +93,8 @@ public class CreateOrderTest extends TestBase {
     @Test
     @Tag("create_order")
     void createNewOrderWith2BouquetsTest() throws Exception {
-        catalogPage.openCatalogPage(baseUrl)
+        catalogPage.initBouquet(BouquetType.FLORIST_RU)
+                .openCatalogPage(baseUrl)
                 .closeCookiePopUp()
                 .setDeliveryCity()
                 //.setCurrency(CurrencyType.RUB)
@@ -105,7 +107,8 @@ public class CreateOrderTest extends TestBase {
                 .assertTotalMinPrice(CurrencyType.RUB)
                 .addToCard(baseUrl);
 
-        catalogPage.openCatalogPage(baseUrl)
+        catalogPage.initBouquet(BouquetType.FLORIST_RU)
+                .openCatalogPage(baseUrl)
                 .setRandomBouquet(BouquetType.FLORIST_RU, CurrencyType.RUB, DeliveryDateType.LOW);
 
         bouquetPage.openBouquetPage(baseUrl)
@@ -154,7 +157,8 @@ public class CreateOrderTest extends TestBase {
     @MethodSource("currencyEnumProvider")
     @Tag("create_order")
     void createOrderDifferentCurrencyTest(CurrencyType currency) throws Exception {
-        catalogPage.openCatalogPage(baseUrl)
+        catalogPage.initBouquet(BouquetType.FLORIST_RU)
+                .openCatalogPage(baseUrl)
                 .closeCookiePopUp()
                 .setDeliveryCity()
                 .setCurrency(currency)
@@ -211,6 +215,8 @@ public class CreateOrderTest extends TestBase {
     @Tag("create_order")
     void createNewOrderAnAuthUserTest() throws Exception {
         catalogPage.apiRegisterUser(yourName, yourEmail, yourPhone, password)
+                .initBouquet(BouquetType.FLORIST_RU)
+                .openCatalogPage(baseUrl)
                 .openCatalogPage(baseUrl)
                 .closeCookiePopUp()
                 .openAuthModal()
@@ -265,11 +271,12 @@ public class CreateOrderTest extends TestBase {
     @Test
     @Tag("create_order")
     void usingPromoCodeTest() throws Exception {
-        catalogPage.openCatalogPage(baseUrl)
+        catalogPage.initBouquet(BouquetType.FLORIST_RU)
+                .openCatalogPage(baseUrl)
                 .closeCookiePopUp()
                 .setDeliveryCity()
                 //.setCurrency(CurrencyType.KZT)
-                .setRandomBouquet(BouquetType.ALL_BOUQUETS, CurrencyType.RUB, DeliveryDateType.LOW, false);
+                .setRandomBouquet(BouquetType.FLORIST_RU, CurrencyType.RUB, DeliveryDateType.LOW, false);
 
         bouquetPage.openBouquetPage(baseUrl)
                 .setFirstVariation()
@@ -304,7 +311,8 @@ public class CreateOrderTest extends TestBase {
     @Test
     @Tag("create_order")
     void usingBackAfterCreatedOrderTest() throws Exception {
-        catalogPage.openCatalogPage(baseUrl)
+        catalogPage.initBouquet(BouquetType.FLORIST_RU)
+                .openCatalogPage(baseUrl)
                 .closeCookiePopUp()
                 .setDeliveryCity()
                 .setRandomBouquet(BouquetType.FLORIST_RU, CurrencyType.RUB, DeliveryDateType.LOW);
@@ -347,7 +355,8 @@ public class CreateOrderTest extends TestBase {
     @Test
     @Tag("create_order")
     void removeFromCardTest() {
-        catalogPage.openCatalogPage(baseUrl)
+        catalogPage.initBouquet(BouquetType.FLORIST_RU)
+                .openCatalogPage(baseUrl)
                 .closeCookiePopUp()
                 .setDeliveryCity()
                 .setRandomBouquet(BouquetType.FLORIST_RU, CurrencyType.RUB, DeliveryDateType.LOW);
@@ -365,7 +374,8 @@ public class CreateOrderTest extends TestBase {
     @Test
     @Tag("high_season")
     void lowPriceOnCatalogAndBouquetPageTest() {
-        catalogPage.openCatalogPage(baseUrl)
+        catalogPage.initBouquet(BouquetType.FLORIST_RU)
+                .openCatalogPage(baseUrl)
                 .closeCookiePopUp()
                 .setDeliveryCity()
                 .assertDeliveryCity()

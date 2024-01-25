@@ -2,6 +2,7 @@ package tests;
 
 import fixtures.AssertFixturesPage;
 import helpers.ApiClient;
+import helpers.BouquetType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -34,7 +35,8 @@ public class RegisterTest extends TestBase {
     @Test
     @Tag("register")
     void successRegisterTest() {
-        catalogPage.openCatalogPage(baseUrl)
+        catalogPage.initBouquet(BouquetType.FLORIST_RU)
+                .openCatalogPage(baseUrl)
                 .closeCookiePopUp()
                 .openRegisterModal()
                 .fillRegisterForm(yourName, phone, yourEmail, password)
@@ -47,7 +49,8 @@ public class RegisterTest extends TestBase {
     @ValueSource(strings = {"12345", "!", "АбвгD"})
     @Tag("register")
     void validateMin6SymbolsPasswordFieldsRegisterTest(String password) {
-        catalogPage.openCatalogPage(baseUrl)
+        catalogPage.initBouquet(BouquetType.FLORIST_RU)
+                .openCatalogPage(baseUrl)
                 .closeCookiePopUp()
                 .openRegisterModal()
                 .fillRegisterForm(yourName, phone, yourEmail, password)
@@ -58,7 +61,8 @@ public class RegisterTest extends TestBase {
     @ValueSource(strings = "")
     @Tag("register")
     void emptyFieldsRegisterTest(String empty) {
-        catalogPage.openCatalogPage(baseUrl)
+        catalogPage.initBouquet(BouquetType.FLORIST_RU)
+                .openCatalogPage(baseUrl)
                 .closeCookiePopUp()
                 .openRegisterModal()
                 .fillRegisterForm(empty, empty, empty, empty)
@@ -66,10 +70,11 @@ public class RegisterTest extends TestBase {
     }
 
     @ParameterizedTest(name = "Негативный тест на проверку валидации поля 'телефон' при регистрации")
-    @ValueSource(strings = {"", "!" , "абвгд", "123456789"})
+    @ValueSource(strings = {"", "!", "абвгд", "123456789"})
     @Tag("register")
     void validatePhoneFieldRegisterTest(String phone) {
-        catalogPage.openCatalogPage(baseUrl)
+        catalogPage.initBouquet(BouquetType.FLORIST_RU)
+                .openCatalogPage(baseUrl)
                 .closeCookiePopUp()
                 .openRegisterModal()
                 .assertAddedIncorrectRegisterPhone(phone);
@@ -79,7 +84,8 @@ public class RegisterTest extends TestBase {
     @ValueSource(strings = {"a", "aa@aa", "aa@aa.a", "aa@1.aa"})
     @Tag("register")
     void validateEmailFieldRegisterTest(String email) {
-        catalogPage.openCatalogPage(baseUrl)
+        catalogPage.initBouquet(BouquetType.FLORIST_RU)
+                .openCatalogPage(baseUrl)
                 .closeCookiePopUp()
                 .openRegisterModal()
                 .assertAddedIncorrectRegisterEmail(email);
@@ -88,7 +94,8 @@ public class RegisterTest extends TestBase {
     @Test
     @Tag("register")
     void validateErrorWhenTryRegisterWithoutAcceptDataPolicyTest() {
-        catalogPage.openCatalogPage(baseUrl)
+        catalogPage.initBouquet(BouquetType.FLORIST_RU)
+                .openCatalogPage(baseUrl)
                 .closeCookiePopUp()
                 .openRegisterModal()
                 .assertNotRegisterWithoutAcceptPolicy(yourName, phone, yourEmail, password);
@@ -98,6 +105,7 @@ public class RegisterTest extends TestBase {
     @Tag("register")
     void tryRegistrationWhenRegisteredCredsTest() {
         catalogPage.apiRegisterUser(yourName, yourEmail, yourPhone, password)
+                .initBouquet(BouquetType.FLORIST_RU)
                 .openCatalogPage(baseUrl)
                 .closeCookiePopUp()
                 .openRegisterModal()
