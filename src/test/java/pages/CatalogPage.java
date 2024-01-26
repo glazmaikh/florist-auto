@@ -126,6 +126,8 @@ public class CatalogPage {
         bouquetLoader.shouldNotBe(visible, Duration.ofSeconds(30));
         String bouquetName = apiClient.getBouquetName();
         String bouquetPrice = apiClient.getBouquetPriceList(currencyType, deliveryDateType).toString();
+        System.out.println(bouquetName + " bouquetName");
+        System.out.println(bouquetPrice + " bouquetPrice");
         int page = 1;
 
         boolean foundBouquet = false;
