@@ -513,8 +513,7 @@ public class ApiClient {
         return getRandomBouquet(filteredMap);
     }
 
-    private BouquetDataItemDto getRandomBouquetFloristRu(Map<String, BouquetDataItemDto> bouquetMap,
-                                                         boolean isAction) {
+    private BouquetDataItemDto getRandomBouquetFloristRu(Map<String, BouquetDataItemDto> bouquetMap, boolean isAction) {
         Map<String, BouquetDataItemDto> filteredMap = bouquetMap.entrySet()
                 .stream()
                 .filter(e -> e.getKey().startsWith("6"))
@@ -522,6 +521,7 @@ public class ApiClient {
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         return getRandomBouquet(filteredMap);
     }
+
 
     private ExtrasDataItemDto getRandomExtrasFromMap(Map<String, ExtrasDataItemDto> extrasMap) {
         List<ExtrasDataItemDto> values = new ArrayList<>(extrasMap.values());

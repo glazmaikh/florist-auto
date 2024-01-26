@@ -87,6 +87,11 @@ public class CatalogPage {
         return this;
     }
 
+    public CatalogPage initBouquet(BouquetType bouquetType, boolean isActive) {
+        apiClient.initBouquet(bouquetType, isActive);
+        return this;
+    }
+
     public AccountOrderPage openAccountOrderPage() {
         accountOrdersButton.shouldBe(exist).click();
         return new AccountOrderPage(apiClient);
@@ -145,33 +150,33 @@ public class CatalogPage {
     }
 
     //isAction - show_sales_hit": true
-    public CatalogPage setRandomBouquet(BouquetType bouquetType, CurrencyType currencyType, DeliveryDateType deliveryDateType, boolean isAction) {
-        apiClient.initBouquet(bouquetType, isAction);
-        bouquetLoader.shouldNotBe(visible, Duration.ofSeconds(30));
-        String bouquetName = apiClient.getBouquetName();
-        String bouquetPrice = apiClient.getBouquetPriceList(currencyType, deliveryDateType).toString();
-        int page = 1;
-
-        boolean foundBouquet = false;
-        while (!foundBouquet) {
-            bouquetList.shouldHave(sizeGreaterThanOrEqual(apiClient.getBouquetListReminder()));
-            for (SelenideElement se : bouquetList) {
-                if (se.getText().contains(bouquetName)) {
-                    assertTrue(se.$("._1KvrG3Aq").getText().contains(HelperPage.priceCurrencyFormat(currencyType, bouquetPrice)),
-                            "Incorrect bouquet price " + bouquetName);
-                    se.click();
-                    foundBouquet = true;
-                    break;
-                }
-            }
-            if (!foundBouquet) {
-                String nextPageUrl = baseUrl + "?page=" + (page + 1);
-                open(nextPageUrl);
-                page++;
-            }
-        }
-        return this;
-    }
+//    public CatalogPage setRandomBouquet(BouquetType bouquetType, CurrencyType currencyType, DeliveryDateType deliveryDateType, boolean isAction) {
+//        //apiClient.initBouquet(bouquetType, isAction);
+//        bouquetLoader.shouldNotBe(visible, Duration.ofSeconds(30));
+//        String bouquetName = apiClient.getBouquetName();
+//        String bouquetPrice = apiClient.getBouquetPriceList(currencyType, deliveryDateType).toString();
+//        int page = 1;
+//
+//        boolean foundBouquet = false;
+//        while (!foundBouquet) {
+//            bouquetList.shouldHave(sizeGreaterThanOrEqual(apiClient.getBouquetListReminder()));
+//            for (SelenideElement se : bouquetList) {
+//                if (se.getText().contains(bouquetName)) {
+//                    assertTrue(se.$("._1KvrG3Aq").getText().contains(HelperPage.priceCurrencyFormat(currencyType, bouquetPrice)),
+//                            "Incorrect bouquet price " + bouquetName);
+//                    se.click();
+//                    foundBouquet = true;
+//                    break;
+//                }
+//            }
+//            if (!foundBouquet) {
+//                String nextPageUrl = baseUrl + "?page=" + (page + 1);
+//                open(nextPageUrl);
+//                page++;
+//            }
+//        }
+//        return this;
+//    }
 
     public String setRandomDeliveryDate(DeliveryDateType deliveryDateType) throws Exception {
         List<LocalDate> disabledDaysList = apiClient.getDisabledDeliveryDaysList();

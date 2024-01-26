@@ -217,7 +217,6 @@ public class CreateOrderTest extends TestBase {
         catalogPage.apiRegisterUser(yourName, yourEmail, yourPhone, password)
                 .initBouquet(BouquetType.FLORIST_RU)
                 .openCatalogPage(baseUrl)
-                .openCatalogPage(baseUrl)
                 .closeCookiePopUp()
                 .openAuthModal()
                 .fillAuthForm(yourEmail, password);
@@ -271,12 +270,12 @@ public class CreateOrderTest extends TestBase {
     @Test
     @Tag("create_order")
     void usingPromoCodeTest() throws Exception {
-        catalogPage.initBouquet(BouquetType.FLORIST_RU)
+        catalogPage.initBouquet(BouquetType.FLORIST_RU, false)
                 .openCatalogPage(baseUrl)
                 .closeCookiePopUp()
                 .setDeliveryCity()
                 //.setCurrency(CurrencyType.KZT)
-                .setRandomBouquet(BouquetType.FLORIST_RU, CurrencyType.RUB, DeliveryDateType.LOW, false);
+                .setRandomBouquet(BouquetType.FLORIST_RU, CurrencyType.RUB, DeliveryDateType.LOW);
 
         bouquetPage.openBouquetPage(baseUrl)
                 .setFirstVariation()

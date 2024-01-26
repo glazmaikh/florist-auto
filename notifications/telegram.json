@@ -1,0 +1,18 @@
+{
+  "base": {
+    "project": "Florist auto",
+    "environment": "${TEST_ENV}",
+    "comment": "pull request",
+    "reportLink": "http://192.168.116.94:58904/index.html",
+    "language": "en",
+    "allureFolder": "allure-report/",
+    "enableChart": true,
+    "logo": "logo.png",
+    "durationFormat": "HH:mm:ss.SSS"
+  },
+  "telegram": {
+    "token": "6842964762:AAEDnhteImd2tvoEXLFtTRUySnmD2shK3Yg",
+    "chat": "-1001289788603",
+    "replyTo": ""
+  }
+}
