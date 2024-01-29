@@ -219,24 +219,6 @@ public class ApiClient {
         };
     }
 
-//    public String getBouquetPrice(CurrencyType currencyType, DeliveryDateType deliveryDateType) {
-//        return switch (currencyType) {
-//            case EUR, KZT, USD, RUB -> {
-//                String price = switch (deliveryDateType) {
-//                    case HiGH_FEBRUARY -> bouquet.pricesFirstVariations.stream()
-//                            .map(e -> e.getDatePrice().get("1").getCurrency(currencyType))
-//                            .collect(Collectors.toList());
-//                    case HIGH_MARCH -> pricesFirstVariations.stream()
-//                            .map(e -> e.getDatePrice().get("2").getCurrency(currencyType))
-//                            .collect(Collectors.toList());
-//                    case LOW -> bouquetList.stream()
-//                            .map(e -> e.getMin_price().getCurrency(currencyType))
-//                            .collect(Collectors.toList());
-//                };
-//            }
-//        };
-//    }
-
     public void initExtras() {
         getRandomExtras();
     }
@@ -513,7 +495,8 @@ public class ApiClient {
         return getRandomBouquet(filteredMap);
     }
 
-    private BouquetDataItemDto getRandomBouquetFloristRu(Map<String, BouquetDataItemDto> bouquetMap, boolean isAction) {
+    private BouquetDataItemDto getRandomBouquetFloristRu(Map<String, BouquetDataItemDto> bouquetMap,
+                                                         boolean isAction) {
         Map<String, BouquetDataItemDto> filteredMap = bouquetMap.entrySet()
                 .stream()
                 .filter(e -> e.getKey().startsWith("6"))
@@ -521,7 +504,6 @@ public class ApiClient {
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         return getRandomBouquet(filteredMap);
     }
-
 
     private ExtrasDataItemDto getRandomExtrasFromMap(Map<String, ExtrasDataItemDto> extrasMap) {
         List<ExtrasDataItemDto> values = new ArrayList<>(extrasMap.values());

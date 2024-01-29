@@ -6,10 +6,11 @@ import com.codeborne.selenide.SelenideElement;
 import fixtures.AssertFixturesPage;
 import helpers.ApiClient;
 import helpers.CurrencyType;
-import helpers.DeliveryDateType;
 import helpers.HelperPage;
 
 import java.time.Duration;
+import java.util.Calendar;
+import java.util.TimeZone;
 
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.*;
@@ -22,8 +23,6 @@ public class BouquetPage extends AssertFixturesPage {
     private final SelenideElement bouquetSection = $("#bouquet-main");
     private final ElementsCollection variation = $$x("//div[@class='hmJhIXSe']/div/div");
     private final ElementsCollection extrases = $$("._38l21lFz");
-    private final SelenideElement deliveryDayButton = $x(".//*[@class='_1KRc46hs']/ancestor::button");
-    private final SelenideElement deliverySelectedDay = $x(".//*[@class='_1KRc46hs']/following-sibling::span");
     private ApiClient apiClient;
     private AssertFixturesPage assertFixturesPage;
 
@@ -31,6 +30,18 @@ public class BouquetPage extends AssertFixturesPage {
         super(apiClient);
         this.apiClient = apiClient;
         this.assertFixturesPage = assertFixturesPage;
+    }
+
+    public int getBouquetId() {
+        return apiClient.getBouquetId();
+    }
+
+    public String getDeliveryPrice(CurrencyType currencyType) {
+        return apiClient.getDeliveryPrice(currencyType);
+    }
+
+    public String getBouquetName() {
+        return apiClient.getBouquetName();
     }
 
     public BouquetPage openBouquetPage(String baseUrl) {
@@ -43,13 +54,13 @@ public class BouquetPage extends AssertFixturesPage {
         return this;
     }
 
-    public BouquetPage assertDeliveryPrice(CurrencyType currencyType) {
-        assertFixturesPage.performAssertDeliveryPrice(bouquetSection, currencyType);
-        return this;
+    public String assertBouquetMinPrice(CurrencyType currencyType) {
+        assertFixturesPage.performAssertBouquetMinPrice(bouquetSection, currencyType);
+        return apiClient.getBouquetMinPrice(currencyType);
     }
 
-    public BouquetPage assertBouquetPrice(CurrencyType currencyType, DeliveryDateType deliveryDateType) {
-        assertFixturesPage.performAssertBouquetPriceList(bouquetSection, currencyType, deliveryDateType);
+    public BouquetPage assertDeliveryPrice(CurrencyType currencyType) {
+        assertFixturesPage.performAssertDeliveryPrice(bouquetSection, currencyType);
         return this;
     }
 
@@ -99,12 +110,6 @@ public class BouquetPage extends AssertFixturesPage {
             totalPrice += Double.parseDouble(apiClient.getPriceExtrasFirstVariation(currencyType));
         }
         bouquetSection.shouldHave(text(HelperPage.priceCurrencyFormat(currencyType, String.valueOf(totalPrice))));
-        return this;
-    }
-
-    public BouquetPage assertDeliveryDate(String deliveryDate) {
-        deliveryDayButton.shouldBe(visible);
-        assertEquals(HelperPage.formatDateDeliveryDateParseToSite(deliveryDate), deliverySelectedDay.getText());
         return this;
     }
 }

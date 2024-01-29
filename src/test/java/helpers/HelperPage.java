@@ -54,13 +54,6 @@ public class HelperPage {
         return date.format(outputFormatter);
     }
 
-    public static String formatDateDeliveryDateParseToSite(String formatDate) {
-        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("d MMMM", new Locale("ru"));
-        LocalDate date = LocalDate.parse(formatDate, inputFormatter);
-        return date.format(outputFormatter);
-    }
-
     public static String getRandomStringFromList(List<LocalDate> list) {
         if (list.isEmpty()) {
             throw new RuntimeException("Нет доступных дат");
@@ -129,9 +122,13 @@ public class HelperPage {
         DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         while (currentDate.isBefore(afterDate)) {
-            boolean highMarchDate = currentDate.getMonthValue() == 3 && currentDate.getDayOfMonth() <= 10;
+            boolean isLeapYear = Year.of(currentDate.getYear()).isLeap();
 
-            if (highMarchDate) {
+            boolean includeDate = (isLeapYear && currentDate.getMonthValue() == 2 &&
+                    currentDate.getDayOfMonth() == 29) ||
+                    (!isLeapYear && currentDate.getMonthValue() == 3 && currentDate.getDayOfMonth() <= 10);
+
+            if (includeDate) {
                 dateList.add(LocalDate.parse(dateFormat.format(currentDate)));
             }
             currentDate = currentDate.plusDays(1);
@@ -139,6 +136,7 @@ public class HelperPage {
         dateList.removeAll(disabledDaysList);
         return getRandomStringFromList(dateList);
     }
+
 
     public static LocalTime doubleToTime(double value) {
         int hours = (int) value;

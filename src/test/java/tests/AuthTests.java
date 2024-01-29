@@ -2,7 +2,6 @@ package tests;
 
 import fixtures.AssertFixturesPage;
 import helpers.ApiClient;
-import helpers.BouquetType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -33,7 +32,6 @@ public class AuthTests extends TestBase {
     @Tag("auth")
     void authNewUserTest() {
         catalogPage.apiRegisterUser(yourName, yourEmail, yourPhone, password)
-                .initBouquet(BouquetType.FLORIST_RU)
                 .openCatalogPage(baseUrl)
                 .closeCookiePopUp()
                 .openAuthModal()
@@ -44,8 +42,7 @@ public class AuthTests extends TestBase {
     @Test
     @Tag("auth")
     void authUnregisterUserTest() {
-        catalogPage.initBouquet(BouquetType.FLORIST_RU)
-                .openCatalogPage(baseUrl)
+        catalogPage.openCatalogPage(baseUrl)
                 .closeCookiePopUp()
                 .openAuthModal()
                 .fillAuthForm(yourEmail, password);
@@ -56,7 +53,6 @@ public class AuthTests extends TestBase {
     @Tag("auth")
     void authNewUserWithIncorrectPasswordTest() {
         catalogPage.apiRegisterUser(yourName, yourEmail, yourPhone, password)
-                .initBouquet(BouquetType.FLORIST_RU)
                 .openCatalogPage(baseUrl)
                 .closeCookiePopUp()
                 .openAuthModal()
@@ -68,8 +64,7 @@ public class AuthTests extends TestBase {
     @ValueSource(strings = {""})
     @Tag("auth")
     void authEmptyFieldsTest(String empty) {
-        catalogPage.initBouquet(BouquetType.FLORIST_RU)
-                .openCatalogPage(baseUrl)
+        catalogPage.openCatalogPage(baseUrl)
                 .closeCookiePopUp()
                 .openAuthModal()
                 .fillUnAuthForm(empty, empty);
