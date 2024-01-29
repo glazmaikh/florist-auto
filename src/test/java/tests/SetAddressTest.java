@@ -6,7 +6,6 @@ import helpers.BouquetType;
 import helpers.CurrencyType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import pages.BouquetPage;
@@ -26,7 +25,6 @@ public class SetAddressTest extends TestBase {
         bouquetPage = new BouquetPage(apiClient, assertFixturesPage);
         checkoutPage = new CheckoutPage(apiClient, assertFixturesPage);
     }
-
 
     @ParameterizedTest(name = "Тест на применение адреса на странице CatalogPage и проверке на чекауте {0}")
     @ValueSource(strings = {"г Астрахань, ул Ульянова, д 1", "ул Ульянова, д 1"})
