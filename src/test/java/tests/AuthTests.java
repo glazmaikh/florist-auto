@@ -28,46 +28,46 @@ public class AuthTests extends TestBase {
         accountOrderPage = new AccountOrderPage(apiClient);
     }
 
-//    @Test
-//    @Tag("auth")
-//    void authNewUserTest() {
-//        catalogPage.apiRegisterUser(yourName, yourEmail, yourPhone, password)
-//                .openCatalogPage(baseUrl)
-//                .closeCookiePopUp()
-//                .openAuthModal()
-//                .fillAuthForm(yourEmail, password);
-//        accountOrderPage.assertAuth(baseUrl, yourName);
-//    }
-//
-//    @Test
-//    @Tag("auth")
-//    void authUnregisterUserTest() {
-//        catalogPage.openCatalogPage(baseUrl)
-//                .closeCookiePopUp()
-//                .openAuthModal()
-//                .fillAuthForm(yourEmail, password);
-//        catalogPage.assertUnAuth();
-//    }
-//
-//    @Test
-//    @Tag("auth")
-//    void authNewUserWithIncorrectPasswordTest() {
-//        catalogPage.apiRegisterUser(yourName, yourEmail, yourPhone, password)
-//                .openCatalogPage(baseUrl)
-//                .closeCookiePopUp()
-//                .openAuthModal()
-//                .fillAuthForm(yourEmail, testData.getPassword());
-//        catalogPage.assertAuthIncorrectPass();
-//    }
-//
-//    @ParameterizedTest(name = "Тест на проверку всплывающей ошибки 'Поле обязательно для заполнения' когда поля авторизации пустые")
-//    @ValueSource(strings = {""})
-//    @Tag("auth")
-//    void authEmptyFieldsTest(String empty) {
-//        catalogPage.openCatalogPage(baseUrl)
-//                .closeCookiePopUp()
-//                .openAuthModal()
-//                .fillUnAuthForm(empty, empty);
-//        catalogPage.assertEmptyAuthFields();
-//    }
+    @Test
+    @Tag("auth")
+    void authNewUserTest() {
+        catalogPage.apiRegisterUser(yourName, yourEmail, yourPhone, password)
+                .openCatalogPage(baseUrl)
+                .closeCookiePopUp()
+                .openAuthModal()
+                .fillAuthForm(yourEmail, password);
+        accountOrderPage.assertAuth(baseUrl, yourName);
+    }
+
+    @Test
+    @Tag("auth")
+    void authUnregisterUserTest() {
+        catalogPage.openCatalogPage(baseUrl)
+                .closeCookiePopUp()
+                .openAuthModal()
+                .fillAuthForm(yourEmail, password);
+        catalogPage.assertUnAuth();
+    }
+
+    @Test
+    @Tag("auth")
+    void authNewUserWithIncorrectPasswordTest() {
+        catalogPage.apiRegisterUser(yourName, yourEmail, yourPhone, password)
+                .openCatalogPage(baseUrl)
+                .closeCookiePopUp()
+                .openAuthModal()
+                .fillAuthForm(yourEmail, testData.getPassword());
+        catalogPage.assertAuthIncorrectPass();
+    }
+
+    @ParameterizedTest(name = "Тест на проверку всплывающей ошибки 'Поле обязательно для заполнения' когда поля авторизации пустые")
+    @ValueSource(strings = {""})
+    @Tag("auth")
+    void authEmptyFieldsTest(String empty) {
+        catalogPage.openCatalogPage(baseUrl)
+                .closeCookiePopUp()
+                .openAuthModal()
+                .fillUnAuthForm(empty, empty);
+        catalogPage.assertEmptyAuthFields();
+    }
 }

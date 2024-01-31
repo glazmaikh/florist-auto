@@ -24,6 +24,9 @@ public class BouquetPage extends AssertFixturesPage {
     private final SelenideElement bouquetSection = $("#bouquet-main");
     private final ElementsCollection variation = $$x("//div[@class='hmJhIXSe']/div/div");
     private final ElementsCollection extrases = $$("._38l21lFz");
+    private final SelenideElement deliveryDayButton = $x(".//*[@class='_1KRc46hs']/ancestor::button");
+    private final SelenideElement deliverySelectedDay = $x(".//*[@class='_1KRc46hs']/following-sibling::span");
+
     private ApiClient apiClient;
     private AssertFixturesPage assertFixturesPage;
 
@@ -119,4 +122,11 @@ public class BouquetPage extends AssertFixturesPage {
         bouquetSection.shouldHave(text(HelperPage.priceCurrencyFormat(currencyType, String.valueOf(totalPrice))));
         return this;
     }
+
+    public BouquetPage assertDeliveryDate(String deliveryDate) {
+        deliveryDayButton.shouldBe(visible);
+        assertEquals(HelperPage.formatDateDeliveryDateParseToSite(deliveryDate), deliverySelectedDay.getText());
+        return this;
+    }
+
 }

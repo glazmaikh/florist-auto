@@ -122,13 +122,9 @@ public class HelperPage {
         DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         while (currentDate.isBefore(afterDate)) {
-            boolean isLeapYear = Year.of(currentDate.getYear()).isLeap();
+            boolean highMarchDate = currentDate.getMonthValue() == 3 && currentDate.getDayOfMonth() <= 10;
 
-            boolean includeDate = (isLeapYear && currentDate.getMonthValue() == 2 &&
-                    currentDate.getDayOfMonth() == 29) ||
-                    (!isLeapYear && currentDate.getMonthValue() == 3 && currentDate.getDayOfMonth() <= 10);
-
-            if (includeDate) {
+            if (highMarchDate) {
                 dateList.add(LocalDate.parse(dateFormat.format(currentDate)));
             }
             currentDate = currentDate.plusDays(1);
@@ -191,5 +187,12 @@ public class HelperPage {
         }
         DecimalFormat decimalFormat = new DecimalFormat(pattern);
         return decimalFormat.format(sum).replaceAll(",", ".");
+    }
+
+    public static String formatDateDeliveryDateParseToSite(String formatDate) {
+        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("d MMMM", new Locale("ru"));
+        LocalDate date = LocalDate.parse(formatDate, inputFormatter);
+        return date.format(outputFormatter);
     }
 }
