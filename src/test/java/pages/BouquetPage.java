@@ -6,6 +6,7 @@ import com.codeborne.selenide.SelenideElement;
 import fixtures.AssertFixturesPage;
 import helpers.ApiClient;
 import helpers.CurrencyType;
+import helpers.DeliveryDateType;
 import helpers.HelperPage;
 
 import java.time.Duration;
@@ -53,6 +54,12 @@ public class BouquetPage extends AssertFixturesPage {
         bouquetSection.shouldHave(text(apiClient.getBouquetName()));
         return this;
     }
+
+    public BouquetPage assertBouquetPrice(CurrencyType currencyType, DeliveryDateType deliveryDateType) {
+        assertFixturesPage.performAssertBouquetPriceList(bouquetSection, currencyType, deliveryDateType);
+        return this;
+    }
+
 
     public String assertBouquetMinPrice(CurrencyType currencyType) {
         assertFixturesPage.performAssertBouquetMinPrice(bouquetSection, currencyType);
