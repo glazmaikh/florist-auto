@@ -3,10 +3,7 @@ package pages;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import fixtures.AssertFixturesPage;
-import helpers.ApiClient;
-import helpers.BouquetType;
-import helpers.CurrencyType;
-import helpers.HelperPage;
+import helpers.*;
 
 import java.time.Duration;
 import java.util.Objects;
@@ -99,7 +96,7 @@ public class CatalogPage {
         return this;
     }
 
-    public BouquetPage setRandomBouquet(BouquetType bouquetType, CurrencyType currencyType) {
+    public BouquetPage setRandomBouquetTest(BouquetType bouquetType, CurrencyType currencyType) {
         apiClient.initBouquet(bouquetType);
         bouquetLoader.shouldNotBe(visible, Duration.ofSeconds(30));
         String bouquetName = apiClient.getBouquetName();
@@ -127,11 +124,10 @@ public class CatalogPage {
         return new BouquetPage(apiClient, new AssertFixturesPage(apiClient));
     }
 
-    public BouquetPage setRandomBouquet(BouquetType bouquetType, CurrencyType currencyType, boolean isActive) {
-        apiClient.initBouquet(bouquetType, isActive);
+    public BouquetPage setRandomBouquet(CurrencyType currencyType, DeliveryDateType deliveryDateType) {
         bouquetLoader.shouldNotBe(visible, Duration.ofSeconds(30));
         String bouquetName = apiClient.getBouquetName();
-        String bouquetPrice = String.valueOf(apiClient.getBouquetMinPrice(currencyType));
+        String bouquetPrice = apiClient.getBouquetPriceList(currencyType, deliveryDateType).toString();
         int page = 1;
 
         boolean foundBouquet = false;
@@ -170,6 +166,13 @@ public class CatalogPage {
             }
         }
         cookiePopUp.shouldNotBe(visible, Duration.ofSeconds(15));
+        return this;
+    }
+
+    public CatalogPage assertDeliveryCity() {
+        String cityName = apiClient.getCityName();
+        deliveryCity.shouldBe(visible);
+        assertEquals(deliveryCity.getText(), cityName, "deliveryCity not equals on CatalogPage");
         return this;
     }
 
