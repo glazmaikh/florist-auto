@@ -30,6 +30,7 @@ public @Data class BouquetDataItemDto {
     private Map<String, PriceItemDto> prices;
     @JsonProperty("min_date_price")
     public Map<String, Map<String, Double>> minDatePrice;
+    //public Map<String, MinDatePrice> minDatePrice;
     public String salon_name;
 
     public MinPrice getMin_price() {

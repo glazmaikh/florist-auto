@@ -101,7 +101,7 @@ public class CreateOrderTest extends TestBase {
 //                .closeCookiePopUp()
 //                .setDeliveryCity()
 //                //.setCurrency(CurrencyType.RUB)
-//                .setRandomBouquet(CurrencyType.RUB, DeliveryDateType.LOW);
+//                .setRandomBouquetTest(CurrencyType.RUB, DeliveryDateType.LOW);
 //
 //        bouquetPage.openBouquetPage(baseUrl)
 //                .setFirstVariation()
@@ -113,7 +113,7 @@ public class CreateOrderTest extends TestBase {
 //        apiClient.initBouquet(BouquetType.FLORIST_RU);
 //
 //        catalogPage.openCatalogPage(baseUrl)
-//                .setRandomBouquet(CurrencyType.RUB, DeliveryDateType.LOW);
+//                .setRandomBouquetTest(CurrencyType.RUB, DeliveryDateType.LOW);
 //
 //        bouquetPage.openBouquetPage(baseUrl)
 //                .setFirstVariation()
