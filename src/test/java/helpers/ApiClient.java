@@ -219,19 +219,19 @@ public class ApiClient {
         };
     }
 
-    public String getBouquetPrice(CurrencyType currencyType, DeliveryDateType deliveryDateType) {
-        return switch (currencyType) {
-            case EUR, KZT, USD, RUB -> {
-                String price = null;
-                switch (deliveryDateType) {
-                    case HiGH_FEBRUARY -> price = String.valueOf(bouquet.getMinDatePrice().get("1").getCurrency(currencyType));
-                    case HIGH_MARCH -> price = String.valueOf(bouquet.getMinDatePrice().get("2").getCurrency(currencyType));
-                    case LOW -> price = String.valueOf(bouquet.getMin_price().getCurrency(currencyType));
-                };
-                yield price;
-            }
-        };
-    }
+//    public String getBouquetPrice(CurrencyType currencyType, DeliveryDateType deliveryDateType) {
+//        return switch (currencyType) {
+//            case EUR, KZT, USD, RUB -> {
+//                String price = null;
+//                switch (deliveryDateType) {
+//                    case HiGH_FEBRUARY -> price = String.valueOf(bouquet.getMinDatePrice().get("1").getCurrency(currencyType));
+//                    case HIGH_MARCH -> price = String.valueOf(bouquet.getMinDatePrice().get("2").getCurrency(currencyType));
+//                    case LOW -> price = String.valueOf(bouquet.getMin_price().getCurrency(currencyType));
+//                };
+//                yield price;
+//            }
+//        };
+//    }
 
     public void initExtras() {
         getRandomExtras();

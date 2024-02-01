@@ -8,13 +8,29 @@ import lombok.Data;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public @Data class MinDatePrice {
     @JsonProperty("RUB")
-    private double rub;
+    private int rub;
     @JsonProperty("USD")
     private double usd;
-    @JsonProperty("KZT")
-    private double kzt;
     @JsonProperty("EUR")
     private double eur;
+    @JsonProperty("KZT")
+    private int kzt;
+
+    public double getEur() {
+        return eur;
+    }
+
+    public int getKzt() {
+        return kzt;
+    }
+
+    public double getUsd() {
+        return usd;
+    }
+
+    public int getRub() {
+        return rub;
+    }
 
     public double getCurrency(CurrencyType currencyType) {
         return switch (currencyType) {
