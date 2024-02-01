@@ -131,6 +131,35 @@ public class CatalogPage {
         return new BouquetPage(apiClient, new AssertFixturesPage(apiClient));
     }
 
+    public BouquetPage setRandomBouquetTest(CurrencyType currencyType, DeliveryDateType deliveryDateType) {
+        bouquetLoader.shouldNotBe(visible, Duration.ofSeconds(30));
+        String bouquetName = apiClient.getBouquetName();
+        String bouquetPrice = apiClient.getBouquetPrice(currencyType, deliveryDateType);
+        System.out.println(bouquetName + " bouquetName");
+        System.out.println(bouquetPrice + " bouquetPrice");
+        int page = 1;
+
+        boolean foundBouquet = false;
+        while (!foundBouquet) {
+            bouquetList.shouldHave(sizeGreaterThanOrEqual(apiClient.getBouquetListReminder()));
+            for (SelenideElement se : bouquetList) {
+                if (se.getText().contains(bouquetName)) {
+                    assertTrue(se.$("._1KvrG3Aq").getText().contains(HelperPage.priceCurrencyFormat(currencyType, bouquetPrice)),
+                            "Incorrect bouquet price " + bouquetName);
+                    se.click();
+                    foundBouquet = true;
+                    break;
+                }
+            }
+            if (!foundBouquet) {
+                String nextPageUrl = baseUrl + "?page=" + (page + 1);
+                open(nextPageUrl);
+                page++;
+            }
+        }
+        return new BouquetPage(apiClient, new AssertFixturesPage(apiClient));
+    }
+
     public CatalogPage closeCookiePopUp() {
         cookiePopUpCross.shouldBe(visible, Duration.ofSeconds(15));
         cookiePopUp.shouldBe(visible, Duration.ofSeconds(15));

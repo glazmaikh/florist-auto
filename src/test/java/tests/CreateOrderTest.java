@@ -92,70 +92,70 @@ public class CreateOrderTest extends TestBase {
                 .assertSuccessCreatedOrder(CurrencyType.RUB);
     }
 
-//    @Test
-//    @Tag("create_order")
-//    void createNewOrderWith2BouquetsTest() throws Exception {
-//        apiClient.initBouquet(BouquetType.FLORIST_RU);
-//
-//        catalogPage.openCatalogPage(baseUrl)
-//                .closeCookiePopUp()
-//                .setDeliveryCity()
-//                //.setCurrency(CurrencyType.RUB)
-//                .setRandomBouquet(CurrencyType.RUB, DeliveryDateType.LOW);
-//
-//        bouquetPage.openBouquetPage(baseUrl)
-//                .setFirstVariation()
-//                .assertBouquetName()
-//                .assertDeliveryPrice(CurrencyType.RUB)
-//                .assertTotalMinPrice(CurrencyType.RUB)
-//                .addToCard(baseUrl);
-//
-//        apiClient.initBouquet(BouquetType.FLORIST_RU);
-//
-//        catalogPage.openCatalogPage(baseUrl)
-//                .setRandomBouquet(CurrencyType.RUB, DeliveryDateType.LOW);
-//
-//        bouquetPage.openBouquetPage(baseUrl)
-//                .setFirstVariation()
-//                .assertBouquetName()
-//                .assertDeliveryPrice(CurrencyType.RUB)
-//                .assertTotalMinPrice(CurrencyType.RUB)
-//                .addToCard(baseUrl);
-//
-//        checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, recipientName, phone, address)
-//                .setRandomDeliveryDate(DeliveryDateType.LOW);
-//
-//        String deliveryTimeFrom = checkoutPage.setRandomDeliveryTime();
-//
-//        checkoutPage.assertBouquetName()
-//                .assertDeliveryPrice(CurrencyType.RUB)
-//                .assertBouquetPrice(CurrencyType.RUB, DeliveryDateType.LOW)
-//                .assertTotalPrice(CurrencyType.RUB, DeliveryDateType.LOW)
-//                .goToPaymentPage();
-//
-//        paymentPage.assertPaymentStatus(baseUrl)
-//                .assertBouquetName()
-//                .assertDeliveryPrice(CurrencyType.RUB)
-//                .assertBouquetPrice(CurrencyType.RUB, DeliveryDateType.LOW)
-//                .assertTotalPrice(CurrencyType.RUB);
-//
-//        String orderId = HelperPage.getOrderNumber();
-//        String totalPrice = paymentPage.getTotalPrice(CurrencyType.RUB);
-//
-//        paymentPage.fillCard(cardNumber, expireNumber, cvcNumber)
-//                .pay()
-//                .confirm();
-//
-//        successPage.assertSuccessOrderStatus(baseUrl)
-//                .assertSuccessCreatedOrder(CurrencyType.RUB);
-//
-//        orderERPPage.openOrder(baseUrl, orderId)
-//                .assertBouquetInfo(orderId, CurrencyType.RUB)
-//                //передавать корректный CurrencyType в assertPrices() когда в ERP будет реализована цена в валютах
-//                .assertPrices(CurrencyType.RUB, totalPrice)
-//                .assertPaymentCompletedChecked()
-//                .assertRecipientInfo(deliveryTimeFrom);
-//    }
+    @Test
+    @Tag("create_order")
+    void createNewOrderWith2BouquetsTest() throws Exception {
+        apiClient.initBouquet(BouquetType.FLORIST_RU);
+
+        catalogPage.openCatalogPage(baseUrl)
+                .closeCookiePopUp()
+                .setDeliveryCity()
+                //.setCurrency(CurrencyType.RUB)
+                .setRandomBouquetTest(CurrencyType.RUB, DeliveryDateType.LOW);
+
+        bouquetPage.openBouquetPage(baseUrl)
+                .setFirstVariation()
+                .assertBouquetName()
+                .assertDeliveryPrice(CurrencyType.RUB)
+                .assertTotalMinPrice(CurrencyType.RUB)
+                .addToCard(baseUrl);
+
+        apiClient.initBouquet(BouquetType.FLORIST_RU);
+
+        catalogPage.openCatalogPage(baseUrl)
+                .setRandomBouquetTest(CurrencyType.RUB, DeliveryDateType.LOW);
+
+        bouquetPage.openBouquetPage(baseUrl)
+                .setFirstVariation()
+                .assertBouquetName()
+                .assertDeliveryPrice(CurrencyType.RUB)
+                .assertTotalMinPrice(CurrencyType.RUB)
+                .addToCard(baseUrl);
+
+        checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, recipientName, phone, address)
+                .setRandomDeliveryDate(DeliveryDateType.LOW);
+
+        String deliveryTimeFrom = checkoutPage.setRandomDeliveryTime();
+
+        checkoutPage.assertBouquetName()
+                .assertDeliveryPrice(CurrencyType.RUB)
+                .assertBouquetPrice(CurrencyType.RUB, DeliveryDateType.LOW)
+                .assertTotalPrice(CurrencyType.RUB, DeliveryDateType.LOW)
+                .goToPaymentPage();
+
+        paymentPage.assertPaymentStatus(baseUrl)
+                .assertBouquetName()
+                .assertDeliveryPrice(CurrencyType.RUB)
+                .assertBouquetPrice(CurrencyType.RUB, DeliveryDateType.LOW)
+                .assertTotalPrice(CurrencyType.RUB);
+
+        String orderId = HelperPage.getOrderNumber();
+        String totalPrice = paymentPage.getTotalPrice(CurrencyType.RUB);
+
+        paymentPage.fillCard(cardNumber, expireNumber, cvcNumber)
+                .pay()
+                .confirm();
+
+        successPage.assertSuccessOrderStatus(baseUrl)
+                .assertSuccessCreatedOrder(CurrencyType.RUB);
+
+        orderERPPage.openOrder(baseUrl, orderId)
+                .assertBouquetInfo(orderId, CurrencyType.RUB)
+                //передавать корректный CurrencyType в assertPrices() когда в ERP будет реализована цена в валютах
+                .assertPrices(CurrencyType.RUB, totalPrice)
+                .assertPaymentCompletedChecked()
+                .assertRecipientInfo(deliveryTimeFrom);
+    }
 
     @ParameterizedTest(name = "Тест на проверку оформления заказа и оплаты в валюте {0} доступной на сайте")
     @MethodSource("currencyEnumProvider")
