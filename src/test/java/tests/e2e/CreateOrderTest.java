@@ -1,4 +1,4 @@
-package tests;
+package tests.e2e;
 
 import fixtures.AssertFixturesPage;
 import helpers.*;
@@ -11,6 +11,9 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import pages.*;
+import tests.TestBase;
+import tests.TestData;
+import tests.TimeZoneExtension;
 
 import java.util.stream.Stream;
 

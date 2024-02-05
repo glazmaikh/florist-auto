@@ -21,18 +21,18 @@ import static io.restassured.RestAssured.baseURI;
 
 public class TestBase {
     public static String baseUrl;
-    static String cardNumber;
-    static String expireNumber;
-    static String cvcNumber;
-    static String promo;
-    static String login;
-    static String password;
+    protected static String cardNumber;
+    protected static String expireNumber;
+    protected static String cvcNumber;
+    protected static String promo;
+    protected static String login;
+    protected static String password;
 
     @BeforeAll
     static void setUp() throws IOException {
-        String testEnv = System.getProperty("TEST_ENV");
-        String propertiesFilePath = "src/test/resources/" + testEnv + ".properties";
-        //String propertiesFilePath = "src/test/resources/test.properties";
+        //String testEnv = System.getProperty("TEST_ENV");
+        //String propertiesFilePath = "src/test/resources/" + testEnv + ".properties";
+        String propertiesFilePath = "src/test/resources/test.properties";
 
         Properties properties = new Properties();
         properties.load(new FileInputStream(propertiesFilePath));

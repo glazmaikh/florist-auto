@@ -1,4 +1,4 @@
-package tests;
+package tests.e2e;
 
 import fixtures.AssertFixturesPage;
 import helpers.ApiClient;
@@ -12,6 +12,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import pages.BouquetPage;
 import pages.CatalogPage;
 import pages.CheckoutPage;
+import tests.TestBase;
 
 public class SetAddressTest extends TestBase {
     private CatalogPage catalogPage;

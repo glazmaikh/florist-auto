@@ -1,4 +1,4 @@
-package tests;
+package tests.e2e;
 
 import fixtures.AssertFixturesPage;
 import helpers.ApiClient;
@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import pages.*;
+import tests.TestBase;
+import tests.TestData;
 
 public class AuthTests extends TestBase {
     private final TestData testData = new TestData();

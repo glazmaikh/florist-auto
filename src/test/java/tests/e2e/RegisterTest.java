@@ -1,4 +1,4 @@
-package tests;
+package tests.e2e;
 
 import fixtures.AssertFixturesPage;
 import helpers.ApiClient;
@@ -9,6 +9,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import pages.AccountOrderPage;
 import pages.CatalogPage;
+import tests.TestBase;
+import tests.TestData;
 
 public class RegisterTest extends TestBase {
     private final TestData testData = new TestData();
