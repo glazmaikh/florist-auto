@@ -1,34 +1,45 @@
 package tests.api;
 
-import io.restassured.response.Response;
+import com.codeborne.selenide.Configuration;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import tests.TestBase;
 
-import java.io.IOException;
-
+import static io.restassured.RestAssured.baseURI;
 import static io.restassured.RestAssured.given;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class PSTests extends TestBase {
+public class PSTests {
     public static String baseUrl;
-    private static String token;
-    private static final String shortLink = "https://partner.k8s-dev.florist.local/t/KJ25jHNF";
+    public static String getToken;
 
     @BeforeAll
-    static void setUp() throws IOException {
-        Response response = given()
+    static void setUp() {
+        Configuration.remote = "http://10.201.0.139:4444/wd/hub";
+        baseURI = "https://partner.k8s-dev.florist.local";
+
+        getToken = given()
+                .relaxedHTTPSValidation()
                 .auth().basic("florist_api", "123")
                 .when()
-                .get(shortLink)
+                .get("/api/auth/partner")
                 .then()
-                .statusCode(302)
-                .extract().response();
-
-        token  = response.header("Set-Cookie");
+                .statusCode(200)
+                .extract().path("data.token").toString();
     }
 
     @Test
-    void getTokenTest() {
-        System.out.println(token);
+    void afterLoginEmailTest() {
+        String login = given()
+                .relaxedHTTPSValidation()
+                .queryParam("_token", getToken)
+                .contentType("application/json")
+                .body("{\"login\":\"lapina79@inbox.ru\",\"password\":\"12032004lotos\"}")
+                .when()
+                .post("/api/partner/login")
+                .then()
+                .statusCode(200)
+                .extract()
+                .path("data.login");
+        assertEquals(login, "lapina79@inbox.ru");
     }
 }
