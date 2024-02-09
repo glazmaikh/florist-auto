@@ -31,7 +31,7 @@ public class CatalogPage {
     private final SelenideElement cityLoader = $(".css-1gl4k7y");
     private final ElementsCollection droppedCityList = $$("._8PeWF0tD");
     private final SelenideElement bouquetLoader = $(".w0pOM9kK");
-    private ElementsCollection bouquetList = $$("._3fIsQ45s");
+    private final ElementsCollection bouquetList = $$("._3fIsQ45s");
     private final SelenideElement authRegisterButton = $("button[aria-label='Войти на сайт']");
     private final SelenideElement createAccountTab = $x("//ul/span[text()='Создать аккаунт']");
     private final SelenideElement nameInput = $(byName("name"));
