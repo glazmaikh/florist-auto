@@ -2,6 +2,7 @@ package pages;
 
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
+import com.codeborne.selenide.ex.ElementNotFound;
 import fixtures.AssertFixturesPage;
 import helpers.*;
 
@@ -23,8 +24,7 @@ import static tests.TestBase.baseUrl;
 public class CatalogPage {
     private final ApiClient apiClient;
     private AssertFixturesPage assertFixturesPage;
-    private final SelenideElement cookiePopUpCross = $x("(.//*[normalize-space(text()) and normalize-space(.)='Флорист.ру — международная доставка цветов и букетов'])[1]/following::*[name()='svg'][3]");
-    private final SelenideElement cookiePopUp = $(".bco1zbf0");
+    private final SelenideElement cookiePopUp = $("._3bcT6MiV");
     private final SelenideElement cookiePopUpCrossArea = $(".lkfJru7k");
     private final SelenideElement deliveryCityModal = $x("//span[text()='Укажите город доставки в поле:']");
     private final SelenideElement cityPopUpInput = $("#location-select");
@@ -159,20 +159,18 @@ public class CatalogPage {
     }
 
     public CatalogPage closeCookiePopUp() {
-        cookiePopUpCross.shouldBe(visible, Duration.ofSeconds(15));
-        cookiePopUp.shouldBe(visible, Duration.ofSeconds(15));
-
-        boolean cookiePopUpClosed = false;
-        while (!cookiePopUpClosed) {
+        try {
+            cookiePopUp.shouldBe(visible, Duration.ofSeconds(15));
             cookiePopUpCrossArea.shouldBe(visible, Duration.ofSeconds(15)).click();
-            if (cookiePopUp.is(visible)) {
-                System.out.println("Попап кук не закрылся с 1 раза");
-                cookiePopUpCrossArea.shouldBe(visible, Duration.ofSeconds(15)).click();
-            } else {
-                cookiePopUpClosed = true;
-            }
+        } catch (ElementNotFound e) {
+            System.out.println("Окно куки не найдено.");
         }
-        cookiePopUp.shouldNotBe(visible, Duration.ofSeconds(15));
+
+        try {
+            cookiePopUp.shouldNotBe(visible, Duration.ofSeconds(15));
+        } catch (ElementNotFound e) {
+            System.out.println("Окно куки не исчезло.");
+        }
         return this;
     }
 
