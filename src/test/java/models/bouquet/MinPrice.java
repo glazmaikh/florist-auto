@@ -40,3 +40,4 @@ public @Data class MinPrice {
         };
     }
 }
+

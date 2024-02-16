@@ -10,3 +10,4 @@ public @Data class Delivery {
     private double EUR;
     private int KZT;
 }
+

@@ -8,3 +8,4 @@ public @Data class DeliveryTime {
     private int from;
     private int to;
 }
+

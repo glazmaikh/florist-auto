@@ -10,3 +10,4 @@ public @lombok.Data class CityDataAliasDto {
     private Object meta;
     private double t;
 }
+

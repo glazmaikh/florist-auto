@@ -10,3 +10,4 @@ public @Data class DeliveryData {
     private int worldCountryId;
     private String deliveryDate;
 }
+

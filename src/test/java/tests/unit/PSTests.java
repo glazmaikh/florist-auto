@@ -1,8 +1,15 @@
-package tests.api;
+package tests.unit;
 
+import api.PartnerProfileDao;
 import com.codeborne.selenide.Configuration;
+import modelsDB.User;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
 
 import static io.restassured.RestAssured.baseURI;
 import static io.restassured.RestAssured.given;
@@ -28,18 +35,33 @@ public class PSTests {
     }
 
     @Test
-    void afterLoginEmailTest() {
-        String login = given()
+    void partnerInfoTest() {
+        String log = "lapina79@inbox.ru";
+        String pas = "12032004lotos";
+
+        PartnerProfileDao dao = new PartnerProfileDao();
+        String dbName = dao.getPartnerNameByEmail(log);
+
+        given()
                 .relaxedHTTPSValidation()
                 .queryParam("_token", getToken)
                 .contentType("application/json")
-                .body("{\"login\":\"lapina79@inbox.ru\",\"password\":\"12032004lotos\"}")
+                .body("{\"login\":\"" + log + "\",\"password\":\"" + pas + "\"}")
                 .when()
                 .post("/api/partner/login")
                 .then()
+                .statusCode(200);
+
+        String apiName = given()
+                .relaxedHTTPSValidation()
+                .queryParam("_token", getToken)
+                .contentType("application/json")
+                .when()
+                .get("/api/partner/info")
+                .then()
                 .statusCode(200)
                 .extract()
-                .path("data.login");
-        assertEquals(login, "lapina79@inbox.ru");
+                .path("data.partner_profile.name");
+        assertEquals(dbName, apiName);
     }
 }
