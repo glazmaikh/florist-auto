@@ -2,6 +2,7 @@ package tests.unit;
 
 import api.PartnerProfileDao;
 import com.codeborne.selenide.Configuration;
+import modelsDB.PartnerProfile;
 import modelsDB.User;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -10,6 +11,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.Map;
 
 import static io.restassured.RestAssured.baseURI;
 import static io.restassured.RestAssured.given;
@@ -36,23 +38,25 @@ public class PSTests {
 
     @Test
     void partnerInfoTest() {
-        String log = "lapina79@inbox.ru";
-        String pas = "12032004lotos";
+        String login = "lapina79@inbox.ru";
+        String password = "12032004lotos";
+        Long id = 5699L;
 
         PartnerProfileDao dao = new PartnerProfileDao();
-        String dbName = dao.getPartnerNameByEmail(log);
+        PartnerProfile profile;
+        profile = dao.getPartnerProfileByAccountId(id);
 
         given()
                 .relaxedHTTPSValidation()
                 .queryParam("_token", getToken)
                 .contentType("application/json")
-                .body("{\"login\":\"" + log + "\",\"password\":\"" + pas + "\"}")
+                .body("{\"login\":\"" + login + "\",\"password\":\"" + password + "\"}")
                 .when()
                 .post("/api/partner/login")
                 .then()
                 .statusCode(200);
 
-        String apiName = given()
+        Map<String, Object> apiResponse = given()
                 .relaxedHTTPSValidation()
                 .queryParam("_token", getToken)
                 .contentType("application/json")
@@ -61,7 +65,13 @@ public class PSTests {
                 .then()
                 .statusCode(200)
                 .extract()
-                .path("data.partner_profile.name");
-        assertEquals(dbName, apiName);
+                .path("data.partner_profile");
+
+        assertEquals(id, Long.valueOf(apiResponse.get("id").toString()));
+        assertEquals(profile.getName(), apiResponse.get("name"));
+        assertEquals(profile.getLocation(), apiResponse.get("location"));
+        assertEquals(profile.getTimezone(), apiResponse.get("timezone"));
+        assertEquals(profile.getCurrency(), apiResponse.get("currency"));
+        assertEquals(profile.getAgency_fee(), Long.valueOf(apiResponse.get("agency_fee").toString()));
     }
 }
