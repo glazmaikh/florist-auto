@@ -1,5 +1,6 @@
 package api;
 
+import entityDB.BankEntity;
 import entityDB.LegalEntity;
 import entityDB.UserEntity;
 import org.hibernate.Session;
@@ -24,6 +25,18 @@ public class PartnerProfileDao {
             Query<LegalEntity> query = session.createQuery("FROM LegalEntity WHERE account_id = :accountId", LegalEntity.class);
             query.setParameter("accountId", accountId);
             List<LegalEntity> results = query.list();
+            return results.isEmpty() ? null : results.get(0);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public BankEntity getBank(Long accountId) {
+        try (Session session = HibernateUtil.getSession()) {
+            Query<BankEntity> query = session.createQuery("FROM BankEntity WHERE account_id = :accountId", BankEntity.class);
+            query.setParameter("accountId", accountId);
+            List<BankEntity> results = query.list();
             return results.isEmpty() ? null : results.get(0);
         } catch (Exception e) {
             e.printStackTrace();

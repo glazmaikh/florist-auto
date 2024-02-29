@@ -16,10 +16,10 @@ public @Data class LegalEntity {
     private Long id;
 
     @Column(name = "account_id")
-    private Long account_id;
+    private Long accountId;
 
     @Column(name = "legalname")
-    private String legalname;
+    private String legalName;
 
     @Column(name = "inn")
     private String inn;
@@ -37,23 +37,23 @@ public @Data class LegalEntity {
     private String egrip;
 
     @Column(name = "head_fullname")
-    private String head_fullname;
+    private String headFullName;
 
     @Column(name = "head_position")
-    private String head_position;
+    private String headPosition;
 
     @Column(name = "document_title")
-    private String document_title;
+    private String documentTitle;
 
     @Column(name = "legal_address")
-    private String legal_address;
+    private String legalAddress;
 
     @Column(name = "real_address")
-    private String real_address;
+    private String realAddress;
 
     @Column(name = "post_address")
-    private String post_address;
+    private String postAddress;
 
     @Column(name = "created_at")
-    private String created_at;
+    private String createdAt;
 }

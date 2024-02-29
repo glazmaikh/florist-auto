@@ -16,22 +16,22 @@ public @Data class UserEntity {
     private Long id;
 
     @Column(name = "account_id")
-    private Long account_id;
+    private Long accountId;
 
     @Column(name = "phone")
     private String phone;
 
     @Column(name = "ur_name")
-    private String ur_name;
+    private String urName;
 
     @Column(name = "accepted_oferta")
-    private Long accepted_oferta;
+    private Long acceptedOferta;
 
     @Column(name = "created_at")
-    private String created_at;
+    private String createdAt;
 
     @Column(name = "updated_at")
-    private String updated_at;
+    private String updatedAt;
 
     @Column(name = "partnerOfertaDate")
     private String partnerOfertaDate;
@@ -55,10 +55,10 @@ public @Data class UserEntity {
     private Long status;
 
     @Column(name = "partner_level")
-    private Long partner_level;
+    private Long partnerLevel;
 
     @Column(name = "agency_fee")
-    private Long agency_fee;
+    private Long agencyFee;
 
     @Column(name = "comment")
     private String comment;
@@ -70,5 +70,5 @@ public @Data class UserEntity {
     private Long worldCountry;
 
     @Column(name = "location_id")
-    private Long location_id;
+    private Long locationId;
 }

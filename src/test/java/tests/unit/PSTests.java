@@ -3,16 +3,15 @@ package tests.unit;
 import api.PartnerProfileDao;
 import com.codeborne.selenide.Configuration;
 import config.BaseConfig;
+import entityDB.BankEntity;
 import entityDB.LegalEntity;
 import entityDB.UserEntity;
 import org.aeonbits.owner.ConfigFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import tests.TestBase;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Properties;
@@ -70,8 +69,7 @@ public class PSTests {
 
     @Test
     void partnerInfoTest() {
-        UserEntity user;
-        user = dao.getUserInfo(id);
+        UserEntity user = dao.getUserInfo(id);
 
         Map<String, Object> apiResponse = given()
                 .relaxedHTTPSValidation()
@@ -89,13 +87,12 @@ public class PSTests {
         assertEquals(user.getLocation(), apiResponse.get("location"));
         assertEquals(user.getTimezone(), apiResponse.get("timezone"));
         assertEquals(user.getCurrency(), apiResponse.get("currency"));
-        assertEquals(user.getAgency_fee(), Long.valueOf(apiResponse.get("agency_fee").toString()));
+        assertEquals(user.getAgencyFee(), Long.valueOf(apiResponse.get("agency_fee").toString()));
     }
 
     @Test
     void partnerLegalTest() {
-        LegalEntity legal;
-        legal = dao.getLegal(id);
+        LegalEntity legal = dao.getLegal(id);
 
         Map<String, Object> apiResponse = given()
                 .relaxedHTTPSValidation()
@@ -108,13 +105,36 @@ public class PSTests {
                 .extract()
                 .path("data.partner_legal");
 
-        assertEquals(legal.getHead_fullname(), apiResponse.get("head_fullname"));
+        assertEquals(legal.getHeadFullName(), apiResponse.get("head_fullname"));
         assertEquals(id, Long.valueOf(apiResponse.get("id").toString()));
         assertEquals(legal.getInn(), apiResponse.get("inn").toString());
-        assertEquals(legal.getLegal_address(), apiResponse.get("legal_address"));
-        assertEquals(legal.getLegalname(), apiResponse.get("legalname"));
+        assertEquals(legal.getLegalAddress(), apiResponse.get("legal_address"));
+        assertEquals(legal.getLegalName(), apiResponse.get("legalname"));
         assertEquals(legal.getOgrn(), apiResponse.get("ogrn"));
-        assertEquals(legal.getPost_address(), apiResponse.get("post_address"));
-        assertEquals(legal.getReal_address(), apiResponse.get("real_address"));
+        assertEquals(legal.getPostAddress(), apiResponse.get("post_address"));
+        assertEquals(legal.getRealAddress(), apiResponse.get("real_address"));
+    }
+
+    @Test
+    void partnerBankTest() {
+        BankEntity bank = dao.getBank(id);
+
+        Map<String, Object> apiResponse = given()
+                .relaxedHTTPSValidation()
+                .queryParam("_token", getToken)
+                .contentType("application/json")
+                .when()
+                .get("/api/partner/bank")
+                .then()
+                .statusCode(200)
+                .extract()
+                .path("data.partner_bank");
+
+        assertEquals(bank.getBankAddress(), apiResponse.get("bank_address"));
+        assertEquals(bank.getBankName(), apiResponse.get("bank_name"));
+        assertEquals(bank.getBik(), apiResponse.get("bik"));
+        assertEquals(id, Long.valueOf(apiResponse.get("id").toString()));
+        assertEquals(bank.getKs(), apiResponse.get("ks"));
+        assertEquals(bank.getRs(), apiResponse.get("rs"));
     }
 }
