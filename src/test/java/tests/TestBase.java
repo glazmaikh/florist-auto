@@ -29,6 +29,7 @@ public class TestBase {
     protected static String login;
     protected static String password;
 
+
     @BeforeAll
     static void setUp() throws IOException {
         //String testEnv = System.getProperty("TEST_ENV");
@@ -39,14 +40,15 @@ public class TestBase {
         properties.load(new FileInputStream(propertiesFilePath));
 
         BaseConfig config = ConfigFactory.create(BaseConfig.class, System.getProperties());
-        baseUrl = properties.getProperty("base_url", config.getBaseUrl());
+        baseUrl = properties.getProperty("base.url", config.getBaseUrl());
         baseURI = baseUrl;
-        cardNumber = properties.getProperty("card_number", config.getCardNumber());
-        expireNumber = properties.getProperty("expire_number", config.getExpireNumber());
-        cvcNumber = properties.getProperty("cvc_number", config.getCvcNumber());
-        promo = properties.getProperty("promo_code", config.getPromoCode());
+        cardNumber = properties.getProperty("card.number", config.getCardNumber());
+        expireNumber = properties.getProperty("expire.number", config.getExpireNumber());
+        cvcNumber = properties.getProperty("cvc.number", config.getCvcNumber());
+        promo = properties.getProperty("promo.code", config.getPromoCode());
         login = properties.getProperty("login", config.getLogin());
         password = properties.getProperty("password", config.getPassword());
+
 
         //System.setProperty("webdriver.chrome.driver", "C://webdrivers/chromedriver119.exe");
         Configuration.browser = System.getProperty("browser", "chrome");

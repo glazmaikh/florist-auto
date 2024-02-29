@@ -3,7 +3,7 @@ package config;
 import org.aeonbits.owner.Config;
 
 @Config.Sources({
-        "classpath:${TEST_ENV}.properties"
+        "classpath:test.properties"
 })
 public interface BaseConfig extends Config {
     @Key("base.url")
@@ -26,4 +26,10 @@ public interface BaseConfig extends Config {
 
     @Key("password")
     String getPassword();
+
+    @Key("partner.login")
+    String getPartnerLogin();
+
+    @Key("partner.pass")
+    String getPartnerPass();
 }

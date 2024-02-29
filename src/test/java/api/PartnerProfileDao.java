@@ -1,16 +1,29 @@
 package api;
 
-import modelsDB.PartnerProfile;
+import entityDB.LegalEntity;
+import entityDB.UserEntity;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import java.util.List;
 
 public class PartnerProfileDao {
-    public PartnerProfile getPartnerProfileByAccountId(Long accountId) {
+    public UserEntity getUserInfo(Long accountId) {
         try (Session session = HibernateUtil.getSession()) {
-            Query<PartnerProfile> query = session.createQuery("FROM PartnerProfile WHERE account_id = :accountId", PartnerProfile.class);
+            Query<UserEntity> query = session.createQuery("FROM UserEntity WHERE account_id = :accountId", UserEntity.class);
             query.setParameter("accountId", accountId);
-            List<PartnerProfile> results = query.list();
+            List<UserEntity> results = query.list();
+            return results.isEmpty() ? null : results.get(0);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public LegalEntity getLegal(Long accountId) {
+        try (Session session = HibernateUtil.getSession()) {
+            Query<LegalEntity> query = session.createQuery("FROM LegalEntity WHERE account_id = :accountId", LegalEntity.class);
+            query.setParameter("accountId", accountId);
+            List<LegalEntity> results = query.list();
             return results.isEmpty() ? null : results.get(0);
         } catch (Exception e) {
             e.printStackTrace();
