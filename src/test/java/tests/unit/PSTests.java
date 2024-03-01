@@ -10,6 +10,9 @@ import org.aeonbits.owner.ConfigFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -136,5 +139,58 @@ public class PSTests {
         assertEquals(id, Long.valueOf(apiResponse.get("id").toString()));
         assertEquals(bank.getKs(), apiResponse.get("ks"));
         assertEquals(bank.getRs(), apiResponse.get("rs"));
+    }
+
+    // нужно сообщение поменять поставщика/партнера для логина, для пасс - ок
+    @ParameterizedTest()
+    @ValueSource(strings = {"invalidLogin","","123123"})
+    void invalidLoginTest(String login) {
+        String invalidLoginMessage = given()
+                .relaxedHTTPSValidation()
+                .queryParam("_token", getToken)
+                .contentType("application/json")
+                .body("{\"login\":\"" + login + "\",\"password\":\"" + partnerPassword + "\"}")
+                .when()
+                .post("/api/partner/login")
+                .then()
+                .statusCode(200)
+                .extract()
+                .path("error");
+
+        assertEquals("Неверный логин или пароль поставщика", invalidLoginMessage);
+    }
+
+    @ParameterizedTest()
+    @ValueSource(strings = {"invalidPass","","123123"})
+    void invalidPasswordTest(String password) {
+        String invalidPasswordMessage = given()
+                .relaxedHTTPSValidation()
+                .queryParam("_token", getToken)
+                .contentType("application/json")
+                .body("{\"login\":\"" + partnerLogin + "\",\"password\":\"" + password + "\"}")
+                .when()
+                .post("/api/partner/login")
+                .then()
+                .statusCode(200)
+                .extract()
+                .path("error");
+
+        assertEquals("Неверный логин или пароль партнера", invalidPasswordMessage);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"info", "legal", "bank"})
+    void partnerNoTokenTest(String endpoint) {
+        String wrongAccessMessage = given()
+                .relaxedHTTPSValidation()
+                .contentType("application/json")
+                .when()
+                .get("/api/partner/" + endpoint)
+                .then()
+                .statusCode(401)
+                .extract()
+                .path("error");
+
+        assertEquals("Wrong access credentials", wrongAccessMessage);
     }
 }
