@@ -6,7 +6,10 @@ import config.BaseConfig;
 import entityDB.BankEntity;
 import entityDB.LegalEntity;
 import entityDB.UserEntity;
+import entityDB.WorkTimeEntity;
+import helpers.HelperPage;
 import org.aeonbits.owner.ConfigFactory;
+import org.hibernate.query.Query;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,6 +19,9 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -29,6 +35,8 @@ public class PSTests {
     public PartnerProfileDao dao;
     public static String partnerLogin;
     public static String partnerPassword;
+
+    //https://partner.k8s-dev.florist.local/t/VSt9dLSn
 
     @BeforeAll
     static void setBasic() throws IOException {
@@ -133,6 +141,8 @@ public class PSTests {
                 .extract()
                 .path("data.partner_bank");
 
+        System.out.println(apiResponse + " !!!");
+
         assertEquals(bank.getBankAddress(), apiResponse.get("bank_address"));
         assertEquals(bank.getBankName(), apiResponse.get("bank_name"));
         assertEquals(bank.getBik(), apiResponse.get("bik"));
@@ -141,9 +151,46 @@ public class PSTests {
         assertEquals(bank.getRs(), apiResponse.get("rs"));
     }
 
+    @Test
+    void partnerWorkTimeTest() {
+        List<WorkTimeEntity> time = dao.getWorkTime(id);
+
+        Map<String, Map<String, Object>> apiResponse = given()
+                .relaxedHTTPSValidation()
+                .queryParam("_token", getToken)
+                .contentType("application/json")
+                .when()
+                .get("/api/partner/workTime")
+                .then()
+                .statusCode(200)
+                .extract()
+                .path("data.days");
+
+        for (WorkTimeEntity workTime : time) {
+            int weekday = workTime.getWeekday();
+            Map<String, Object> dayInfo = apiResponse.get(String.valueOf(weekday - 1));
+
+            BigDecimal from = workTime.getFromTime();
+            BigDecimal to = workTime.getToTime();
+            int workday = workTime.getWorkday();
+            int aroundTheClock = workTime.getAroundTheClock();
+
+            Object fromApi = dayInfo.get("from");
+            Object toApi = dayInfo.get("to");
+
+            String formattedFrom = from != null ? from.toString() : null;
+            String formattedTo = from != null ? to.toString() : null;
+
+            assertEquals(formattedFrom, HelperPage.formatFromApi(fromApi));
+            assertEquals(formattedTo, HelperPage.formatFromApi(toApi));
+            assertEquals(workday, (boolean) dayInfo.get("workday") ? 1 : 0);
+            assertEquals(aroundTheClock, (boolean) dayInfo.get("around_the_clock") ? 1 : 0);
+        }
+    }
+
     // нужно сообщение поменять поставщика/партнера для логина, для пасс - ок
     @ParameterizedTest()
-    @ValueSource(strings = {"invalidLogin","","123123"})
+    @ValueSource(strings = {"invalidLogin", "", "123123"})
     void invalidLoginTest(String login) {
         String invalidLoginMessage = given()
                 .relaxedHTTPSValidation()
@@ -161,7 +208,7 @@ public class PSTests {
     }
 
     @ParameterizedTest()
-    @ValueSource(strings = {"invalidPass","","123123"})
+    @ValueSource(strings = {"invalidPass", "", "123123"})
     void invalidPasswordTest(String password) {
         String invalidPasswordMessage = given()
                 .relaxedHTTPSValidation()

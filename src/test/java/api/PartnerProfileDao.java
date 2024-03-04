@@ -3,8 +3,11 @@ package api;
 import entityDB.BankEntity;
 import entityDB.LegalEntity;
 import entityDB.UserEntity;
+import entityDB.WorkTimeEntity;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
+
+import java.util.Collections;
 import java.util.List;
 
 public class PartnerProfileDao {
@@ -41,6 +44,17 @@ public class PartnerProfileDao {
         } catch (Exception e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    public List<WorkTimeEntity> getWorkTime(Long accountId) {
+        try (Session session = HibernateUtil.getSession()) {
+            Query<WorkTimeEntity> query = session.createQuery("FROM WorkTimeEntity WHERE account_id = :accountId", WorkTimeEntity.class);
+            query.setParameter("accountId", accountId);
+            return query.list();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Collections.emptyList();
         }
     }
 }
