@@ -141,8 +141,6 @@ public class PSTests {
                 .extract()
                 .path("data.partner_bank");
 
-        System.out.println(apiResponse + " !!!");
-
         assertEquals(bank.getBankAddress(), apiResponse.get("bank_address"));
         assertEquals(bank.getBankName(), apiResponse.get("bank_name"));
         assertEquals(bank.getBik(), apiResponse.get("bik"));
