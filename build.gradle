@@ -46,7 +46,8 @@ dependencies {
             'io.qameta.allure:allure-selenide:2.22.2',
             'com.mysql:mysql-connector-j:8.3.0',
             'org.hibernate:hibernate-core:5.6.15.Final',
-            'org.hibernate:hibernate-entitymanager:5.6.15.Final'
+            'org.hibernate:hibernate-entitymanager:5.6.15.Final',
+            'org.json:json:20240303'
     )
 }
 
@@ -94,5 +95,11 @@ tasks.register('regress_test', Test) {
         includeTags("create_order")
         includeTags("auth")
         includeTags("register")
+    }
+}
+
+tasks.register('api_test', Test) {
+    useJUnitPlatform {
+        includeTags("api")
     }
 }

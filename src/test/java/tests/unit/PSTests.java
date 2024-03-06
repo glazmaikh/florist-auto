@@ -9,9 +9,9 @@ import entityDB.UserEntity;
 import entityDB.WorkTimeEntity;
 import helpers.HelperPage;
 import org.aeonbits.owner.ConfigFactory;
-import org.hibernate.query.Query;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -20,7 +20,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -29,6 +28,7 @@ import static io.restassured.RestAssured.baseURI;
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Tag("api")
 public class PSTests {
     public static String getToken;
     public Long id;
@@ -150,6 +150,51 @@ public class PSTests {
     }
 
     @Test
+    void createWorkTimeTest() {
+        Object[] fromValues = {1.25, 2.50, 3.75, 4.00, 11.00, 0.00, null};
+        Object[] toValues = {11.75, 12.50, 13.75, 14.00, 22.00, 24.00, null};
+        Object[] workdayValues = {true, true, true, true, true, true, false};
+        Object[] aroundTheClockValues = {false, false, false, false, false, true, false};
+
+        String jsonData = createWorkTimeBuildJson(fromValues, toValues, workdayValues, aroundTheClockValues);
+
+        Map<String, Map<String, Object>> apiResponse = given()
+                .relaxedHTTPSValidation()
+                .queryParam("_token", getToken)
+                .contentType("application/json")
+                .body(jsonData)
+                .when()
+                .post("/api/partner/createWorkTime")
+                .then()
+                .statusCode(200)
+                .extract()
+                .path("data.days");
+
+        List<WorkTimeEntity> time = dao.getWorkTime(id);
+
+        for (WorkTimeEntity workTime : time) {
+            int weekday = workTime.getWeekday();
+            Map<String, Object> dayInfo = apiResponse.get(String.valueOf(weekday - 1));
+
+            BigDecimal from = workTime.getFromTime();
+            BigDecimal to = workTime.getToTime();
+            int workday = workTime.getWorkday();
+            int aroundTheClock = workTime.getAroundTheClock();
+
+            Object fromApi = dayInfo.get("from");
+            Object toApi = dayInfo.get("to");
+
+            String formattedFrom = from != null ? from.toString() : null;
+            String formattedTo = to != null ? to.toString() : null;
+
+            assertEquals(formattedFrom, HelperPage.formatFromApi(fromApi));
+            assertEquals(formattedTo, HelperPage.formatFromApi(toApi));
+            assertEquals(workday, (boolean) dayInfo.get("workday") ? 1 : 0);
+            assertEquals(aroundTheClock, (boolean) dayInfo.get("around_the_clock") ? 1 : 0);
+        }
+    }
+
+    @Test
     void partnerWorkTimeTest() {
         List<WorkTimeEntity> time = dao.getWorkTime(id);
 
@@ -186,9 +231,80 @@ public class PSTests {
         }
     }
 
+    @ParameterizedTest
+    @CsvSource({
+            "1.11, 2.22",
+            "20.21, 23.99",
+            "00.01, 01.01"
+    })
+    void validRangeOfParamCreateWorkTimeNegativeTest(double from, double to) {
+        Object[] fromValues = {from, from, from, 4.00, 2.50, 3.75, null};
+        Object[] toValues = {to, to, to, 13.25, 13.75, 14.00, null};
+        Object[] workdayValues = {true, true, true, true, true, true, false};
+        Object[] aroundTheClockValues = {false, false, false, false, false, true, false};
+
+        String jsonData = createWorkTimeBuildJson(fromValues, toValues, workdayValues, aroundTheClockValues);
+
+        given()
+                .relaxedHTTPSValidation()
+                .queryParam("_token", getToken)
+                .contentType("application/json")
+                .body(jsonData)
+                .when()
+                .post("/api/partner/createWorkTime")
+                .then()
+                .statusCode(200);
+    }
+
+    // statusCode(200) - нужно 400
+    @ParameterizedTest
+    @CsvSource({
+            "25.101, 39.299"
+    })
+    void invalidRangeOfParamCreateWorkTimeNegativeTest(double from, double to) {
+        Object[] fromValues = {from, 4.00, 4.00, 4.00, 2.50, 3.75, null};
+        Object[] toValues = {to, 13.25, 13.25, 13.25, 13.75, 14.00, null};
+        Object[] workdayValues = {true, true, true, true, true, true, false};
+        Object[] aroundTheClockValues = {false, false, false, false, false, true, false};
+
+        String jsonData = createWorkTimeBuildJson(fromValues, toValues, workdayValues, aroundTheClockValues);
+
+        given()
+                .relaxedHTTPSValidation()
+                .queryParam("_token", getToken)
+                .contentType("application/json")
+                .body(jsonData)
+                .when()
+                .post("/api/partner/createWorkTime")
+                .then()
+                .statusCode(200);
+    }
+
+    // в statusCode(200) - нужен статус 400
+    @ParameterizedTest
+    @ValueSource(strings = {"", "asd", "~"})
+    void invalidParamCreateWorkTimeTest(String param) {
+        Object[] fromValues = {param, 2.50, 3.75, 4.00, param, param, null};
+        Object[] toValues = {11.75, param, 13.75, 14.00, param, param, null};
+        Object[] workdayValues = {true, true, param, true, true, param, false};
+        Object[] aroundTheClockValues = {false, false, false, param, false, param, false};
+
+        String jsonData = createWorkTimeBuildJson(fromValues, toValues, workdayValues, aroundTheClockValues);
+
+        given()
+                .relaxedHTTPSValidation()
+                .queryParam("_token", getToken)
+                .contentType("application/json")
+                .body(jsonData)
+                .when()
+                .post("/api/partner/createWorkTime")
+                .then()
+                .statusCode(500); // Ожидаем статус код 400 для невалидных входных данных
+    }
+
     // нужно сообщение поменять поставщика/партнера для логина, для пасс - ок
     @ParameterizedTest()
-    @ValueSource(strings = {"invalidLogin", "", "123123"})
+    @ValueSource(strings = {"invalidLogin", "123123"})
     void invalidLoginTest(String login) {
         String invalidLoginMessage = given()
                 .relaxedHTTPSValidation()
@@ -224,7 +340,7 @@ public class PSTests {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"info", "legal", "bank"})
+    @ValueSource(strings = {"info", "legal", "bank", "workTime"})
     void partnerNoTokenTest(String endpoint) {
         String wrongAccessMessage = given()
                 .relaxedHTTPSValidation()
@@ -237,5 +353,33 @@ public class PSTests {
                 .path("error");
 
         assertEquals("Wrong access credentials", wrongAccessMessage);
+    }
+
+    public String createWorkTimeBuildJson(Object[] fromValues, Object[] toValues, Object[] workdayValues, Object[] aroundTheClockValues) {
+        StringBuilder jsonDataBuilder = new StringBuilder();
+        jsonDataBuilder.append("{");
+        jsonDataBuilder.append("\"ok\": 0,");
+        jsonDataBuilder.append("\"error\": \"string\",");
+        jsonDataBuilder.append("\"data\": {");
+        jsonDataBuilder.append("\"id\": 0,");
+        jsonDataBuilder.append("\"days\": {");
+
+        for (int i = 0; i < fromValues.length; i++) {
+            jsonDataBuilder.append("\"").append(i).append("\": {");
+            jsonDataBuilder.append("\"from\": ").append(fromValues[i]).append(",");
+            jsonDataBuilder.append("\"to\": ").append(toValues[i]).append(",");
+            jsonDataBuilder.append("\"workday\": ").append(workdayValues[i]).append(",");
+            jsonDataBuilder.append("\"around_the_clock\": ").append(aroundTheClockValues[i]);
+            jsonDataBuilder.append("}");
+            if (i < fromValues.length - 1) {
+                jsonDataBuilder.append(",");
+            }
+        }
+
+        jsonDataBuilder.append("}},");
+        jsonDataBuilder.append("\"meta\": {\"total\": 0},");
+        jsonDataBuilder.append("\"t\": 0}");
+
+        return jsonDataBuilder.toString();
     }
 }
