@@ -1,14 +1,9 @@
 package tests.unit;
 
+import api.HibernateUtil;
 import api.PartnerProfileDao;
-import com.codeborne.selenide.Configuration;
-import config.BaseConfig;
-import entityDB.BankEntity;
-import entityDB.LegalEntity;
-import entityDB.UserEntity;
-import entityDB.WorkTimeEntity;
+import entityDB.*;
 import helpers.HelperPage;
-import org.aeonbits.owner.ConfigFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -16,43 +11,33 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import tests.TestBase;
 
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
-import static io.restassured.RestAssured.baseURI;
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Tag("api")
-public class PSTests {
-    public static String getToken;
-    public Long id;
-    public PartnerProfileDao dao;
-    public static String partnerLogin;
-    public static String partnerPassword;
-
-    //https://partner.k8s-dev.florist.local/t/VSt9dLSn
+public class PSTests extends TestBase {
+    public static String authPartnerToken;
+    public static String token;
+    public static Long id;
+    public static Long supplierId;
+    public static PartnerProfileDao dao;
 
     @BeforeAll
-    static void setBasic() throws IOException {
-        String propertiesFilePath = "src/test/resources/test.properties";
+    static void setClass() {
+        HibernateUtil.getFlowersSession();
+        HibernateUtil.getPsSession();
 
-        Properties properties = new Properties();
-        properties.load(new FileInputStream(propertiesFilePath));
+        id = 5699L;
+        supplierId = 295L;
+        dao = new PartnerProfileDao();
 
-        BaseConfig config = ConfigFactory.create(BaseConfig.class, System.getProperties());
-        partnerLogin = properties.getProperty("partner.login", config.getPartnerLogin());
-        partnerPassword = properties.getProperty("partner.pass", config.getPartnerPass());
-
-        Configuration.remote = "http://10.201.0.139:4444/wd/hub";
-        baseURI = "https://partner.k8s-dev.florist.local";
-
-        getToken = given()
+        authPartnerToken = given()
                 .relaxedHTTPSValidation()
                 .auth().basic("florist_api", "123")
                 .when()
@@ -63,35 +48,81 @@ public class PSTests {
     }
 
     @BeforeEach
-    void setUp() {
-        id = 5699L;
-        dao = new PartnerProfileDao();
-
-        given()
+    void setTest() {
+        token = given()
                 .relaxedHTTPSValidation()
-                .queryParam("_token", getToken)
+                .auth().basic("florist_api", "123")
+                .header("Cookie", "auth_partner_token=" + authPartnerToken)
                 .contentType("application/json")
-                .body("{\"login\":\"" + partnerLogin + "\",\"password\":\"" + partnerPassword + "\"}")
                 .when()
-                .post("/api/partner/login")
+                .post("api/partner/login/byShort/Y19fu1Gb")
                 .then()
-                .statusCode(200);
+                .statusCode(200)
+                .extract()
+                .path("data.token");
+    }
+
+    @Test
+    void partnerLoginTest() {
+        UserPSEntity userDB = dao.getUserPSInfo(supplierId);
+
+        Map<String, Object> apiResponse = given()
+                .relaxedHTTPSValidation()
+                .auth().basic("florist_api", "123")
+                .header("Cookie", "auth_partner_token=" + authPartnerToken)
+                .when()
+                .post("api/partner/login/byShort/Y19fu1Gb")
+                .then()
+                .statusCode(200)
+                .extract()
+                .path("data");
+
+        assertEquals(userDB.getId(), Long.valueOf(apiResponse.get("user").toString()));
+        assertEquals(userDB.getName(), apiResponse.get("name"));
+        assertEquals(userDB.getEmail(), apiResponse.get("email"));
+    }
+
+    @Test
+    void supplierLoginTest() {
+        AccountEntity accountDB = dao.getSupplierInfo(id);
+
+        Map<String, Object> apiResponse = given()
+                .relaxedHTTPSValidation()
+                .queryParam("_token", authPartnerToken)
+                .contentType("application/json")
+                .body("{\"login\":\"" + supplierLogin + "\",\"password\":\"" + supplierPassword + "\"}")
+                .when()
+                .post("api/partner/login")
+                .then()
+                .statusCode(200)
+                .extract()
+                .path("data");
+
+        assertEquals(accountDB.getCity(), apiResponse.get("city"));
+        assertEquals(accountDB.getEmail(), apiResponse.get("email"));
+        assertEquals(id, Long.valueOf(apiResponse.get("id").toString()));
+        assertEquals(accountDB.getPartnerLogin(), apiResponse.get("login"));
+        assertEquals(accountDB.getName(), apiResponse.get("name"));
+        assertEquals(accountDB.getPhones(), apiResponse.get("phone"));
+        assertEquals(accountDB.getUseProductsstorage(), apiResponse.get("useProductsStorage"));
     }
 
     @Test
     void partnerInfoTest() {
-        UserEntity user = dao.getUserInfo(id);
+        UserEntity user = dao.getPartnerInfo(id);
 
         Map<String, Object> apiResponse = given()
                 .relaxedHTTPSValidation()
-                .queryParam("_token", getToken)
+                .queryParam("_token", token)
                 .contentType("application/json")
                 .when()
-                .get("/api/partner/info")
+                .get("api/partner/info")
                 .then()
                 .statusCode(200)
                 .extract()
                 .path("data.partner_profile");
+
+        System.out.println(apiResponse);
 
         assertEquals(id, Long.valueOf(apiResponse.get("id").toString()));
         assertEquals(user.getName(), apiResponse.get("name"));
@@ -107,10 +138,10 @@ public class PSTests {
 
         Map<String, Object> apiResponse = given()
                 .relaxedHTTPSValidation()
-                .queryParam("_token", getToken)
+                .queryParam("_token", token)
                 .contentType("application/json")
                 .when()
-                .get("/api/partner/legal")
+                .get("api/partner/legal")
                 .then()
                 .statusCode(200)
                 .extract()
@@ -132,10 +163,10 @@ public class PSTests {
 
         Map<String, Object> apiResponse = given()
                 .relaxedHTTPSValidation()
-                .queryParam("_token", getToken)
+                .queryParam("_token", token)
                 .contentType("application/json")
                 .when()
-                .get("/api/partner/bank")
+                .get("api/partner/bank")
                 .then()
                 .statusCode(200)
                 .extract()
@@ -160,11 +191,11 @@ public class PSTests {
 
         Map<String, Map<String, Object>> apiResponse = given()
                 .relaxedHTTPSValidation()
-                .queryParam("_token", getToken)
+                .queryParam("_token", token)
                 .contentType("application/json")
                 .body(jsonData)
                 .when()
-                .post("/api/partner/createWorkTime")
+                .post("api/partner/createWorkTime")
                 .then()
                 .statusCode(200)
                 .extract()
@@ -200,10 +231,10 @@ public class PSTests {
 
         Map<String, Map<String, Object>> apiResponse = given()
                 .relaxedHTTPSValidation()
-                .queryParam("_token", getToken)
+                .queryParam("_token", token)
                 .contentType("application/json")
                 .when()
-                .get("/api/partner/workTime")
+                .get("api/partner/workTime")
                 .then()
                 .statusCode(200)
                 .extract()
@@ -247,11 +278,11 @@ public class PSTests {
 
         given()
                 .relaxedHTTPSValidation()
-                .queryParam("_token", getToken)
+                .queryParam("_token", token)
                 .contentType("application/json")
                 .body(jsonData)
                 .when()
-                .post("/api/partner/createWorkTime")
+                .post("api/partner/createWorkTime")
                 .then()
                 .statusCode(200);
     }
@@ -271,16 +302,15 @@ public class PSTests {
 
         given()
                 .relaxedHTTPSValidation()
-                .queryParam("_token", getToken)
+                .queryParam("_token", token)
                 .contentType("application/json")
                 .body(jsonData)
                 .when()
-                .post("/api/partner/createWorkTime")
+                .post("api/partner/createWorkTime")
                 .then()
-                .statusCode(200);
+                .statusCode(200); // statusCode(200) - нужен статус 400
     }
 
-    // в statusCode(200) - нужен статус 400
     @ParameterizedTest
     @ValueSource(strings = {"", "asd", "~"})
     void invalidParamCreateWorkTimeTest(String param) {
@@ -293,11 +323,11 @@ public class PSTests {
 
         given()
                 .relaxedHTTPSValidation()
-                .queryParam("_token", getToken)
+                .queryParam("_token", token)
                 .contentType("application/json")
                 .body(jsonData)
                 .when()
-                .post("/api/partner/createWorkTime")
+                .post("api/partner/createWorkTime")
                 .then()
                 .statusCode(500); // Ожидаем статус код 400 для невалидных входных данных
     }
@@ -308,11 +338,11 @@ public class PSTests {
     void invalidLoginTest(String login) {
         String invalidLoginMessage = given()
                 .relaxedHTTPSValidation()
-                .queryParam("_token", getToken)
+                .queryParam("_token", token)
                 .contentType("application/json")
-                .body("{\"login\":\"" + login + "\",\"password\":\"" + partnerPassword + "\"}")
+                .body("{\"login\":\"" + login + "\",\"password\":\"" + supplierPassword + "\"}")
                 .when()
-                .post("/api/partner/login")
+                .post("api/partner/login")
                 .then()
                 .statusCode(200)
                 .extract()
@@ -326,11 +356,11 @@ public class PSTests {
     void invalidPasswordTest(String password) {
         String invalidPasswordMessage = given()
                 .relaxedHTTPSValidation()
-                .queryParam("_token", getToken)
+                .queryParam("_token", token)
                 .contentType("application/json")
-                .body("{\"login\":\"" + partnerLogin + "\",\"password\":\"" + password + "\"}")
+                .body("{\"login\":\"" + supplierLogin + "\",\"password\":\"" + password + "\"}")
                 .when()
-                .post("/api/partner/login")
+                .post("api/partner/login")
                 .then()
                 .statusCode(200)
                 .extract()
@@ -346,7 +376,7 @@ public class PSTests {
                 .relaxedHTTPSValidation()
                 .contentType("application/json")
                 .when()
-                .get("/api/partner/" + endpoint)
+                .get("api/partner/" + endpoint)
                 .then()
                 .statusCode(401)
                 .extract()

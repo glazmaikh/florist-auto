@@ -1,5 +1,6 @@
 package tests;
 
+import api.HibernateUtil;
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.WebDriverRunner;
@@ -28,13 +29,15 @@ public class TestBase {
     protected static String promo;
     protected static String login;
     protected static String password;
+    public static String supplierLogin;
+    public static String supplierPassword;
 
 
     @BeforeAll
     static void setUp() throws IOException {
-        //String testEnv = System.getProperty("TEST_ENV");
-        //String propertiesFilePath = "src/test/resources/" + testEnv + ".properties";
-        String propertiesFilePath = "src/test/resources/test.properties";
+        String testEnv = System.getProperty("TEST_ENV");
+        String propertiesFilePath = "src/test/resources/" + testEnv + ".properties";
+        //String propertiesFilePath = "src/test/resources/test.properties";
 
         Properties properties = new Properties();
         properties.load(new FileInputStream(propertiesFilePath));
@@ -48,7 +51,8 @@ public class TestBase {
         promo = properties.getProperty("promo.code", config.getPromoCode());
         login = properties.getProperty("login", config.getLogin());
         password = properties.getProperty("password", config.getPassword());
-
+        supplierLogin = properties.getProperty("partner.login", config.getPartnerLogin());
+        supplierPassword = properties.getProperty("partner.pass", config.getPartnerPass());
 
         //System.setProperty("webdriver.chrome.driver", "C://webdrivers/chromedriver119.exe");
         Configuration.browser = System.getProperty("browser", "chrome");
@@ -72,15 +76,18 @@ public class TestBase {
 
     @AfterEach
     void addAttachments() {
-        Attach.screenshotAs("Last screenshot");
-        Attach.pageSource();
-        Attach.browserConsoleLogs();
-        Attach.addVideo();
-        Selenide.closeWebDriver();
+        if (WebDriverRunner.hasWebDriverStarted()) {
+            Attach.screenshotAs("Last screenshot");
+            Attach.pageSource();
+            Attach.browserConsoleLogs();
+            Attach.addVideo();
+            Selenide.closeWebDriver();
+        }
     }
 
     @AfterAll
     public static void tearDown() {
         SelenideLogger.removeListener("allure");
+        HibernateUtil.shutdown();
     }
 }

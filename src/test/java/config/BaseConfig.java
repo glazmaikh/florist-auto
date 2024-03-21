@@ -3,7 +3,7 @@ package config;
 import org.aeonbits.owner.Config;
 
 @Config.Sources({
-        "classpath:test.properties"
+        "classpath:${TEST_ENV}.properties"
 })
 public interface BaseConfig extends Config {
     @Key("base.url")
