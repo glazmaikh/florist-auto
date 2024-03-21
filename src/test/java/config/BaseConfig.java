@@ -26,4 +26,10 @@ public interface BaseConfig extends Config {
 
     @Key("password")
     String getPassword();
+
+    @Key("partner.login")
+    String getPartnerLogin();
+
+    @Key("partner.pass")
+    String getPartnerPass();
 }

@@ -195,4 +195,13 @@ public class HelperPage {
         LocalDate date = LocalDate.parse(formatDate, inputFormatter);
         return date.format(outputFormatter);
     }
+
+    public static String formatFromApi(Object fromApi) {
+        if (fromApi == null) {
+            return null;
+        } else {
+            double value = ((Number) fromApi).doubleValue();
+            return String.format(Locale.US,"%.2f", value);
+        }
+    }
 }
