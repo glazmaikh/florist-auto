@@ -17,6 +17,7 @@ import tests.TimeZoneExtension;
 
 import java.util.stream.Stream;
 
+@Tag("e2e")
 @ExtendWith(TimeZoneExtension.class)
 public class CreateOrderTest extends TestBase {
     private final TestData testData = new TestData();
@@ -53,7 +54,6 @@ public class CreateOrderTest extends TestBase {
     }
 
     @Test
-    @Tag("create_order")
     void createNewOrderWithExtrasTest() throws Exception {
         apiClient.initBouquet(BouquetType.FLORIST_RU);
 
@@ -96,7 +96,6 @@ public class CreateOrderTest extends TestBase {
     }
 
     @Test
-    @Tag("create_order")
     void createNewOrderWith2BouquetsTest() throws Exception {
         apiClient.initBouquet(BouquetType.FLORIST_RU);
 
@@ -162,7 +161,6 @@ public class CreateOrderTest extends TestBase {
 
     @ParameterizedTest(name = "Тест на проверку оформления заказа и оплаты в валюте {0} доступной на сайте")
     @MethodSource("currencyEnumProvider")
-    @Tag("create_order")
     void createOrderDifferentCurrencyTest(CurrencyType currency) throws Exception {
         apiClient.initBouquet(BouquetType.FLORIST_RU);
 
@@ -220,7 +218,6 @@ public class CreateOrderTest extends TestBase {
     }
 
     @Test
-    @Tag("create_order")
     void createNewOrderAnAuthUserTest() throws Exception {
         apiClient.initBouquet(BouquetType.FLORIST_RU);
 
@@ -277,7 +274,6 @@ public class CreateOrderTest extends TestBase {
     }
 
     @Test
-    @Tag("create_order")
     void usingPromoCodeTest() throws Exception {
         apiClient.initBouquet(BouquetType.FLORIST_RU, false);
 
@@ -319,7 +315,6 @@ public class CreateOrderTest extends TestBase {
     }
 
     @Test
-    @Tag("create_order")
     void usingBackAfterCreatedOrderTest() throws Exception {
         apiClient.initBouquet(BouquetType.FLORIST_RU);
 
@@ -364,7 +359,6 @@ public class CreateOrderTest extends TestBase {
     }
 
     @Test
-    @Tag("create_order")
     void removeFromCardTest() throws InterruptedException {
         apiClient.initBouquet(BouquetType.FLORIST_RU);
 
