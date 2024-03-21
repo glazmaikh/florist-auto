@@ -67,39 +67,13 @@ test {
     }
 }
 
-tasks.register('test_order', Test) {
+tasks.register('e2e_tests', Test) {
     useJUnitPlatform {
-        includeTags("test_order")
+        includeTags("e2e")
     }
 }
 
-tasks.register('create_order_test', Test) {
-    useJUnitPlatform {
-        includeTags("create_order")
-    }
-}
-
-tasks.register('register_test', Test) {
-    useJUnitPlatform {
-        includeTags("register")
-    }
-}
-
-tasks.register('auth_test', Test) {
-    useJUnitPlatform {
-        includeTags("auth")
-    }
-}
-
-tasks.register('regress_test', Test) {
-    useJUnitPlatform {
-        includeTags("create_order")
-        includeTags("auth")
-        includeTags("register")
-    }
-}
-
-tasks.register('api_test', Test) {
+tasks.register('api_tests', Test) {
     useJUnitPlatform {
         includeTags("api")
     }

@@ -14,6 +14,7 @@ import pages.CatalogPage;
 import pages.CheckoutPage;
 import tests.TestBase;
 
+@Tag("e2e")
 public class SetAddressTest extends TestBase {
     private CatalogPage catalogPage;
     private BouquetPage bouquetPage;
@@ -31,7 +32,6 @@ public class SetAddressTest extends TestBase {
 
     @ParameterizedTest(name = "Тест на применение адреса на странице CatalogPage и проверке на чекауте {0}")
     @ValueSource(strings = {"г Астрахань, ул Ульянова, д 1", "ул Ульянова, д 1"})
-    @Tag("address")
     void setValidAddressOnCatalogPageTest(String address) throws Exception {
         apiClient.initBouquet(BouquetType.FLORIST_RU);
 

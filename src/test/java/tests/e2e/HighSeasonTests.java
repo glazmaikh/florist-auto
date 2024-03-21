@@ -13,6 +13,7 @@ import org.junit.jupiter.params.provider.EnumSource;
 import pages.*;
 import tests.TestBase;
 
+@Tag("e2e_high")
 public class HighSeasonTests extends TestBase {
     private CatalogPage catalogPage;
     private BouquetPage bouquetPage;
@@ -27,7 +28,6 @@ public class HighSeasonTests extends TestBase {
     }
 
     @Test
-    @Tag("high_season")
     void lowPriceOnCatalogAndBouquetPageTest() throws Exception {
         apiClient.initBouquet(BouquetType.FLORIST_RU);
 
@@ -45,7 +45,6 @@ public class HighSeasonTests extends TestBase {
 
     @ParameterizedTest
     @EnumSource(DeliveryDateType.class)
-    @Tag("high_season")
     void setHighPriceOnCatalogPageTest(DeliveryDateType deliveryDateType) throws Exception {
         apiClient.initBouquet(BouquetType.FLORIST_RU);
 
