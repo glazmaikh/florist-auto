@@ -71,10 +71,12 @@ tasks.register('e2e_tests', Test) {
     useJUnitPlatform {
         includeTags("e2e")
     }
+    systemProperties(System.getProperties())
 }
 
 tasks.register('api_tests', Test) {
     useJUnitPlatform {
         includeTags("api")
     }
+    systemProperties(System.getProperties())
 }

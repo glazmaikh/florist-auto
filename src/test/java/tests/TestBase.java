@@ -32,7 +32,6 @@ public class TestBase {
     public static String supplierLogin;
     public static String supplierPassword;
 
-
     @BeforeAll
     static void setUp() throws IOException {
         String testEnv = System.getProperty("TEST_ENV");
