@@ -2,8 +2,11 @@ package tests.unit;
 
 import api.HibernateUtil;
 import api.PartnerProfileDao;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import entityDB.*;
 import helpers.HelperPage;
+import io.restassured.response.Response;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -13,7 +16,10 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import tests.TestBase;
 
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 
@@ -60,6 +66,48 @@ public class PSTests extends TestBase {
                 .statusCode(200)
                 .extract()
                 .path("data.token");
+    }
+
+    @Test
+    void partnerOfertaTest() throws IOException {
+        String ofertaHtml = new String(Files.readAllBytes(Paths.get("src/test/resources/oferta/oferta-2.html")));
+
+        Response response = given()
+                .relaxedHTTPSValidation()
+                .auth().basic("florist_api", "123")
+                .queryParam("_token", token)
+                .contentType("application/json")
+                .when()
+                .get("api/partner/oferta")
+                .then()
+                .statusCode(200)
+                .extract()
+                .response();
+
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode dataNode = mapper.convertValue(response.path("data"), JsonNode.class);
+        assertEquals(2,dataNode.get("version").asInt());
+        assertEquals(ofertaHtml,dataNode.get("oferta").asText());
+    }
+
+    @Test
+    void partnerPriceModifierTest() {
+        PriceModifierEntity priceModifierDB = dao.getPriceModifier(id);
+
+        Map<String, Object> apiResponse = given()
+                .relaxedHTTPSValidation()
+                .auth().basic("florist_api", "123")
+                .queryParam("_token", token)
+                .contentType("application/json")
+                .when()
+                .get("api/partner/priceModifier")
+                .then()
+                .statusCode(200)
+                .extract()
+                .path("data");
+
+        assertEquals(priceModifierDB.getAccountId(), Long.valueOf(apiResponse.get("id").toString()));
+        assertEquals(priceModifierDB.getPriceModifier(), apiResponse.get("price_modifier"));
     }
 
     @Test
@@ -121,8 +169,6 @@ public class PSTests extends TestBase {
                 .statusCode(200)
                 .extract()
                 .path("data.partner_profile");
-
-        System.out.println(apiResponse);
 
         assertEquals(id, Long.valueOf(apiResponse.get("id").toString()));
         assertEquals(user.getName(), apiResponse.get("name"));

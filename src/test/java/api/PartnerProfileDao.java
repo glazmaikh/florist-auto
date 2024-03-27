@@ -8,6 +8,18 @@ import java.util.Collections;
 import java.util.List;
 
 public class PartnerProfileDao {
+
+    public PriceModifierEntity getPriceModifier(Long accountId) {
+        try (Session session = HibernateUtil.getFlowersSession()) {
+            Query<PriceModifierEntity> query = session.createQuery("FROM PriceModifierEntity WHERE account_id = :accountId", PriceModifierEntity.class);
+            query.setParameter("accountId", accountId);
+            List<PriceModifierEntity> results = query.list();
+            return results.isEmpty() ? null : results.get(0);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
     public UserEntity getPartnerInfo(Long accountId) {
         try (Session session = HibernateUtil.getFlowersSession()) {
             Query<UserEntity> query = session.createQuery("FROM UserEntity WHERE account_id = :accountId", UserEntity.class);
