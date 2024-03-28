@@ -2,6 +2,8 @@ package tests.unit;
 
 import api.HibernateUtil;
 import api.PartnerProfileDao;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import entityDB.*;
@@ -20,6 +22,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -33,11 +36,14 @@ public class PSTests extends TestBase {
     public static Long id;
     public static Long supplierId;
     public static PartnerProfileDao dao;
+    public static ObjectMapper mapper;
 
     @BeforeAll
     static void setClass() {
         HibernateUtil.getFlowersSession();
         HibernateUtil.getPsSession();
+
+        mapper = new ObjectMapper();
 
         id = 5699L;
         supplierId = 295L;
@@ -69,6 +75,50 @@ public class PSTests extends TestBase {
     }
 
     @Test
+    void partnerGetDeliveryListTest() throws JsonProcessingException {
+        List<PartnerDeliveryEntity> deliveryEntityListDB = dao.getPartnerDeliveryList(id);
+
+        Response response = given()
+                .relaxedHTTPSValidation()
+                .auth().basic("florist_api", "123")
+                .queryParam("_token", token)
+                .contentType("application/json")
+                .when()
+                .get("api/partner/delivery/list")
+                .then()
+                .statusCode(200)
+                .extract()
+                .response();
+
+        JsonNode apiResponse = mapper.readTree(response.getBody().asString());
+        JsonNode deliveryNode = apiResponse.path("data").path("delivery");
+
+        Map<Long, JsonNode> deliveryMap = new HashMap<>();
+        for (JsonNode node : deliveryNode) {
+            deliveryMap.put(node.path("id").asLong(), node);
+        }
+
+        for (PartnerDeliveryEntity deliveryEntityDB : deliveryEntityListDB) {
+            JsonNode dbNode = deliveryMap.get(deliveryEntityDB.getId());
+
+            assertEquals(deliveryEntityDB.getCost(), dbNode.path("cost").asInt());
+            assertEquals(deliveryEntityDB.getCurrency(), dbNode.path("currency").asText());
+            assertEquals(deliveryEntityDB.getHidden(), dbNode.path("hidden").asInt());
+            assertEquals(deliveryEntityDB.getId(), dbNode.path("id").asLong());
+            assertEquals(deliveryEntityDB.getLocationId(), dbNode.path("location_id").asLong());
+            assertEquals(deliveryEntityDB.getLocationType(), dbNode.path("location_type").asInt());
+            assertEquals(deliveryEntityDB.getName(), dbNode.path("name").asText());
+            assertEquals(deliveryEntityDB.getTime(), dbNode.path("time").asInt());
+        }
+
+        int size = dao.getPartnerDeliveryListSize(id);
+        JsonNode responseSize = mapper.readTree(response.getBody().asString());
+        JsonNode responseSizeNode = responseSize.path("meta");
+
+        assertEquals(size, responseSizeNode.get("total").asInt());
+    }
+
+    @Test
     void partnerOfertaTest() throws IOException {
         String ofertaHtml = new String(Files.readAllBytes(Paths.get("src/test/resources/oferta/oferta-2.html")));
 
@@ -84,7 +134,6 @@ public class PSTests extends TestBase {
                 .extract()
                 .response();
 
-        ObjectMapper mapper = new ObjectMapper();
         JsonNode dataNode = mapper.convertValue(response.path("data"), JsonNode.class);
         assertEquals(2,dataNode.get("version").asInt());
         assertEquals(ofertaHtml,dataNode.get("oferta").asText());
@@ -108,6 +157,28 @@ public class PSTests extends TestBase {
 
         assertEquals(priceModifierDB.getAccountId(), Long.valueOf(apiResponse.get("id").toString()));
         assertEquals(priceModifierDB.getPriceModifier(), apiResponse.get("price_modifier"));
+    }
+
+    @Test
+    void partnerPostPriceModifierTest() {
+        PriceModifierEntity priceModifierDB = dao.getPriceModifier(id);
+        int priceModifier = -1;
+
+        Map<String, Object> apiResponse = given()
+                .relaxedHTTPSValidation()
+                .auth().basic("florist_api", "123")
+                .queryParam("_token", token)
+                .contentType("application/json")
+                .body("{\"price_modifier\": "+ priceModifier +"}")
+                .when()
+                .post("api/partner/priceModifier")
+                .then()
+                .statusCode(200)
+                .extract()
+                .path("data");
+
+        assertEquals(priceModifierDB.getAccountId(), Long.valueOf(apiResponse.get("id").toString()));
+        assertEquals(priceModifier, apiResponse.get("price_modifier"));
     }
 
     @Test
