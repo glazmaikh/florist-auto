@@ -111,6 +111,28 @@ public class PSTests extends TestBase {
     }
 
     @Test
+    void partnerPostPriceModifierTest() {
+        PriceModifierEntity priceModifierDB = dao.getPriceModifier(id);
+        int priceModifier = -1;
+
+        Map<String, Object> apiResponse = given()
+                .relaxedHTTPSValidation()
+                .auth().basic("florist_api", "123")
+                .queryParam("_token", token)
+                .contentType("application/json")
+                .body("{\"price_modifier\": "+ priceModifier +"}")
+                .when()
+                .post("api/partner/priceModifier")
+                .then()
+                .statusCode(200)
+                .extract()
+                .path("data");
+
+        assertEquals(priceModifierDB.getAccountId(), Long.valueOf(apiResponse.get("id").toString()));
+        assertEquals(priceModifier, apiResponse.get("price_modifier"));
+    }
+
+    @Test
     void partnerLoginTest() {
         UserPSEntity userDB = dao.getUserPSInfo(supplierId);
 
