@@ -25,7 +25,7 @@ public @Data class PartnerDeliveryEntity {
     private Long accountId;
 
     @Column(name = "location_id")
-    private Long locationId;
+    private Integer locationId;
 
     @Column(name = "location_type")
     private Integer locationType;
@@ -43,5 +43,5 @@ public @Data class PartnerDeliveryEntity {
     private Integer time;
 
     @Column(name = "hidden")
-    private short hidden;
+    private int hidden;
 }

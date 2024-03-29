@@ -105,7 +105,7 @@ public class PSTests extends TestBase {
             assertEquals(deliveryEntityDB.getCurrency(), dbNode.path("currency").asText());
             assertEquals(deliveryEntityDB.getHidden(), dbNode.path("hidden").asInt());
             assertEquals(deliveryEntityDB.getId(), dbNode.path("id").asLong());
-            assertEquals(deliveryEntityDB.getLocationId(), dbNode.path("location_id").asLong());
+            assertEquals(deliveryEntityDB.getLocationId(), dbNode.path("location_id").asInt());
             assertEquals(deliveryEntityDB.getLocationType(), dbNode.path("location_type").asInt());
             assertEquals(deliveryEntityDB.getName(), dbNode.path("name").asText());
             assertEquals(deliveryEntityDB.getTime(), dbNode.path("time").asInt());
@@ -116,6 +116,57 @@ public class PSTests extends TestBase {
         JsonNode responseSizeNode = responseSize.path("meta");
 
         assertEquals(size, responseSizeNode.get("total").asInt());
+    }
+
+    @Test
+    void partnerPostDeliveryListTest() throws JsonProcessingException {
+        String deliveryJson = "{\"location_id\":1," +
+                "\"location_type\":1," +
+                "\"cost\":123," +
+                "\"time\":123," +
+                "\"currency\":\"RUB\"," +
+                "\"hidden\":0}";
+
+        Response jsonResponse = given()
+                .relaxedHTTPSValidation()
+                .auth().basic("florist_api", "123")
+                .queryParam("_token", token)
+                .contentType("application/json")
+                .body(deliveryJson)
+                .when()
+                .post("api/partner/createDelivery")
+                .then()
+                .statusCode(200)
+                .extract()
+                .response();
+
+        JsonNode apiResponse = mapper.readTree(jsonResponse.getBody().asString());
+        JsonNode deliveryNode = apiResponse.path("data").path("delivery");
+
+        PartnerDeliveryEntity deliveryEntityDB = dao.getPartnerDeliveryById(deliveryNode.get("id").asLong());
+        assertEquals(deliveryEntityDB.getId(), deliveryNode.get("id").asLong());
+        assertEquals(deliveryEntityDB.getLocationId(), deliveryNode.get("location_id").asInt());
+        assertEquals(deliveryEntityDB.getLocationType(), deliveryNode.get("location_type").asInt());
+        assertEquals(HelperPage.extractCity(deliveryEntityDB.getName()), deliveryNode.get("name").asText());
+        assertEquals(deliveryEntityDB.getCost(), deliveryNode.get("cost").asInt());
+        assertEquals(deliveryEntityDB.getTime(), deliveryNode.get("time").asInt());
+        assertEquals(deliveryEntityDB.getHidden(), deliveryNode.get("hidden").asInt());
+
+        Response jsonResponseForDel = given()
+                .relaxedHTTPSValidation()
+                .auth().basic("florist_api", "123")
+                .queryParam("_token", token)
+                .contentType("application/json")
+                .when()
+                .delete("api/partner/deleteDelivery/" + deliveryNode.get("id").asLong())
+                .then()
+                .statusCode(200)
+                .extract()
+                .response();
+
+        JsonNode apiResponseForDel = mapper.readTree(jsonResponseForDel.getBody().asString());
+        JsonNode deliveryNodeForDel = apiResponseForDel.path("data");
+        assertEquals(deliveryNode.get("id").asLong(), deliveryNodeForDel.get("id").asLong());
     }
 
     @Test
@@ -135,8 +186,8 @@ public class PSTests extends TestBase {
                 .response();
 
         JsonNode dataNode = mapper.convertValue(response.path("data"), JsonNode.class);
-        assertEquals(2,dataNode.get("version").asInt());
-        assertEquals(ofertaHtml,dataNode.get("oferta").asText());
+        assertEquals(2, dataNode.get("version").asInt());
+        assertEquals(ofertaHtml, dataNode.get("oferta").asText());
     }
 
     @Test
@@ -169,7 +220,7 @@ public class PSTests extends TestBase {
                 .auth().basic("florist_api", "123")
                 .queryParam("_token", token)
                 .contentType("application/json")
-                .body("{\"price_modifier\": "+ priceModifier +"}")
+                .body("{\"price_modifier\": " + priceModifier + "}")
                 .when()
                 .post("api/partner/priceModifier")
                 .then()

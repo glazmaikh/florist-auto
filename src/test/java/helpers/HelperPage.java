@@ -204,4 +204,15 @@ public class HelperPage {
             return String.format(Locale.US,"%.2f", value);
         }
     }
+
+    public static String extractCity(String input) {
+        String regex = "<!--#RU\\s*(.*?)\\s*-->";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(input);
+        if (matcher.find()) {
+            return matcher.group(1);
+        } else {
+            return "";
+        }
+    }
 }
