@@ -33,7 +33,7 @@ public class PartnerProfileDao {
 
     public int getPartnerDeliveryListSize(Long accountId) {
         try (Session session = HibernateUtil.getFlowersSession()) {
-            Query<PartnerDeliveryEntity> query = session.createQuery("FROM PartnerDeliveryEntity WHERE account_id = :accountId", PartnerDeliveryEntity.class);
+            Query<PartnerDeliveryEntity> query = session.createQuery("FROM PartnerDeliveryEntity WHERE account_id = :accountId AND hidden = 0", PartnerDeliveryEntity.class);
             query.setParameter("accountId", accountId);
             return query.list().size();
         } catch (Exception e) {
