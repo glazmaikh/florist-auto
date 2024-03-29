@@ -28,6 +28,7 @@ import java.util.Map;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 @Tag("api")
 public class PSTests extends TestBase {
@@ -167,6 +168,9 @@ public class PSTests extends TestBase {
         JsonNode apiResponseForDel = mapper.readTree(jsonResponseForDel.getBody().asString());
         JsonNode deliveryNodeForDel = apiResponseForDel.path("data");
         assertEquals(deliveryNode.get("id").asLong(), deliveryNodeForDel.get("id").asLong());
+
+        deliveryEntityDB = dao.getPartnerDeliveryById(deliveryNode.get("id").asLong());
+        assertEquals(deliveryEntityDB.getHidden(), 1);
     }
 
     @Test
