@@ -13,7 +13,7 @@ import org.junit.jupiter.params.provider.EnumSource;
 import pages.*;
 import tests.TestBase;
 
-@Tag("e2e_high")
+//@Tag("e2e_high")
 public class HighSeasonTests extends TestBase {
     private CatalogPage catalogPage;
     private BouquetPage bouquetPage;
