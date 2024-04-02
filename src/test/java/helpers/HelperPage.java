@@ -215,4 +215,14 @@ public class HelperPage {
             return "";
         }
     }
+
+    public static String regexDateISO8601(String dateTimeISO8601) {
+        String regex = "T|\\+\\d{2}:\\d{2}";
+        return dateTimeISO8601.replaceAll(regex, " ").trim();
+    }
+
+    public static String getSplitSupplierId(String id) {
+        String[] parts = id.split("/");
+        return parts[parts.length - 1];
+    }
 }

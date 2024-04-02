@@ -8,6 +8,27 @@ import java.util.Collections;
 import java.util.List;
 
 public class PartnerProfileDao {
+    public PartnerProductEntity getPartnerProductById(Long id) {
+        try (Session session = HibernateUtil.getPsSession()) {
+            Query<PartnerProductEntity> query = session.createQuery("FROM PartnerProductEntity WHERE id = :id", PartnerProductEntity.class);
+            query.setParameter("id", id);
+            List<PartnerProductEntity> results = query.list();
+            return results.isEmpty() ? null : results.get(0);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    public List<PartnerProductEntity> getPartnerProducts(Long supplierId) {
+        try (Session session = HibernateUtil.getPsSession()) {
+            Query<PartnerProductEntity> query = session.createQuery("FROM PartnerProductEntity WHERE supplier_id = :supplierId", PartnerProductEntity.class);
+            query.setParameter("supplierId", supplierId);
+            return query.list();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
     public PartnerDeliveryEntity getPartnerDeliveryById(Long id) {
         try (Session session = HibernateUtil.getFlowersSession()) {
             Query<PartnerDeliveryEntity> query = session.createQuery("FROM PartnerDeliveryEntity WHERE id = :id", PartnerDeliveryEntity.class);

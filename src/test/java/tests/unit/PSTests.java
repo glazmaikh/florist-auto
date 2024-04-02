@@ -3,7 +3,6 @@ package tests.unit;
 import api.HibernateUtil;
 import api.PartnerProfileDao;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import entityDB.*;
@@ -22,9 +21,8 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -73,6 +71,79 @@ public class PSTests extends TestBase {
                 .statusCode(200)
                 .extract()
                 .path("data.token");
+    }
+
+    @Test
+    void partnerCreateProductTest() throws JsonProcessingException {
+        String json = "{\n" +
+                "  \"color\": 7,\n" +
+                "  \"type\": 16,\n" +
+                "  \"hidden\": 0,\n" +
+                "  \"variation\": [\n" +
+                "    {\n" +
+                "      \"titleType\": 1,\n" +
+                "      \"currency\": \"RUB\",\n" +
+                "      \"isDefault\": true,\n" +
+                "      \"compositions\": [\n" +
+                "        {\n" +
+                "          \"id\": \"9\",\n" +
+                "          \"count\": \"11\"\n" +
+                "        }\n" +
+                "      ],\n" +
+                "      \"dimensions\": {\n" +
+                "        \"height\": \"111\",\n" +
+                "        \"width\": \"111\"\n" +
+                "      },\n" +
+                "      \"price\": \"111\",\n" +
+                "      \"formationTime\": 111,\n" +
+                "      \"title\": \"standart\",\n" +
+                "      \"images\": [\n" +
+                "        \"https://lstorage.florist.ru/f/get/supplier/295/products/0/de/25/_ad82aaed83758c72f87ec83d8642/660bfb9d8a26f.png\"\n" +
+                "      ],\n" +
+                "      \"hidden\": 1\n" +
+                "    }\n" +
+                "  ],\n" +
+                "  \"title\": \"Тестовый букет 11\",\n" +
+                "  \"description\": \"Тестовый букет 11\",\n" +
+                "  \"tags\": [\n" +
+                "    {\n" +
+                "      \"2\": \"Свадебные букеты\"\n" +
+                "    }\n" +
+                "  ]\n" +
+                "}";
+
+        Response apiResponse = given()
+                .relaxedHTTPSValidation()
+                .auth().basic("florist_api", "123")
+                .header("Cookie", "auth_partner_token=" + authPartnerToken)
+                .queryParam("_token", token)
+                .contentType("application/json")
+                .body(json)
+                .when()
+                .post("api/partner/product")
+                .then()
+                .statusCode(200)
+                .extract().response();
+
+
+        JsonNode responseNode = mapper.readTree(apiResponse.getBody().asString());
+        JsonNode dataNode = responseNode.path("data");
+        Long productId = responseNode.path("data").path("id").asLong();
+
+        PartnerProductEntity productEntityDB = dao.getPartnerProductById(productId);
+        assertEquals(productEntityDB.getId(), dataNode.get("id").asLong());
+        assertEquals(productEntityDB.getTitle(), dataNode.get("title").asText());
+        assertEquals(productEntityDB.getDescription(), dataNode.get("description").asText());
+        assertEquals(productEntityDB.getUpdatedAt(), HelperPage.regexDateISO8601(dataNode.get("updatedAt").asText()));
+        assertEquals(productEntityDB.getCreatedAt(), HelperPage.regexDateISO8601(dataNode.get("createdAt").asText()));
+
+        String sId = HelperPage.getSplitSupplierId(dataNode.path("supplier").path("@id").asText());
+        assertEquals(productEntityDB.getSupplierId(), Long.valueOf(sId));
+        assertEquals(productEntityDB.getHidden(), dataNode.get("hidden").asInt());
+        //assertEquals(productEntityDB.getTags(), dataNode.get("tags").asText());
+
+//        JsonNode tagsNode = dataNode.path("tags");
+//        System.out.println("Узел tags: " + tagsNode.toString());
     }
 
     @Test
