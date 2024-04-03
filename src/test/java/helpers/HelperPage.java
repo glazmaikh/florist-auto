@@ -225,4 +225,8 @@ public class HelperPage {
         String[] parts = id.split("/");
         return parts[parts.length - 1];
     }
+
+    public static String getTagCutter(String tagObject) {
+        return tagObject.replaceAll("[^0-9]", "");
+    }
 }

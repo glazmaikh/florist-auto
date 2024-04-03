@@ -5,6 +5,7 @@ import api.PartnerProfileDao;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.errorprone.annotations.Var;
 import entityDB.*;
 import helpers.HelperPage;
 import io.restassured.response.Response;
@@ -125,25 +126,87 @@ public class PSTests extends TestBase {
                 .statusCode(200)
                 .extract().response();
 
-
         JsonNode responseNode = mapper.readTree(apiResponse.getBody().asString());
         JsonNode dataNode = responseNode.path("data");
         Long productId = responseNode.path("data").path("id").asLong();
+        JsonNode variationNode = dataNode.path("variation").get("0");
 
         PartnerProductEntity productEntityDB = dao.getPartnerProductById(productId);
+        VariationEntity variationEntityDB = dao.getVariationByProductId(productId);
+
+        String supplierIdApi = HelperPage.getSplitSupplierId(dataNode.path("supplier").path("@id").asText());
+        String variationIdApi = HelperPage.getSplitSupplierId(variationNode.path("@id").asText());
+        String variationSupplIdApi = HelperPage.getSplitSupplierId(variationNode.path("product").asText());
+
+        JsonNode tagsNode = dataNode.get("tags");
+        StringBuilder tags = new StringBuilder();
+        if (tagsNode != null && tagsNode.isObject()) {
+            tagsNode.fields().forEachRemaining(entry -> {
+                JsonNode tagObject = entry.getValue();
+                tags.append(HelperPage.getTagCutter(tagObject.toString() + ","));
+            });
+        }
+
+        JsonNode imagesNode = variationNode.get("images");
+        StringBuilder images = new StringBuilder("[");
+        if (imagesNode != null && imagesNode.isObject()) {
+            imagesNode.elements().forEachRemaining(valueNode -> {
+                images.append("\"");
+                String escapedValue = valueNode.asText().replaceAll("/", "\\\\/");
+                images.append(escapedValue);
+                images.append("\",");
+            });
+        }
+        images.deleteCharAt(images.length() - 1);
+        images.append("]");
+
+        JsonNode compositionsNode = variationNode.get("compositions");
+        StringBuilder compositions = new StringBuilder("[");
+        if (compositionsNode != null && compositionsNode.isObject()) {
+            compositionsNode.fields().forEachRemaining(entry -> {
+                JsonNode compositionObject = entry.getValue();
+                compositions.append("{\"id\":\"").append(compositionObject.get("id").asText()).append("\",\"count\":\"")
+                        .append(compositionObject.get("count").asText()).append("\"},");
+            });
+        }
+        compositions.deleteCharAt(compositions.length() - 1);
+        compositions.append("]");
+
+        JsonNode dimensionsNode = variationNode.get("dimensions");
+        StringBuilder dimensions = new StringBuilder("{");
+        if (dimensionsNode != null && dimensionsNode.isObject()) {
+            dimensionsNode.fields().forEachRemaining(entry -> {
+                dimensions.append("\"").append(entry.getKey()).append("\":\"").append(entry.getValue().asText()).append("\",");
+            });
+        }
+        dimensions.deleteCharAt(dimensions.length() - 1);
+        dimensions.append("}");
+
         assertEquals(productEntityDB.getId(), dataNode.get("id").asLong());
         assertEquals(productEntityDB.getTitle(), dataNode.get("title").asText());
         assertEquals(productEntityDB.getDescription(), dataNode.get("description").asText());
         assertEquals(productEntityDB.getUpdatedAt(), HelperPage.regexDateISO8601(dataNode.get("updatedAt").asText()));
         assertEquals(productEntityDB.getCreatedAt(), HelperPage.regexDateISO8601(dataNode.get("createdAt").asText()));
-
-        String sId = HelperPage.getSplitSupplierId(dataNode.path("supplier").path("@id").asText());
-        assertEquals(productEntityDB.getSupplierId(), Long.valueOf(sId));
+        assertEquals(productEntityDB.getSupplierId(), Long.valueOf(supplierIdApi));
         assertEquals(productEntityDB.getHidden(), dataNode.get("hidden").asInt());
-        //assertEquals(productEntityDB.getTags(), dataNode.get("tags").asText());
+        assertEquals(productEntityDB.getTags(), tags.toString());
+        assertEquals(productEntityDB.getType(), HelperPage.getTagCutter(dataNode.get("type").toString()));
+        assertEquals(productEntityDB.getColor(), HelperPage.getTagCutter(dataNode.get("color").toString()));
 
-//        JsonNode tagsNode = dataNode.path("tags");
-//        System.out.println("Узел tags: " + tagsNode.toString());
+        assertEquals(variationEntityDB.getId(), Long.valueOf(variationIdApi));
+        assertEquals(variationEntityDB.getProductId(), variationSupplIdApi);
+        assertEquals(variationEntityDB.getTitle(), variationNode.get("title").asText());
+        assertEquals(variationEntityDB.getCreatedAt(), HelperPage.regexDateISO8601(variationNode.get("createdAt").asText()));
+        assertEquals(variationEntityDB.getUpdatedAt(), HelperPage.regexDateISO8601(variationNode.get("updatedAt").asText()));
+        assertEquals(variationEntityDB.getPrice(), variationNode.get("price").asText());
+        assertEquals(variationEntityDB.getCurrency(), variationNode.get("currency").asText());
+        assertEquals(variationEntityDB.getHidden(), variationNode.get("hidden").asInt());
+        assertEquals(variationEntityDB.getImages(), images.toString());
+        assertEquals(variationEntityDB.getCompositions(), compositions.toString());
+        assertEquals(variationEntityDB.getDimensions(), dimensions.toString());
+        boolean isDefaultFromApi = variationNode.get("isDefault").asInt() == 1;
+        assertEquals(variationEntityDB.isDefault(), isDefaultFromApi);
+        assertEquals(variationEntityDB.getFormationTime(), variationNode.get("formationTime").asInt());
     }
 
     @Test

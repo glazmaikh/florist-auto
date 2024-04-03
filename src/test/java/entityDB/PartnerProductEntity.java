@@ -40,8 +40,8 @@ public @Data class PartnerProductEntity {
     private String tags;
 
     @Column(name = "type")
-    private Integer type;
+    private String type;
 
     @Column(name = "color")
-    private Integer color;
+    private String color;
 }

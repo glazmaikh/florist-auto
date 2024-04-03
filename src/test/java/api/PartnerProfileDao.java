@@ -8,6 +8,17 @@ import java.util.Collections;
 import java.util.List;
 
 public class PartnerProfileDao {
+    public VariationEntity getVariationByProductId(Long product_id) {
+        try (Session session = HibernateUtil.getPsSession()) {
+            Query<VariationEntity> query = session.createQuery("FROM VariationEntity WHERE product_id = :product_id", VariationEntity.class);
+            query.setParameter("product_id", product_id);
+            List<VariationEntity> results = query.list();
+            return results.isEmpty() ? null : results.get(0);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
     public PartnerProductEntity getPartnerProductById(Long id) {
         try (Session session = HibernateUtil.getPsSession()) {
             Query<PartnerProductEntity> query = session.createQuery("FROM PartnerProductEntity WHERE id = :id", PartnerProductEntity.class);
