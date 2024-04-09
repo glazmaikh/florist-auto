@@ -5,10 +5,11 @@ import api.PartnerProfileDao;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.errorprone.annotations.Var;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import entityDB.*;
 import helpers.HelperPage;
 import io.restassured.response.Response;
+import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -20,14 +21,13 @@ import tests.TestBase;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static io.restassured.RestAssured.given;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Tag("api")
 public class PSTests extends TestBase {
@@ -37,6 +37,7 @@ public class PSTests extends TestBase {
     public static Long supplierId;
     public static PartnerProfileDao dao;
     public static ObjectMapper mapper;
+    public static ClassLoader classLoader;
 
     @BeforeAll
     static void setClass() {
@@ -44,6 +45,7 @@ public class PSTests extends TestBase {
         HibernateUtil.getPsSession();
 
         mapper = new ObjectMapper();
+        classLoader = PSTests.class.getClassLoader();
 
         id = 5699L;
         supplierId = 295L;
@@ -75,51 +77,17 @@ public class PSTests extends TestBase {
     }
 
     @Test
-    void partnerCreateProductTest() throws JsonProcessingException {
-        String json = "{\n" +
-                "  \"color\": 7,\n" +
-                "  \"type\": 16,\n" +
-                "  \"hidden\": 0,\n" +
-                "  \"variation\": [\n" +
-                "    {\n" +
-                "      \"titleType\": 1,\n" +
-                "      \"currency\": \"RUB\",\n" +
-                "      \"isDefault\": true,\n" +
-                "      \"compositions\": [\n" +
-                "        {\n" +
-                "          \"id\": \"9\",\n" +
-                "          \"count\": \"11\"\n" +
-                "        }\n" +
-                "      ],\n" +
-                "      \"dimensions\": {\n" +
-                "        \"height\": \"111\",\n" +
-                "        \"width\": \"111\"\n" +
-                "      },\n" +
-                "      \"price\": \"111\",\n" +
-                "      \"formationTime\": 111,\n" +
-                "      \"title\": \"standart\",\n" +
-                "      \"images\": [\n" +
-                "        \"https://lstorage.florist.ru/f/get/supplier/295/products/0/de/25/_ad82aaed83758c72f87ec83d8642/660bfb9d8a26f.png\"\n" +
-                "      ],\n" +
-                "      \"hidden\": 1\n" +
-                "    }\n" +
-                "  ],\n" +
-                "  \"title\": \"Тестовый букет 11\",\n" +
-                "  \"description\": \"Тестовый букет 11\",\n" +
-                "  \"tags\": [\n" +
-                "    {\n" +
-                "      \"2\": \"Свадебные букеты\"\n" +
-                "    }\n" +
-                "  ]\n" +
-                "}";
+    void partnerCreateProductTest() throws IOException {
+        classLoader = PSTests.class.getClassLoader();
+        String postJson = IOUtils.toString(Objects.requireNonNull(classLoader.getResourceAsStream("requests/createPSProduct.json")),
+                StandardCharsets.UTF_8);
 
         Response apiResponse = given()
                 .relaxedHTTPSValidation()
-                .auth().basic("florist_api", "123")
                 .header("Cookie", "auth_partner_token=" + authPartnerToken)
                 .queryParam("_token", token)
                 .contentType("application/json")
-                .body(json)
+                .body(postJson)
                 .when()
                 .post("api/partner/product")
                 .then()
@@ -143,8 +111,13 @@ public class PSTests extends TestBase {
         if (tagsNode != null && tagsNode.isObject()) {
             tagsNode.fields().forEachRemaining(entry -> {
                 JsonNode tagObject = entry.getValue();
-                tags.append(HelperPage.getTagCutter(tagObject.toString() + ","));
+                tagObject.fields().forEachRemaining(tagEntry -> {
+                    tags.append(tagEntry.getKey()).append(",");
+                });
             });
+        }
+        if (tags.length() > 0) {
+            tags.deleteCharAt(tags.length() - 1);
         }
 
         JsonNode imagesNode = variationNode.get("images");
@@ -165,11 +138,25 @@ public class PSTests extends TestBase {
         if (compositionsNode != null && compositionsNode.isObject()) {
             compositionsNode.fields().forEachRemaining(entry -> {
                 JsonNode compositionObject = entry.getValue();
-                compositions.append("{\"id\":\"").append(compositionObject.get("id").asText()).append("\",\"count\":\"")
-                        .append(compositionObject.get("count").asText()).append("\"},");
+                StringBuilder composition = new StringBuilder("{");
+                compositionObject.fields().forEachRemaining(param -> {
+                    String paramName = param.getKey();
+                    JsonNode paramValueNode = param.getValue();
+                    if (paramValueNode != null && paramValueNode.isTextual() && (paramName.equals("id") || paramName.equals("count"))) {
+                        String paramValue = paramValueNode.asText();
+                        composition.append("\"").append(paramName).append("\":\"").append(paramValue).append("\",");
+                    }
+                });
+                if (composition.length() > 1) {
+                    composition.deleteCharAt(composition.length() - 1);
+                }
+                composition.append("}");
+                compositions.append(composition).append(",");
             });
         }
-        compositions.deleteCharAt(compositions.length() - 1);
+        if (compositions.length() > 1) {
+            compositions.deleteCharAt(compositions.length() - 1);
+        }
         compositions.append("]");
 
         JsonNode dimensionsNode = variationNode.get("dimensions");
@@ -208,6 +195,174 @@ public class PSTests extends TestBase {
         assertEquals(variationEntityDB.isDefault(), isDefaultFromApi);
         assertEquals(variationEntityDB.getFormationTime(), variationNode.get("formationTime").asInt());
     }
+
+    @Test
+    void partnerPutProductTest() throws IOException {
+        classLoader = PSTests.class.getClassLoader();
+        String putJson = IOUtils.toString(Objects.requireNonNull(classLoader.getResourceAsStream("requests/updatePSProduct.json")),
+                StandardCharsets.UTF_8);
+
+        PartnerProductEntity productEntityDB = dao.getOnePartnerPSProduct(supplierId);
+        Long productId = productEntityDB.getId();
+
+        VariationEntity variationEntityDB = dao.getVariationByProductId(productId);
+        Long variationId = variationEntityDB.getId();
+
+        JsonNode jsonNode = mapper.readTree(putJson);
+        ((ObjectNode) jsonNode).put("id", productId);
+        ((ObjectNode) jsonNode.path("variation").get(0)).put("id", variationId);
+        String updatedJson = jsonNode.toString();
+
+        Response apiResponse = given()
+                .relaxedHTTPSValidation()
+                .header("Cookie", "auth_partner_token=" + authPartnerToken)
+                .queryParam("_token", token)
+                .contentType("application/json")
+                .body(updatedJson)
+                .when()
+                .put("api/partner/product/" + productId)
+                .then()
+                .statusCode(200)
+                .extract().response();
+
+        JsonNode responseNode = mapper.readTree(apiResponse.getBody().asString());
+        JsonNode dataNode = responseNode.path("data");
+        JsonNode variationNode = dataNode.path("variation").get("0");
+
+        PartnerProductEntity productEntityDbUpdated = dao.getPartnerProductById(productId);
+        VariationEntity variationEntityDbUpdated = dao.getVariationByProductId(productId);
+
+        String supplierIdApi = HelperPage.getSplitSupplierId(dataNode.path("supplier").path("@id").asText());
+        String variationIdApi = HelperPage.getSplitSupplierId(variationNode.path("@id").asText());
+        String variationSupplIdApi = HelperPage.getSplitSupplierId(variationNode.path("product").asText());
+
+        JsonNode tagsNode = dataNode.get("tags");
+        StringBuilder tags = new StringBuilder();
+        if (tagsNode != null && tagsNode.isObject()) {
+            tagsNode.fields().forEachRemaining(entry -> {
+                JsonNode tagObject = entry.getValue();
+                tagObject.fields().forEachRemaining(tagEntry -> {
+                    tags.append(tagEntry.getKey()).append(",");
+                });
+            });
+        }
+        if (tags.length() > 0) {
+            tags.deleteCharAt(tags.length() - 1);
+        }
+
+        JsonNode imagesNode = variationNode.get("images");
+        StringBuilder images = new StringBuilder("[");
+        if (imagesNode != null && imagesNode.isObject()) {
+            imagesNode.elements().forEachRemaining(valueNode -> {
+                images.append("\"");
+                String escapedValue = valueNode.asText().replaceAll("/", "\\\\/");
+                images.append(escapedValue);
+                images.append("\",");
+            });
+        }
+        images.deleteCharAt(images.length() - 1);
+        images.append("]");
+
+        JsonNode compositionsNode = variationNode.get("compositions");
+        StringBuilder compositions = new StringBuilder("[");
+        if (compositionsNode != null && compositionsNode.isObject()) {
+            compositionsNode.fields().forEachRemaining(entry -> {
+                JsonNode compositionObject = entry.getValue();
+                StringBuilder composition = new StringBuilder("{");
+                compositionObject.fields().forEachRemaining(param -> {
+                    String paramName = param.getKey();
+                    JsonNode paramValueNode = param.getValue();
+                    if (paramValueNode != null && paramValueNode.isTextual() && (paramName.equals("id") || paramName.equals("count"))) {
+                        String paramValue = paramValueNode.asText();
+                        composition.append("\"").append(paramName).append("\":\"").append(paramValue).append("\",");
+                    }
+                });
+                if (composition.length() > 1) {
+                    composition.deleteCharAt(composition.length() - 1);
+                }
+                composition.append("}");
+                compositions.append(composition).append(",");
+            });
+        }
+        if (compositions.length() > 1) {
+            compositions.deleteCharAt(compositions.length() - 1);
+        }
+        compositions.append("]");
+
+        JsonNode dimensionsNode = variationNode.get("dimensions");
+        StringBuilder dimensions = new StringBuilder("{");
+        if (dimensionsNode != null && dimensionsNode.isObject()) {
+            dimensionsNode.fields().forEachRemaining(entry -> {
+                dimensions.append("\"").append(entry.getKey()).append("\":\"").append(entry.getValue().asText()).append("\",");
+            });
+        }
+        dimensions.deleteCharAt(dimensions.length() - 1);
+        dimensions.append("}");
+
+        assertEquals(productEntityDbUpdated.getId(), dataNode.get("id").asLong());
+//        assertEquals(productEntityDbUpdated.getTitle(), dataNode.get("title").asText());
+//        assertEquals(productEntityDbUpdated.getDescription(), dataNode.get("description").asText());
+        assertEquals(productEntityDbUpdated.getUpdatedAt(), HelperPage.regexDateISO8601(dataNode.get("updatedAt").asText()));
+        assertEquals(productEntityDbUpdated.getCreatedAt(), HelperPage.regexDateISO8601(dataNode.get("createdAt").asText()));
+        assertEquals(productEntityDbUpdated.getSupplierId(), Long.valueOf(supplierIdApi));
+        assertEquals(productEntityDbUpdated.getHidden(), dataNode.get("hidden").asInt());
+        assertEquals(productEntityDbUpdated.getTags(), tags.toString());
+        assertEquals(productEntityDbUpdated.getType(), HelperPage.getTagCutter(dataNode.get("type").toString()));
+        assertEquals(productEntityDbUpdated.getColor(), HelperPage.getTagCutter(dataNode.get("color").toString()));
+
+        assertEquals(variationEntityDbUpdated.getId(), Long.valueOf(variationIdApi));
+        assertEquals(variationEntityDbUpdated.getProductId(), variationSupplIdApi);
+//        assertEquals(variationEntityDbUpdated.getTitle(), variationNode.get("title").asText());
+        assertEquals(variationEntityDbUpdated.getCreatedAt(), HelperPage.regexDateISO8601(variationNode.get("createdAt").asText()));
+        assertEquals(variationEntityDbUpdated.getUpdatedAt(), HelperPage.regexDateISO8601(variationNode.get("updatedAt").asText()));
+        assertEquals(variationEntityDbUpdated.getPrice(), variationNode.get("price").asText());
+        assertEquals(variationEntityDbUpdated.getCurrency(), variationNode.get("currency").asText());
+        assertEquals(variationEntityDbUpdated.getHidden(), variationNode.get("hidden").asInt());
+        assertEquals(variationEntityDbUpdated.getImages(), images.toString());
+        assertEquals(variationEntityDbUpdated.getCompositions(), compositions.toString());
+        assertEquals(variationEntityDbUpdated.getDimensions(), dimensions.toString());
+        boolean isDefaultFromApi = variationNode.get("isDefault").asInt() == 1;
+        assertEquals(variationEntityDbUpdated.isDefault(), isDefaultFromApi);
+        assertEquals(variationEntityDbUpdated.getFormationTime(), variationNode.get("formationTime").asInt());
+    }
+
+//    @Test
+//    void partnerHiddenProductTest() throws IOException {
+//        classLoader = PSTests.class.getClassLoader();
+//        String putJson = IOUtils.toString(Objects.requireNonNull(classLoader.getResourceAsStream("requests/updatePSProduct.json")),
+//                StandardCharsets.UTF_8);
+//
+//        PartnerProductEntity oneProduct = dao.getOnePartnerPSProduct(supplierId);
+//        Long productId = oneProduct.getId();
+//        VariationEntity variationByProductId = dao.getVariationByProductId(productId);
+//        Long variationId = variationByProductId.getId();
+//
+//        JsonNode jsonNode = mapper.readTree(putJson);
+//        ((ObjectNode) jsonNode).put("id", productId);
+//        ((ObjectNode) jsonNode.path("variation").get(0)).put("id", variationId);
+//        String updatedJson = jsonNode.toString();
+//
+//        Response apiResponse = given()
+//                .relaxedHTTPSValidation()
+//                .header("Cookie", "auth_partner_token=" + authPartnerToken)
+//                .queryParam("_token", token)
+//                .contentType("application/json")
+//                .body(updatedJson)
+//                .when()
+//                .put("api/partner/product/" + productId)
+//                .then()
+//                .statusCode(200)
+//                .extract().response();
+//
+//        JsonNode responseNode = mapper.readTree(apiResponse.getBody().asString());
+//        JsonNode dataNode = responseNode.path("data");
+//
+//        System.out.println(dataNode.path("supplier").path("hidden").asInt());
+//        System.out.println(responseNode.path("variation").path("id").asInt());
+//
+////        assertEquals(1, dataNode.path("supplier").path("hidden").asInt());
+////        assertEquals(1, responseNode.path("variation").path("id").asInt());
+//    }
 
     @Test
     void partnerGetDeliveryListTest() throws JsonProcessingException {

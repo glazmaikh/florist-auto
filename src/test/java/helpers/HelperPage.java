@@ -227,6 +227,16 @@ public class HelperPage {
     }
 
     public static String getTagCutter(String tagObject) {
-        return tagObject.replaceAll("[^0-9]", "");
+        String[] tagsArray = tagObject.split(",");
+        StringBuilder result = new StringBuilder();
+
+        for (String tag : tagsArray) {
+            String cleanedTag = tag.replaceAll("[^0-9]", "");
+            result.append(cleanedTag).append(",");
+        }
+        if (result.length() > 0) {
+            result.deleteCharAt(result.length() - 1);
+        }
+        return result.toString();
     }
 }
