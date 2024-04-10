@@ -49,7 +49,8 @@ dependencies {
             'org.hibernate:hibernate-entitymanager:5.6.15.Final',
             'org.json:json:20240303',
             'org.jsoup:jsoup:1.17.2',
-            'commons-io:commons-io:2.16.0'
+            'commons-io:commons-io:2.16.0',
+            'com.marcospassos:phpserializer:0.8.0'
     )
 }
 

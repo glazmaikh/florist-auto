@@ -1,6 +1,8 @@
 package helpers;
 
 import com.codeborne.selenide.SelenideElement;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.text.DecimalFormat;
 import java.time.LocalDate;
@@ -238,5 +240,19 @@ public class HelperPage {
             result.deleteCharAt(result.length() - 1);
         }
         return result.toString();
+    }
+
+    public static String convertUpdatedPsProductToJson(String data) {
+        Pattern pattern = Pattern.compile("s:\\d+:\"(title|description)\";s:\\d+:\"([^\"]*)\";");
+        Matcher matcher = pattern.matcher(data);
+
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectNode jsonNodeUpdatedFromDB = mapper.createObjectNode();
+        while (matcher.find()) {
+            String key = matcher.group(1);
+            String value = matcher.group(2);
+            jsonNodeUpdatedFromDB.put(key, value);
+        }
+        return jsonNodeUpdatedFromDB.toString();
     }
 }

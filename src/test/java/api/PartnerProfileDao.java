@@ -8,6 +8,19 @@ import java.util.Collections;
 import java.util.List;
 
 public class PartnerProfileDao {
+    public String getUpdatedProductData(Long objectId) {
+        try (Session session = HibernateUtil.getPsSession()) {
+            Query<String> query = session.createQuery("SELECT data FROM UpdatedProductEntity WHERE object_Id = :objectId AND action = 'update' ORDER BY version DESC", String.class);
+            query.setParameter("objectId", objectId);
+            query.setMaxResults(1);
+            List<String> results = query.list();
+            return results.isEmpty() ? null : results.get(0);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public PartnerProductEntity getOnePartnerPSProduct(Long supplierId) {
         try (Session session = HibernateUtil.getPsSession()) {
             Query<PartnerProductEntity> query = session.createQuery("FROM PartnerProductEntity WHERE supplier_Id = :supplierId and hidden = 0" , PartnerProductEntity.class);

@@ -10,6 +10,7 @@ import entityDB.*;
 import helpers.HelperPage;
 import io.restassured.response.Response;
 import org.apache.commons.io.IOUtils;
+import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -25,6 +26,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.*;
@@ -226,17 +229,21 @@ public class PSTests extends TestBase {
                 .extract().response();
 
         JsonNode responseNode = mapper.readTree(apiResponse.getBody().asString());
-        JsonNode dataNode = responseNode.path("data");
-        JsonNode variationNode = dataNode.path("variation").get("0");
+        JsonNode responseDataNode = responseNode.path("data");
+        JsonNode variationNode = responseDataNode.path("variation").get("0");
+
+        String updatedProductData = dao.getUpdatedProductData(productId);
+        String convertedDataToJson = HelperPage.convertUpdatedPsProductToJson(updatedProductData);
+        JsonNode updatedDataNodeDB = mapper.readTree(convertedDataToJson);
 
         PartnerProductEntity productEntityDbUpdated = dao.getPartnerProductById(productId);
         VariationEntity variationEntityDbUpdated = dao.getVariationByProductId(productId);
 
-        String supplierIdApi = HelperPage.getSplitSupplierId(dataNode.path("supplier").path("@id").asText());
+        String supplierIdApi = HelperPage.getSplitSupplierId(responseDataNode.path("supplier").path("@id").asText());
         String variationIdApi = HelperPage.getSplitSupplierId(variationNode.path("@id").asText());
         String variationSupplIdApi = HelperPage.getSplitSupplierId(variationNode.path("product").asText());
 
-        JsonNode tagsNode = dataNode.get("tags");
+        JsonNode tagsNode = responseDataNode.get("tags");
         StringBuilder tags = new StringBuilder();
         if (tagsNode != null && tagsNode.isObject()) {
             tagsNode.fields().forEachRemaining(entry -> {
@@ -299,16 +306,16 @@ public class PSTests extends TestBase {
         dimensions.deleteCharAt(dimensions.length() - 1);
         dimensions.append("}");
 
-        assertEquals(productEntityDbUpdated.getId(), dataNode.get("id").asLong());
-//        assertEquals(productEntityDbUpdated.getTitle(), dataNode.get("title").asText());
-//        assertEquals(productEntityDbUpdated.getDescription(), dataNode.get("description").asText());
-        assertEquals(productEntityDbUpdated.getUpdatedAt(), HelperPage.regexDateISO8601(dataNode.get("updatedAt").asText()));
-        assertEquals(productEntityDbUpdated.getCreatedAt(), HelperPage.regexDateISO8601(dataNode.get("createdAt").asText()));
+        assertEquals(productEntityDbUpdated.getId(), responseDataNode.get("id").asLong());
+        assertEquals(updatedDataNodeDB.get("title").asText(), responseDataNode.get("title").asText());
+        assertEquals(updatedDataNodeDB.get("description").asText(), responseDataNode.get("description").asText());
+        assertEquals(productEntityDbUpdated.getUpdatedAt(), HelperPage.regexDateISO8601(responseDataNode.get("updatedAt").asText()));
+        assertEquals(productEntityDbUpdated.getCreatedAt(), HelperPage.regexDateISO8601(responseDataNode.get("createdAt").asText()));
         assertEquals(productEntityDbUpdated.getSupplierId(), Long.valueOf(supplierIdApi));
-        assertEquals(productEntityDbUpdated.getHidden(), dataNode.get("hidden").asInt());
+        assertEquals(productEntityDbUpdated.getHidden(), responseDataNode.get("hidden").asInt());
         assertEquals(productEntityDbUpdated.getTags(), tags.toString());
-        assertEquals(productEntityDbUpdated.getType(), HelperPage.getTagCutter(dataNode.get("type").toString()));
-        assertEquals(productEntityDbUpdated.getColor(), HelperPage.getTagCutter(dataNode.get("color").toString()));
+        assertEquals(productEntityDbUpdated.getType(), HelperPage.getTagCutter(responseDataNode.get("type").toString()));
+        assertEquals(productEntityDbUpdated.getColor(), HelperPage.getTagCutter(responseDataNode.get("color").toString()));
 
         assertEquals(variationEntityDbUpdated.getId(), Long.valueOf(variationIdApi));
         assertEquals(variationEntityDbUpdated.getProductId(), variationSupplIdApi);
@@ -325,44 +332,6 @@ public class PSTests extends TestBase {
         assertEquals(variationEntityDbUpdated.isDefault(), isDefaultFromApi);
         assertEquals(variationEntityDbUpdated.getFormationTime(), variationNode.get("formationTime").asInt());
     }
-
-//    @Test
-//    void partnerHiddenProductTest() throws IOException {
-//        classLoader = PSTests.class.getClassLoader();
-//        String putJson = IOUtils.toString(Objects.requireNonNull(classLoader.getResourceAsStream("requests/updatePSProduct.json")),
-//                StandardCharsets.UTF_8);
-//
-//        PartnerProductEntity oneProduct = dao.getOnePartnerPSProduct(supplierId);
-//        Long productId = oneProduct.getId();
-//        VariationEntity variationByProductId = dao.getVariationByProductId(productId);
-//        Long variationId = variationByProductId.getId();
-//
-//        JsonNode jsonNode = mapper.readTree(putJson);
-//        ((ObjectNode) jsonNode).put("id", productId);
-//        ((ObjectNode) jsonNode.path("variation").get(0)).put("id", variationId);
-//        String updatedJson = jsonNode.toString();
-//
-//        Response apiResponse = given()
-//                .relaxedHTTPSValidation()
-//                .header("Cookie", "auth_partner_token=" + authPartnerToken)
-//                .queryParam("_token", token)
-//                .contentType("application/json")
-//                .body(updatedJson)
-//                .when()
-//                .put("api/partner/product/" + productId)
-//                .then()
-//                .statusCode(200)
-//                .extract().response();
-//
-//        JsonNode responseNode = mapper.readTree(apiResponse.getBody().asString());
-//        JsonNode dataNode = responseNode.path("data");
-//
-//        System.out.println(dataNode.path("supplier").path("hidden").asInt());
-//        System.out.println(responseNode.path("variation").path("id").asInt());
-//
-////        assertEquals(1, dataNode.path("supplier").path("hidden").asInt());
-////        assertEquals(1, responseNode.path("variation").path("id").asInt());
-//    }
 
     @Test
     void partnerGetDeliveryListTest() throws JsonProcessingException {
