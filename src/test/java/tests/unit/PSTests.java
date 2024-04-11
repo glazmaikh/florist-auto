@@ -233,8 +233,12 @@ public class PSTests extends TestBase {
         JsonNode variationNode = responseDataNode.path("variation").get("0");
 
         String updatedProductData = dao.getUpdatedProductData(productId);
-        String convertedDataToJson = HelperPage.convertUpdatedPsProductToJson(updatedProductData);
-        JsonNode updatedDataNodeDB = mapper.readTree(convertedDataToJson);
+        String convertedProductDataToJson = HelperPage.convertUpdatedPsProductToJson(updatedProductData);
+        JsonNode updatedProductDataNodeDB = mapper.readTree(convertedProductDataToJson);
+
+        String updatedVariationData = dao.getUpdatedProductData(variationId);
+        String convertedVariationDataToJson = HelperPage.convertUpdatedPsProductToJson(updatedVariationData);
+        JsonNode variationJsonNode = mapper.readTree(convertedVariationDataToJson);
 
         PartnerProductEntity productEntityDbUpdated = dao.getPartnerProductById(productId);
         VariationEntity variationEntityDbUpdated = dao.getVariationByProductId(productId);
@@ -307,8 +311,8 @@ public class PSTests extends TestBase {
         dimensions.append("}");
 
         assertEquals(productEntityDbUpdated.getId(), responseDataNode.get("id").asLong());
-        assertEquals(updatedDataNodeDB.get("title").asText(), responseDataNode.get("title").asText());
-        assertEquals(updatedDataNodeDB.get("description").asText(), responseDataNode.get("description").asText());
+        assertEquals(updatedProductDataNodeDB.get("title").asText(), responseDataNode.get("title").asText());
+        assertEquals(updatedProductDataNodeDB.get("description").asText(), responseDataNode.get("description").asText());
         assertEquals(productEntityDbUpdated.getUpdatedAt(), HelperPage.regexDateISO8601(responseDataNode.get("updatedAt").asText()));
         assertEquals(productEntityDbUpdated.getCreatedAt(), HelperPage.regexDateISO8601(responseDataNode.get("createdAt").asText()));
         assertEquals(productEntityDbUpdated.getSupplierId(), Long.valueOf(supplierIdApi));
@@ -319,7 +323,7 @@ public class PSTests extends TestBase {
 
         assertEquals(variationEntityDbUpdated.getId(), Long.valueOf(variationIdApi));
         assertEquals(variationEntityDbUpdated.getProductId(), variationSupplIdApi);
-//        assertEquals(variationEntityDbUpdated.getTitle(), variationNode.get("title").asText());
+        assertEquals(variationJsonNode.get("title").asText(), variationNode.get("title").asText());
         assertEquals(variationEntityDbUpdated.getCreatedAt(), HelperPage.regexDateISO8601(variationNode.get("createdAt").asText()));
         assertEquals(variationEntityDbUpdated.getUpdatedAt(), HelperPage.regexDateISO8601(variationNode.get("updatedAt").asText()));
         assertEquals(variationEntityDbUpdated.getPrice(), variationNode.get("price").asText());

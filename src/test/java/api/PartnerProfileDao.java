@@ -8,7 +8,8 @@ import java.util.Collections;
 import java.util.List;
 
 public class PartnerProfileDao {
-    public String getUpdatedProductData(Long objectId) {
+    public String
+    getUpdatedProductData(Long objectId) {
         try (Session session = HibernateUtil.getPsSession()) {
             Query<String> query = session.createQuery("SELECT data FROM UpdatedProductEntity WHERE object_Id = :objectId AND action = 'update' ORDER BY version DESC", String.class);
             query.setParameter("objectId", objectId);
