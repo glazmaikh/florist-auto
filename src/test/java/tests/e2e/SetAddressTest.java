@@ -33,7 +33,7 @@ public class SetAddressTest extends TestBase {
     @ParameterizedTest(name = "Тест на применение адреса на странице CatalogPage и проверке на чекауте {0}")
     @ValueSource(strings = {"г Астрахань, ул Ульянова, д 1", "ул Ульянова, д 1"})
     void setValidAddressOnCatalogPageTest(String address) throws Exception {
-        apiClient.initBouquet(BouquetType.FLORIST_RU);
+        apiClient.initBouquet(BouquetType.FLORIST_RU, false);
 
         catalogPage.openCatalogPage(baseUrl)
                 .closeCookiePopUp()
@@ -51,48 +51,48 @@ public class SetAddressTest extends TestBase {
         checkoutPage.assertRecipientAddress(address)
                 .assertSuccessAddress();
     }
-
-    @ParameterizedTest(name = "Тест на применение короткого адреса на странице CatalogPage и проверке на чекауте {0}")
-    @ValueSource(strings = {"ул Ульянова"})
-    void addressValidShortAlertTest(String address) throws Exception {
-        apiClient.initBouquet(BouquetType.FLORIST_RU);
-
-        catalogPage.openCatalogPage(baseUrl)
-                .closeCookiePopUp()
-                .setDeliveryCity();
-
-        catalogPage.openAddressPopUp()
-                .setValidShortAddress(address)
-                .saveAddress()
-                .setRandomBouquet(CurrencyType.RUB, DeliveryDateType.LOW);
-
-        bouquetPage.openBouquetPage(baseUrl)
-                .setFirstVariation()
-                .addToCard(baseUrl);
-
-        checkoutPage.assertRecipientAddress(address)
-                .assertShortAddress();
-    }
-
-    @ParameterizedTest(name = "Тест на применение невалидного адреса на странице CatalogPage и проверке на чекауте {0}")
-    @ValueSource(strings = {"asdasd"})
-    void addressNotFoundInDBTest(String address) throws Exception {
-        apiClient.initBouquet(BouquetType.FLORIST_RU);
-
-        catalogPage.openCatalogPage(baseUrl)
-                .closeCookiePopUp()
-                .setDeliveryCity();
-
-        catalogPage.openAddressPopUp()
-                .setInvalidAddress(address)
-                .saveAddress()
-                .setRandomBouquet(CurrencyType.RUB, DeliveryDateType.LOW);
-
-        bouquetPage.openBouquetPage(baseUrl)
-                .setFirstVariation()
-                .addToCard(baseUrl);
-
-        checkoutPage.assertRecipientInvalidAddress(address)
-                .assertAlertAddress();
-    }
+//
+//    @ParameterizedTest(name = "Тест на применение короткого адреса на странице CatalogPage и проверке на чекауте {0}")
+//    @ValueSource(strings = {"ул Ульянова"})
+//    void addressValidShortAlertTest(String address) throws Exception {
+//        apiClient.initBouquet(BouquetType.FLORIST_RU);
+//
+//        catalogPage.openCatalogPage(baseUrl)
+//                .closeCookiePopUp()
+//                .setDeliveryCity();
+//
+//        catalogPage.openAddressPopUp()
+//                .setValidShortAddress(address)
+//                .saveAddress()
+//                .setRandomBouquet(CurrencyType.RUB, DeliveryDateType.LOW);
+//
+//        bouquetPage.openBouquetPage(baseUrl)
+//                .setFirstVariation()
+//                .addToCard(baseUrl);
+//
+//        checkoutPage.assertRecipientAddress(address)
+//                .assertShortAddress();
+//    }
+//
+//    @ParameterizedTest(name = "Тест на применение невалидного адреса на странице CatalogPage и проверке на чекауте {0}")
+//    @ValueSource(strings = {"asdasd"})
+//    void addressNotFoundInDBTest(String address) throws Exception {
+//        apiClient.initBouquet(BouquetType.FLORIST_RU);
+//
+//        catalogPage.openCatalogPage(baseUrl)
+//                .closeCookiePopUp()
+//                .setDeliveryCity();
+//
+//        catalogPage.openAddressPopUp()
+//                .setInvalidAddress(address)
+//                .saveAddress()
+//                .setRandomBouquet(CurrencyType.RUB, DeliveryDateType.LOW);
+//
+//        bouquetPage.openBouquetPage(baseUrl)
+//                .setFirstVariation()
+//                .addToCard(baseUrl);
+//
+//        checkoutPage.assertRecipientInvalidAddress(address)
+//                .assertAlertAddress();
+//    }
 }

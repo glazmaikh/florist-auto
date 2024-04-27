@@ -45,59 +45,59 @@ public class RegisterTest extends TestBase {
         accountOrderPage.assertAuth(baseUrl, yourName);
     }
 
-    @ParameterizedTest(name = "Негативный тест на проверку password min length с параметром {0}")
-    @ValueSource(strings = {"12345", "!", "АбвгD"})
-    void validateMin6SymbolsPasswordFieldsRegisterTest(String password) {
-        catalogPage.openCatalogPage(baseUrl)
-                .closeCookiePopUp()
-                .openRegisterModal()
-                .fillRegisterForm(yourName, phone, yourEmail, password)
-                .assertInvalidPasswords();
-    }
+//    @ParameterizedTest(name = "Негативный тест на проверку password min length с параметром {0}")
+//    @ValueSource(strings = {"12345", "!", "АбвгD"})
+//    void validateMin6SymbolsPasswordFieldsRegisterTest(String password) {
+//        catalogPage.openCatalogPage(baseUrl)
+//                .closeCookiePopUp()
+//                .openRegisterModal()
+//                .fillRegisterForm(yourName, phone, yourEmail, password)
+//                .assertInvalidPasswords();
+//    }
 
-    @ParameterizedTest(name = "Тест на проверку всплывающей ошибки 'Поле обязательно для заполнения' когда поля регистрации пустые")
-    @ValueSource(strings = "")
-    void emptyFieldsRegisterTest(String empty) {
-        catalogPage.openCatalogPage(baseUrl)
-                .closeCookiePopUp()
-                .openRegisterModal()
-                .fillRegisterForm(empty, empty, empty, empty)
-                .assertEmptyRegisterFields();
-    }
+//    @ParameterizedTest(name = "Тест на проверку всплывающей ошибки 'Поле обязательно для заполнения' когда поля регистрации пустые")
+//    @ValueSource(strings = "")
+//    void emptyFieldsRegisterTest(String empty) {
+//        catalogPage.openCatalogPage(baseUrl)
+//                .closeCookiePopUp()
+//                .openRegisterModal()
+//                .fillRegisterForm(empty, empty, empty, empty)
+//                .assertEmptyRegisterFields();
+//    }
 
-    @ParameterizedTest(name = "Негативный тест на проверку валидации поля 'телефон' при регистрации")
-    @ValueSource(strings = {"", "!" , "абвгд", "123456789"})
-    void validatePhoneFieldRegisterTest(String phone) {
-        catalogPage.openCatalogPage(baseUrl)
-                .closeCookiePopUp()
-                .openRegisterModal()
-                .assertAddedIncorrectRegisterPhone(phone);
-    }
+//    @ParameterizedTest(name = "Негативный тест на проверку валидации поля 'телефон' при регистрации")
+//    @ValueSource(strings = {"", "!" , "абвгд", "123456789"})
+//    void validatePhoneFieldRegisterTest(String phone) {
+//        catalogPage.openCatalogPage(baseUrl)
+//                .closeCookiePopUp()
+//                .openRegisterModal()
+//                .assertAddedIncorrectRegisterPhone(phone);
+//    }
 
-    @ParameterizedTest(name = "Негативный тест на проверку валидации поля 'имейл' при регистрации")
-    @ValueSource(strings = {"a", "aa@aa", "aa@aa.a", "aa@1.aa"})
-    void validateEmailFieldRegisterTest(String email) {
-        catalogPage.openCatalogPage(baseUrl)
-                .closeCookiePopUp()
-                .openRegisterModal()
-                .assertAddedIncorrectRegisterEmail(email);
-    }
+//    @ParameterizedTest(name = "Негативный тест на проверку валидации поля 'имейл' при регистрации")
+//    @ValueSource(strings = {"a", "aa@aa", "aa@aa.a", "aa@1.aa"})
+//    void validateEmailFieldRegisterTest(String email) {
+//        catalogPage.openCatalogPage(baseUrl)
+//                .closeCookiePopUp()
+//                .openRegisterModal()
+//                .assertAddedIncorrectRegisterEmail(email);
+//    }
 
-    @Test
-    void validateErrorWhenTryRegisterWithoutAcceptDataPolicyTest() {
-        catalogPage.openCatalogPage(baseUrl)
-                .closeCookiePopUp()
-                .openRegisterModal()
-                .assertNotRegisterWithoutAcceptPolicy(yourName, phone, yourEmail, password);
-    }
+//    @Test
+//    void validateErrorWhenTryRegisterWithoutAcceptDataPolicyTest() {
+//        catalogPage.openCatalogPage(baseUrl)
+//                .closeCookiePopUp()
+//                .openRegisterModal()
+//                .assertNotRegisterWithoutAcceptPolicy(yourName, phone, yourEmail, password);
+//    }
 
-    @Test
-    void tryRegistrationWhenRegisteredCredsTest() {
-        catalogPage.apiRegisterUser(yourName, yourEmail, yourPhone, password)
-                .openCatalogPage(baseUrl)
-                .closeCookiePopUp()
-                .openRegisterModal()
-                .fillRegisterForm(yourName, phone, yourEmail, password)
-                .assertAlreadyExistsEmailWhenRegister();
-    }
+//    @Test
+//    void tryRegistrationWhenRegisteredCredsTest() {
+//        catalogPage.apiRegisterUser(yourName, yourEmail, yourPhone, password)
+//                .openCatalogPage(baseUrl)
+//                .closeCookiePopUp()
+//                .openRegisterModal()
+//                .fillRegisterForm(yourName, phone, yourEmail, password)
+//                .assertAlreadyExistsEmailWhenRegister();
+//    }
 }

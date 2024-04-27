@@ -53,6 +53,11 @@ public class BouquetPage extends AssertFixturesPage {
         return this;
     }
 
+    public BouquetPage openBouquetPSPage(String baseUrl) {
+        webdriver().shouldHave(url(baseUrl + apiClient.getCityPSSlug() + "/bouquet-" + apiClient.getBouquetId()));
+        return this;
+    }
+
     public BouquetPage assertBouquetName() {
         bouquetSection.shouldHave(text(apiClient.getBouquetName()));
         return this;

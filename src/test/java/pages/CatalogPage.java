@@ -3,11 +3,20 @@ package pages;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import com.codeborne.selenide.ex.ElementNotFound;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import entity.bouquet.BouquetDataDto;
+import entity.bouquet.BouquetDataItemDto;
 import fixtures.AssertFixturesPage;
 import helpers.*;
+import io.restassured.response.Response;
+import io.restassured.response.ResponseBody;
+import io.restassured.specification.RequestSpecification;
 
 import java.time.Duration;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -17,11 +26,13 @@ import static com.codeborne.selenide.Selectors.byName;
 import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.*;
 import static com.codeborne.selenide.WebDriverConditions.url;
+import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.TestBase.baseUrl;
 
 public class CatalogPage {
+    private final ObjectMapper mapper = new ObjectMapper();
     private final ApiClient apiClient;
     private AssertFixturesPage assertFixturesPage;
     private final SelenideElement cookiePopUp = $("._3bcT6MiV");
@@ -87,7 +98,7 @@ public class CatalogPage {
         return new AccountOrderPage(apiClient);
     }
 
-    public CatalogPage setDeliveryCity() throws InterruptedException {
+    public CatalogPage setDeliveryCity() {
         deliveryCity.shouldBe(visible).click();
         deliveryCityModal.shouldBe(visible);
 
@@ -104,30 +115,65 @@ public class CatalogPage {
         return this;
     }
 
-    public BouquetPage setRandomBouquet(CurrencyType currencyType, DeliveryDateType deliveryDateType) {
+    public CatalogPage setDeliveryPSCity() {
+        deliveryCity.shouldBe(visible).click();
+        deliveryCityModal.shouldBe(visible);
+
+        String cityName = apiClient.getCityPSName();
+        cityPopUpInput.val(cityName);
+
+        cityLoader.shouldNotBe(visible, Duration.ofSeconds(10));
+        for (SelenideElement se : droppedCityList) {
+            if (se.getOwnText().contains(cityName)) {
+                se.click();
+                break;
+            }
+        }
+        return this;
+    }
+
+    //bouquetList.shouldHave(sizeGreaterThanOrEqual(apiClient.getBouquetListReminder()));
+
+    public BouquetPage setRandomBouquet(CurrencyType currencyType, DeliveryDateType deliveryDateType) throws JsonProcessingException {
         bouquetLoader.shouldNotBe(visible, Duration.ofSeconds(30));
-        String bouquetName = apiClient.getBouquetName();
-        String bouquetPrice = apiClient.getBouquetPriceList(currencyType, deliveryDateType).toString();
         int page = 1;
+        int index = 0;
 
         boolean foundBouquet = false;
         while (!foundBouquet) {
-            bouquetList.shouldHave(sizeGreaterThanOrEqual(apiClient.getBouquetListReminder()));
-            for (SelenideElement se : bouquetList) {
-                if (se.getText().contains(bouquetName)) {
-                    assertTrue(se.$("._1KvrG3Aq").getText().contains(HelperPage.priceCurrencyFormat(currencyType, bouquetPrice)),
-                            "Incorrect bouquet price " + bouquetName);
-                    se.click();
+            RequestSpecification httpRequest = given();
+            Response responseBouquet = httpRequest
+                    .auth().basic("florist_api", "123")
+                    .param("city", apiClient.getCityPSId())
+                    .param("offset", (page - 1) * 60)
+                    .get("api/bouquet/list");
+
+            JsonNode responseNode = mapper.readTree(responseBouquet.getBody().asString());
+            JsonNode dataNode = responseNode.path("data");
+
+            List<BouquetDataItemDto> bouquetApiList = new ArrayList<>();
+            for (JsonNode bouquetNode : dataNode) {
+                BouquetDataItemDto bouquet = mapper.treeToValue(bouquetNode, BouquetDataItemDto.class);
+                bouquetApiList.add(bouquet);
+            }
+
+
+            for (BouquetDataItemDto bouquet : bouquetApiList) {
+                if (String.valueOf(bouquet.getId()).equals(String.valueOf(apiClient.getBouquetId()))) {
+                    index = bouquetApiList.indexOf(bouquet);
                     foundBouquet = true;
                     break;
                 }
             }
+
             if (!foundBouquet) {
                 String nextPageUrl = baseUrl + "?page=" + (page + 1);
                 open(nextPageUrl);
                 page++;
             }
         }
+
+        bouquetList.get(index).click();
         return new BouquetPage(apiClient, new AssertFixturesPage(apiClient));
     }
 

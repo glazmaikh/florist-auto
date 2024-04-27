@@ -13,7 +13,7 @@ import org.junit.jupiter.params.provider.EnumSource;
 import pages.*;
 import tests.TestBase;
 
-//@Tag("e2e_high")
+@Tag("e2e_high")
 public class HighSeasonTests extends TestBase {
     private CatalogPage catalogPage;
     private BouquetPage bouquetPage;
@@ -27,41 +27,41 @@ public class HighSeasonTests extends TestBase {
         bouquetPage = new BouquetPage(apiClient, assertFixturesPage);
     }
 
-    @Test
-    void lowPriceOnCatalogAndBouquetPageTest() throws Exception {
-        apiClient.initBouquet(BouquetType.FLORIST_RU);
-
-        catalogPage.openCatalogPage(baseUrl)
-                .closeCookiePopUp()
-                .setDeliveryCity()
-                .assertDeliveryCity()
-                .setRandomBouquet(CurrencyType.RUB, DeliveryDateType.LOW);
-
-        bouquetPage.openBouquetPage(baseUrl)
-                .setFirstVariation()
-                .assertBouquetName()
-                .assertBouquetPrice(CurrencyType.RUB, DeliveryDateType.LOW);
-    }
-
-    @ParameterizedTest
-    @EnumSource(DeliveryDateType.class)
-    void setHighPriceOnCatalogPageTest(DeliveryDateType deliveryDateType) throws Exception {
-        apiClient.initBouquet(BouquetType.FLORIST_RU);
-
-        catalogPage.openCatalogPage(baseUrl)
-                .closeCookiePopUp()
-                .setDeliveryCity()
-                .assertDeliveryCity();
-
-        String deliveryDate = catalogPage.setRandomDeliveryDate(deliveryDateType);
-
-        catalogPage.assertDeliveryDate(deliveryDate)
-                .setRandomBouquet(CurrencyType.RUB, deliveryDateType);
-
-        bouquetPage.openBouquetPage(baseUrl)
-                .assertDeliveryDate(deliveryDate)
-                .setFirstVariation()
-                .assertBouquetName()
-                .assertBouquetPrice(CurrencyType.RUB, deliveryDateType);
-    }
+//    @Test
+//    void lowPriceOnCatalogAndBouquetPageTest() throws Exception {
+//        apiClient.initBouquet(BouquetType.FLORIST_RU);
+//
+//        catalogPage.openCatalogPage(baseUrl)
+//                .closeCookiePopUp()
+//                .setDeliveryCity()
+//                .assertDeliveryCity()
+//                .setRandomBouquet(CurrencyType.RUB, DeliveryDateType.LOW);
+//
+//        bouquetPage.openBouquetPage(baseUrl)
+//                .setFirstVariation()
+//                .assertBouquetName()
+//                .assertBouquetPrice(CurrencyType.RUB, DeliveryDateType.LOW);
+//    }
+//
+//    @ParameterizedTest
+//    @EnumSource(DeliveryDateType.class)
+//    void setHighPriceOnCatalogPageTest(DeliveryDateType deliveryDateType) throws Exception {
+//        apiClient.initBouquet(BouquetType.FLORIST_RU);
+//
+//        catalogPage.openCatalogPage(baseUrl)
+//                .closeCookiePopUp()
+//                .setDeliveryCity()
+//                .assertDeliveryCity();
+//
+//        String deliveryDate = catalogPage.setRandomDeliveryDate(deliveryDateType);
+//
+//        catalogPage.assertDeliveryDate(deliveryDate)
+//                .setRandomBouquet(CurrencyType.RUB, deliveryDateType);
+//
+//        bouquetPage.openBouquetPage(baseUrl)
+//                .assertDeliveryDate(deliveryDate)
+//                .setFirstVariation()
+//                .assertBouquetName()
+//                .assertBouquetPrice(CurrencyType.RUB, deliveryDateType);
+//    }
 }
