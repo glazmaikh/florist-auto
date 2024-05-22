@@ -63,46 +63,46 @@ public class CreateOrderTest extends TestBase {
                 .setDeliveryPSCity()
                 .setRandomBouquet(CurrencyType.RUB, DeliveryDateType.LOW);
 
-//        bouquetPage.openBouquetPSPage(baseUrl)
-//                .setFirstVariation()
-//                .assertBouquetName()
-//                .assertDeliveryPrice(CurrencyType.RUB)
-//                .assertTotalMinPrice(CurrencyType.RUB)
-//                .addToCard(baseUrl);
+        bouquetPage.openBouquetPSPage(baseUrl)
+                .setFirstVariation()
+                .assertBouquetName()
+                .assertDeliveryPSPrice(CurrencyType.RUB)
+                .assertTotalPSMinPrice(CurrencyType.RUB)
+                .addPSToCard(baseUrl);
 
-//        checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, recipientName, phone, address)
-//                .setRandomDeliveryDate(DeliveryDateType.LOW);
-//
-//        String deliveryTimeFrom = checkoutPage.setRandomDeliveryTime();
-//
-//        checkoutPage.assertBouquetName()
-//                .assertDeliveryPrice(CurrencyType.RUB)
-//                .assertBouquetPrice(CurrencyType.RUB, DeliveryDateType.LOW)
-//                .assertTotalPrice(CurrencyType.RUB, DeliveryDateType.LOW)
-//                .goToPaymentPage();
-//
-//        paymentPage.assertPaymentStatus(baseUrl)
-//                .assertBouquetName()
-//                .assertDeliveryPrice(CurrencyType.RUB)
-//                .assertBouquetPrice(CurrencyType.RUB, DeliveryDateType.LOW)
-//                .assertTotalPrice(CurrencyType.RUB);
-//
-//        String orderId = HelperPage.getOrderNumber();
-//        String totalPrice = paymentPage.getTotalPrice(CurrencyType.RUB);
-//
-//        paymentPage.fillCard(cardNumber, expireNumber, cvcNumber)
-//                .pay()
-//                .confirm();
-//
-//        successPage.assertSuccessOrderStatus(baseUrl)
-//                .assertSuccessCreatedOrder(CurrencyType.RUB);
-//
-//        orderERPPage.openOrder(baseUrl, orderId)
-//                .assertBouquetInfo(orderId, CurrencyType.RUB)
-//                //передавать корректный CurrencyType в assertPrices() когда в ERP будет реализована цена в валютах
-//                .assertPrices(CurrencyType.RUB, totalPrice)
-//                .assertPaymentCompletedChecked()
-//                .assertRecipientInfo(deliveryTimeFrom);
+        checkoutPage.simpleFillForm(yourName, yourEmail, yourPhone, recipientName, phone, address)
+                .setRandomPSDeliveryDate(DeliveryDateType.LOW);
+
+        String deliveryTimeFrom = checkoutPage.setRandomPSDeliveryTime();
+
+        checkoutPage.assertBouquetName()
+                .assertDeliveryPSPrice(CurrencyType.RUB)
+                .assertBouquetPrice(CurrencyType.RUB, DeliveryDateType.LOW)
+                .assertTotalPSPrice(CurrencyType.RUB, DeliveryDateType.LOW)
+                .goToPaymentPage();
+
+        paymentPage.assertPaymentPSStatus(baseUrl)
+                .assertBouquetName()
+                .assertDeliveryPSPrice(CurrencyType.RUB)
+                .assertBouquetPrice(CurrencyType.RUB, DeliveryDateType.LOW)
+                .assertTotalPrice(CurrencyType.RUB);
+
+        String orderId = HelperPage.getOrderNumber();
+        String totalPrice = paymentPage.getTotalPrice(CurrencyType.RUB);
+
+        paymentPage.fillCard(cardNumber, expireNumber, cvcNumber)
+                .pay()
+                .confirm();
+
+        successPage.assertSuccessPSOrderStatus(baseUrl)
+                .assertSuccessCreatedOrder(CurrencyType.RUB);
+
+        orderERPPage.openOrder(baseUrl, orderId)
+                .assertBouquetInfo(orderId, CurrencyType.RUB)
+                //передавать корректный CurrencyType в assertPrices() когда в ERP будет реализована цена в валютах
+                .assertPrices(CurrencyType.RUB, totalPrice)
+                .assertPaymentCompletedChecked()
+                .assertRecipientInfo(deliveryTimeFrom);
     }
 
     @Test

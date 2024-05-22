@@ -79,6 +79,11 @@ public class BouquetPage extends AssertFixturesPage {
         return this;
     }
 
+    public BouquetPage assertDeliveryPSPrice(CurrencyType currencyType) {
+        assertFixturesPage.performAssertDeliveryPSPrice(bouquetSection, currencyType);
+        return this;
+    }
+
     public BouquetPage setFirstVariation() {
         variation.get(0).click();
         return this;
@@ -87,6 +92,12 @@ public class BouquetPage extends AssertFixturesPage {
     public CheckoutPage addToCard(String baseUrl) {
         addToCardButton.shouldBe(Condition.exist, Duration.ofSeconds(15)).click();
         webdriver().shouldHave(url(baseUrl + apiClient.getCitySlug() + "/checkout"), Duration.ofSeconds(10));
+        return new CheckoutPage(apiClient, assertFixturesPage);
+    }
+
+    public CheckoutPage addPSToCard(String baseUrl) {
+        addToCardButton.shouldBe(Condition.exist, Duration.ofSeconds(15)).click();
+        webdriver().shouldHave(url(baseUrl + apiClient.getCityPSSlug() + "/checkout"), Duration.ofSeconds(10));
         return new CheckoutPage(apiClient, assertFixturesPage);
     }
 
@@ -119,6 +130,18 @@ public class BouquetPage extends AssertFixturesPage {
     public BouquetPage assertTotalMinPrice(CurrencyType currencyType) {
         String bouquetFirstVariationPrice = apiClient.getBouquetMinPrice(currencyType);
         String deliveryPrice = apiClient.getDeliveryPrice(currencyType);
+        double totalPrice = Double.parseDouble(bouquetFirstVariationPrice) + Double.parseDouble(deliveryPrice);
+
+        if (apiClient.getExtrasPrice() != null) {
+            totalPrice += Double.parseDouble(apiClient.getPriceExtrasFirstVariation(currencyType));
+        }
+        bouquetSection.shouldHave(text(HelperPage.priceCurrencyFormat(currencyType, String.valueOf(totalPrice))));
+        return this;
+    }
+
+    public BouquetPage assertTotalPSMinPrice(CurrencyType currencyType) {
+        String bouquetFirstVariationPrice = apiClient.getBouquetMinPrice(currencyType);
+        String deliveryPrice = apiClient.getDeliveryPSPrice(currencyType);
         double totalPrice = Double.parseDouble(bouquetFirstVariationPrice) + Double.parseDouble(deliveryPrice);
 
         if (apiClient.getExtrasPrice() != null) {

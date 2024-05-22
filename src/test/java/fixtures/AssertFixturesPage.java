@@ -54,12 +54,24 @@ public class AssertFixturesPage {
 
     public void performAssertDeliveryPrice(SelenideElement orderSection, CurrencyType currencyType) {
         String deliveryPrice = apiClient.getDeliveryPrice(currencyType);
+        System.out.println(deliveryPrice + " deliveryPrice");
         if (Double.parseDouble(deliveryPrice) > 1) {
             orderSection.shouldHave(text(HelperPage.priceCurrencyFormat(currencyType, deliveryPrice)));
         } else {
             orderSection.shouldBe(text("бесплатно"));
         }
     }
+
+    public void performAssertDeliveryPSPrice(SelenideElement orderSection, CurrencyType currencyType) {
+        String deliveryPrice = apiClient.getDeliveryPSPrice(currencyType);
+        if (Double.parseDouble(deliveryPrice) > 1) {
+            orderSection.shouldHave(text(HelperPage.priceCurrencyFormat(currencyType, deliveryPrice)));
+        } else {
+            orderSection.shouldBe(text("бесплатно"));
+        }
+    }
+
+
 
     public void performAssertExtrasPrice(SelenideElement orderSection, CurrencyType currencyType, DeliveryDateType deliveryDateType) {
         List<String> extrasPrices = apiClient.getExtrasPriceList(currencyType, deliveryDateType).stream()

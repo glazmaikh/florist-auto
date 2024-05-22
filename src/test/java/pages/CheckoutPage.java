@@ -104,6 +104,11 @@ public class CheckoutPage {
         return this;
     }
 
+    public CheckoutPage assertDeliveryPSPrice(CurrencyType currencyType) {
+        assertFixturesPage.performAssertDeliveryPSPrice(orderSection, currencyType);
+        return this;
+    }
+
     public CheckoutPage assertBouquetPrice(CurrencyType currencyType, DeliveryDateType deliveryDateType) {
         assertFixturesPage.performAssertBouquetPriceList(orderSection, currencyType, deliveryDateType);
         return this;
@@ -126,6 +131,23 @@ public class CheckoutPage {
         double totalPrice = bouquetPrices + extrasPrices;
         if (!apiClient.getDeliveryPrice(currencyType).equals("Бесплатно")) {
             totalPrice += Double.parseDouble(apiClient.getDeliveryPrice(currencyType));
+        }
+        orderSection.shouldHave(text(HelperPage.priceCurrencyFormat(currencyType, String.valueOf(totalPrice))));
+        return this;
+    }
+
+    public CheckoutPage assertTotalPSPrice(CurrencyType currencyType, DeliveryDateType deliveryDateType) {
+        double bouquetPrices = apiClient.getBouquetPriceList(currencyType, deliveryDateType).stream()
+                .mapToDouble(Double::parseDouble)
+                .sum();
+
+        double extrasPrices = apiClient.getExtrasPriceList(currencyType, deliveryDateType).stream()
+                .mapToDouble(Double::parseDouble)
+                .sum();
+
+        double totalPrice = bouquetPrices + extrasPrices;
+        if (!apiClient.getDeliveryPSPrice(currencyType).equals("Бесплатно")) {
+            totalPrice += Double.parseDouble(apiClient.getDeliveryPSPrice(currencyType));
         }
         orderSection.shouldHave(text(HelperPage.priceCurrencyFormat(currencyType, String.valueOf(totalPrice))));
         return this;
@@ -195,10 +217,51 @@ public class CheckoutPage {
         return this;
     }
 
+    public CheckoutPage setRandomPSDeliveryDate(DeliveryDateType deliveryDateType) throws Exception {
+        List<LocalDate> disabledDaysList = apiClient.getDisabledPSDeliveryDaysList();
+
+        switch (deliveryDateType) {
+            case LOW -> deliveryDate = HelperPage.getRandomLowDeliveryDay(disabledDaysList);
+            case HiGH_FEBRUARY -> deliveryDate = HelperPage.getRandomHighFebruaryDeliveryDay(disabledDaysList);
+            case HIGH_MARCH -> deliveryDate = HelperPage.getRandomHighMarchDeliveryDay(disabledDaysList);
+        }
+
+        boolean foundDate = false;
+        while (!foundDate) {
+            for (SelenideElement se : deliveryAllDays) {
+                if (Objects.requireNonNull(se.getAttribute("aria-label")).contains(HelperPage.formatDateDeliveryDateParse(deliveryDate))) {
+                    se.shouldBe(exist).click();
+                    foundDate = true;
+                    break;
+                }
+            }
+            if (!foundDate) {
+                nextMonthButton.shouldBe(exist).click();
+                deliveryAllDays = $$x("//button[contains(@class, 'react-calendar__tile') and not(@disabled)]/abbr");
+            }
+        }
+        return this;
+    }
+
+
+
     public String setRandomDeliveryTime() {
         apiClient.getDeliveryDateInterval(deliveryDate);
         LocalTime timeFrom = HelperPage.doubleToTime(apiClient.getDeliveryTimeFrom());
         LocalTime timeTo = HelperPage.doubleToTime(apiClient.getDeliveryTimeTo());
+        String time = String.valueOf(HelperPage.getRandomTimeInterval(timeFrom, timeTo.minusHours(2)));
+
+        timeFromInput.shouldBe(exist).click();
+        timeDropped.shouldBe(exist);
+        timeDropped.shouldHave(text(time));
+        timeIntervals.findBy(text(time)).click();
+        return time;
+    }
+
+    public String setRandomPSDeliveryTime() {
+        apiClient.getDeliveryPSDateInterval(deliveryDate);
+        LocalTime timeFrom = HelperPage.doubleToTime(apiClient.getDeliveryPSTimeFrom());
+        LocalTime timeTo = HelperPage.doubleToTime(apiClient.getDeliveryPSTimeTo());
         String time = String.valueOf(HelperPage.getRandomTimeInterval(timeFrom, timeTo.minusHours(2)));
 
         timeFromInput.shouldBe(exist).click();

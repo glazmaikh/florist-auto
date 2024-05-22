@@ -43,6 +43,14 @@ public class SuccessPage {
         return this;
     }
 
+    public SuccessPage assertSuccessPSOrderStatus(String baseUrl) {
+        header.shouldHave(textCaseSensitive("Спасибо за заказ"), Duration.ofSeconds(20));
+        apiClient.getOrderData();
+        webdriver().shouldHave(url(baseUrl + apiClient.getCityPSSlug() + "/order/payment/" + HelperPage.getOrderNumber() + "/success/" + HelperPage.getOrderAccessKey()), Duration.ofSeconds(20));
+        assertTrue(getPaidOrderStatus(), "Таймаут. Не получил статус 'Заказ оплачен' за 30 сек.");
+        return this;
+    }
+
     private boolean getPaidOrderStatus() {
         long startTime = System.currentTimeMillis();
         long timeoutInMilliseconds = 30000;

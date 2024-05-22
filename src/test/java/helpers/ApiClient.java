@@ -46,7 +46,9 @@ public class ApiClient {
     private final List<ExtrasPriceItemDto> extrasPricesFirstVariations = new ArrayList<>();
     private OrderData orderData;
     private final Data data = getDeliveryPriceByCitySlug();
+    private final Data dataPS = getDeliveryPSPriceByCitySlug();
     private DeliveryTime deliveryTime;
+    private DeliveryTime deliveryPSTime;
     private final List<BouquetDataItemDto> bouquetList = new ArrayList<>();
     private List<BouquetDataItemDto> allBouquetsFromRequest = new ArrayList<>();
     private final List<PriceItemDto> pricesFirstVariations = new ArrayList<>();
@@ -412,6 +414,19 @@ public class ApiClient {
         return cityDataAliasDto.getData();
     }
 
+    @SneakyThrows
+    public Data getDeliveryPSPriceByCitySlug() {
+        RequestSpecification httpRequest = given();
+        Response responseCitySlug = httpRequest
+                .auth().basic("florist_api", "123")
+                .param("alias", cityPS.getSlug())
+                .get("api/city/0");
+        ResponseBody responseBody = responseCitySlug.getBody();
+
+        CityDataAliasDto cityDataAliasDto = mapper.readValue(responseBody.asString(), CityDataAliasDto.class);
+        return cityDataAliasDto.getData();
+    }
+
     // методы взаимодействия с обьектом Data - цен доставки по slug города
     public String getDeliveryPrice(CurrencyType currencyType) {
         DecimalFormat decimalFormat = new DecimalFormat("0.00");
@@ -419,6 +434,15 @@ public class ApiClient {
             case EUR, USD -> decimalFormat.format(data.getDelivery().get(currencyType.name())).replace(",", ".");
             case KZT, RUB ->
                     String.valueOf(data.getDelivery().get(currencyType.name())).replaceAll("(\\d+)\\.\\d+", "$1");
+        };
+    }
+
+    public String getDeliveryPSPrice(CurrencyType currencyType) {
+        DecimalFormat decimalFormat = new DecimalFormat("0.00");
+        return switch (currencyType) {
+            case EUR, USD -> decimalFormat.format(dataPS.getDelivery().get(currencyType.name())).replace(",", ".");
+            case KZT, RUB ->
+                    String.valueOf(dataPS.getDelivery().get(currencyType.name())).replaceAll("(\\d+)\\.\\d+", "$1");
         };
     }
 
@@ -551,6 +575,21 @@ public class ApiClient {
         return new ArrayList<>(disabledDate.getData().getDisabled_dates().values());
     }
 
+    @SneakyThrows
+    public List<LocalDate> getDisabledPSDeliveryDaysList() {
+        RequestSpecification httpRequest = given();
+        Response responseDisabledData = httpRequest
+                .auth().basic("florist_api", "123")
+                .param("city", getCityPSId())
+                .param("ids", bouquet.getId())
+                .get("/api/delivery/date");
+        ResponseBody responseBody = responseDisabledData.getBody();
+
+        mapper.registerModule(new JavaTimeModule());
+        DisabledDeliveryDateResponse disabledDate = mapper.readValue(responseBody.asString(), DisabledDeliveryDateResponse.class);
+        return new ArrayList<>(disabledDate.getData().getDisabled_dates().values());
+    }
+
     // получение рандомного обьекта с возможным интервалом доставки
     @SneakyThrows
     public void getDeliveryDateInterval(String withoutDisabledDay) {
@@ -567,12 +606,35 @@ public class ApiClient {
         deliveryTime = deliveryInfo.getData().getDelivery_time();
     }
 
+    @SneakyThrows
+    public void getDeliveryPSDateInterval(String withoutDisabledDay) {
+        RequestSpecification httpRequest = given();
+        Response responseBouquet = httpRequest
+                .auth().basic("florist_api", "123")
+                .param("city", getCityPSId())
+                .param("date", withoutDisabledDay)
+                .param("ids", bouquet.getId())
+                .get("api/delivery/time");
+        ResponseBody bodyBouquet = responseBouquet.getBody();
+
+        DeliveryInfo deliveryInfo = mapper.readValue(bodyBouquet.asString(), DeliveryInfo.class);
+        deliveryPSTime = deliveryInfo.getData().getDelivery_time();
+    }
+
     public double getDeliveryTimeFrom() {
         return deliveryTime.getFrom();
     }
 
     public double getDeliveryTimeTo() {
         return deliveryTime.getTo();
+    }
+
+    public double getDeliveryPSTimeFrom() {
+        return deliveryPSTime.getFrom();
+    }
+
+    public double getDeliveryPSTimeTo() {
+        return deliveryPSTime.getTo();
     }
 
     // метод регистрации клиента на сайте

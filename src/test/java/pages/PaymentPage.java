@@ -54,6 +54,18 @@ public class PaymentPage {
         return this;
     }
 
+    @SneakyThrows
+    public PaymentPage assertPaymentPSStatus(String baseUrl) {
+        header.shouldHave(textCaseSensitive("Оплата заказа"), Duration.ofSeconds(20));
+        webdriver().shouldHave(url(baseUrl + apiClient.getCityPSSlug() + "/order/payment/" + HelperPage.getOrderNumber() + "/" + HelperPage.getOrderAccessKey()));
+        apiClient.getOrderData();
+        assertEquals(String.valueOf(apiClient.getOrderId()), header.getText().replaceAll("[^0-9]", ""),
+                "incorrect order number on PaymentPage");
+
+        assertTrue(apiClient.getOrderStatus().contains("Ожидает оплаты"));
+        return this;
+    }
+
     public PaymentPage assertBouquetName() {
         assertTrue(HelperPage.isOrderSectionContainsAllFromBouquets(orderSection, apiClient.getBouquetNameList()),
                 "bouquets names not equals");
@@ -62,6 +74,11 @@ public class PaymentPage {
 
     public PaymentPage assertDeliveryPrice(CurrencyType currencyType) {
         assertFixturesPage.performAssertDeliveryPrice(orderSection, currencyType);
+        return this;
+    }
+
+    public PaymentPage assertDeliveryPSPrice(CurrencyType currencyType) {
+        assertFixturesPage.performAssertDeliveryPSPrice(orderSection, currencyType);
         return this;
     }
 
