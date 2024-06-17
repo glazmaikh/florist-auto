@@ -8,8 +8,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class PartnerProfileDao {
-    public String
-    getUpdatedProductData(Long objectId) {
+    public String getUpdatedProductData(Long objectId) {
         try (Session session = HibernateUtil.getPsSession()) {
             Query<String> query = session.createQuery("SELECT data FROM UpdatedProductEntity WHERE object_Id = :objectId AND action = 'update' ORDER BY version DESC", String.class);
             query.setParameter("objectId", objectId);
@@ -78,7 +77,7 @@ public class PartnerProfileDao {
     }
     public List<PartnerDeliveryEntity> getPartnerDeliveryList(Long accountId) {
         try (Session session = HibernateUtil.getFlowersSession()) {
-            Query<PartnerDeliveryEntity> query = session.createQuery("FROM PartnerDeliveryEntity WHERE account_id = :accountId", PartnerDeliveryEntity.class);
+            Query<PartnerDeliveryEntity> query = session.createQuery("FROM PartnerDeliveryEntity WHERE account_id = :accountId AND hidden = 0", PartnerDeliveryEntity.class);
             query.setParameter("accountId", accountId);
             query.setMaxResults(10);
             return query.list();
